@@ -12,3 +12,100 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum Role {
+  ADMIN
+  COURIER
+}
+
+enum OrderStatus {
+  WAITING
+  WITHDRAWN
+  DELIVERED
+  RETURNED
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  cpf       String   @unique
+  password  String
+  role      Role     @default(COURIER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders Order[]
+
+  @@map("users")
+}
+
+model Recipient {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders        Order[]
+  notifications Notification[]
+
+  @@map("recipients")
+}
+
+model Order {
+  id     String      @id @default(uuid())
+  status OrderStatus @default(WAITING)
+
+  latitude   Decimal
+  longitude  Decimal
+  street     String
+  number     String
+  city       String
+  state      String
+  zip        String
+  country    String
+  complement String?
+
+  pickupDate   DateTime?
+  deliveryDate DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  recipientId String
+  recipient   Recipient @relation(fields: [recipientId], references: [id])
+
+  courierId String?
+  courier   User?   @relation(fields: [courierId], references: [id])
+
+  attachments Attachment[]
+
+  @@map("orders")
+}
+
+model Attachment {
+  id    String @id @default(uuid())
+  title String
+  url   String
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@map("attachments")
+}
+
+model Notification {
+  id          String    @id @default(uuid())
+  recipientId String
+  title       String
+  content     String
+  readAt      DateTime?
+  createdAt   DateTime  @default(now())
+
+  recipient Recipient @relation(fields: [recipientId], references: [id])
+
+  @@map("notifications")
+}
