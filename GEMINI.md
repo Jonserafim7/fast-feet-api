@@ -1,0 +1,90 @@
+# FastFeet API Context
+
+## Project Overview
+FastFeet is a backend API for a logistics/delivery service. It manages the complete lifecycle of packages ("encomendas"), including administration of delivery personnel ("entregadores") and recipients.
+
+The project is structured using **Domain-Driven Design (DDD)** principles and **Clean Architecture**, separating core business logic from infrastructure concerns.
+
+## Tech Stack
+- **Runtime**: Node.js
+- **Framework**: NestJS
+- **Language**: TypeScript
+- **Database**: PostgreSQL (via Prisma ORM)
+- **Validation**: Zod
+- **Authentication**: JWT (RS256) with Passport
+- **Cryptography**: BCrypt (for passwords)
+
+## Architecture
+
+The codebase is divided into two main directories within `src/`:
+
+### 1. `src/core/` (Domain Layer)
+Contains the pure business logic, independent of the framework (mostly).
+- **`use-cases/`**: Application specific business rules (e.g., `CreateUserUseCase`). Each use case has a single responsibility.
+- **`repositories/`**: Interfaces defining how data should be accessed.
+- **`entities/`**: Domain entities (Note: In this project, Prisma generated types are sometimes used pragmatically).
+- **`errors/`**: Domain-specific errors and the `Either` pattern implementation for functional error handling.
+
+### 2. `src/infra/` (Infrastructure Layer)
+Contains the implementation details and framework wiring.
+- **`http/`**: NestJS Controllers, Modules, and Pipes (Zod validation).
+- **`database/`**: Prisma implementation of the repository interfaces defined in `core`.
+- **`cryptography/`**: Implementations for hashing and encryption interfaces.
+- **`auth/`**: JWT strategies, guards, and decorators (`@CurrentUser`, `@Public`).
+- **`env/`**: Environment variable validation and configuration service.
+
+## Setup & Configuration
+
+### Prerequisites
+- Node.js (LTS recommended)
+- PostgreSQL Database instance
+
+### Installation
+```bash
+npm install
+```
+
+### Environment Variables
+1. Copy `.env.example` to `.env`.
+2. Configure the following variables:
+   - `DATABASE_URL`: Connection string for PostgreSQL.
+   - `JWT_PRIVATE_KEY`: Base64 encoded RSA private key.
+   - `JWT_PUBLIC_KEY`: Base64 encoded RSA public key.
+   - `PORT`: (Optional) Server port, defaults to 3000.
+
+### Database
+Run migrations to set up the schema:
+```bash
+npx prisma migrate dev
+```
+
+## Running the Application
+
+- **Development**:
+  ```bash
+  npm run start:dev
+  ```
+- **Production**:
+  ```bash
+  npm run build
+  npm run start:prod
+  ```
+
+## Development Guidelines
+
+- **Creating Features**:
+  1. Define the **Use Case** in `src/core/use-cases/`.
+  2. Define the **Repository Interface** in `src/core/repositories/` (if needed).
+  3. Implement the **Repository** in `src/infra/database/prisma/repositories/`.
+  4. Create the **Controller** in `src/infra/http/controllers/`.
+  5. Register everything in the appropriate **Module** (e.g., `HttpModule`, `DatabaseModule`).
+
+- **Error Handling**:
+  - Use the `Either` pattern in Use Cases to return `Left` (error) or `Right` (success).
+  - Domain errors should be transformed into HTTP exceptions in the controllers (or via an exception filter, though manual handling seems current pattern).
+
+- **Validation**:
+  - Use Zod schemas for input validation in controllers (via `ZodValidationPipe`).
+
+## Current Status (Checklist)
+Refer to `README.md` for the detailed feature checklist. Key pending items involve CRUD operations for Orders, Recipients, and delivery status workflows.
