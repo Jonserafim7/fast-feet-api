@@ -26,13 +26,13 @@ enum OrderStatus {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  cpf       String   @unique
-  password  String
-  role      Role     @default(COURIER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(uuid())
+  name         String
+  cpf          String   @unique
+  passwordHash String   @map("password_hash")
+  role         Role     @default(COURIER)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
   orders Order[]
 
@@ -44,8 +44,8 @@ model Recipient {
   name      String
   email     String   @unique
   phone     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   orders        Order[]
   notifications Notification[]
@@ -67,16 +67,16 @@ model Order {
   country    String
   complement String?
 
-  pickupDate   DateTime?
-  deliveryDate DateTime?
+  pickupDate   DateTime? @map("pickup_date")
+  deliveryDate DateTime? @map("delivery_date")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  recipientId String
+  recipientId String    @map("recipient_id")
   recipient   Recipient @relation(fields: [recipientId], references: [id])
 
-  courierId String?
+  courierId String? @map("courier_id")
   courier   User?   @relation(fields: [courierId], references: [id])
 
   attachments Attachment[]
@@ -89,21 +89,21 @@ model Attachment {
   title String
   url   String
 
-  orderId String
+  orderId String @map("order_id")
   order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
 
   @@map("attachments")
 }
 
 model Notification {
   id          String    @id @default(uuid())
-  recipientId String
+  recipientId String    @map("recipient_id")
   title       String
   content     String
   readAt      DateTime?
-  createdAt   DateTime  @default(now())
+  createdAt   DateTime  @default(now()) @map("created_at")
 
   recipient Recipient @relation(fields: [recipientId], references: [id])
 
