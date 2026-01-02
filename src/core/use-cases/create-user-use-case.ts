@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { User, Role } from '../../generated/prisma/client.js';
-import { UserAlreadyExistsError } from '../errors/user-already-exists-errors.js';
-import { Either, left, right } from '../errors/either.js';
-import { UsersRepository } from '../repositories/users-repository.js';
-import { HashGenerator } from '../cryptography/hash-generator.js';
+import type { Role } from '@/generated/prisma/client.js';
+import { UserAlreadyExistsError } from '@/core/errors/user-already-exists-errors.js';
+import { Either, left, right } from '@/core/errors/either.js';
+import { UsersRepository } from '@/core/repositories/users-repository.js';
+import { HashGenerator } from '@/core/cryptography/hash-generator.js';
 
 interface CreateUserUseCaseRequest {
   name: string;
@@ -12,12 +12,7 @@ interface CreateUserUseCaseRequest {
   role: Role;
 }
 
-type CreateUserUseCaseResponse = Either<
-  UserAlreadyExistsError,
-  {
-    user: User;
-  }
->;
+type CreateUserUseCaseResponse = Either<UserAlreadyExistsError, null>;
 
 @Injectable()
 export class CreateUserUseCase {
@@ -40,13 +35,13 @@ export class CreateUserUseCase {
 
     const hashedPassword = await this.hashGenerator.hash(password);
 
-    const user = await this.usersRepository.create({
+    await this.usersRepository.create({
       name,
       cpf,
       password: hashedPassword,
       role,
     });
 
-    return right({ user });
+    return right(null);
   }
 }

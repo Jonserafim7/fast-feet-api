@@ -8,10 +8,10 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { z } from 'zod';
-import { ZodValidationPipe } from '../pipes/zod-validation.pipe.js';
-import { CreateUserUseCase } from '../../../core/use-cases/create-user-use-case.js';
-import { UserAlreadyExistsError } from '../../../core/errors/user-already-exists-errors.js';
-import { Roles } from '../../auth/roles.decorator.js';
+import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js';
+import { CreateUserUseCase } from '@/core/use-cases/create-user-use-case.js';
+import { UserAlreadyExistsError } from '@/core/errors/user-already-exists-errors.js';
+import { Roles } from '@/infra/auth/roles.decorator.js';
 
 const createUserBodySchema = z.object({
   name: z.string(),

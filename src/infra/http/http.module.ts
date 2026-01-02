@@ -1,10 +1,10 @@
-import { DatabaseModule } from '../database/database.module.js';
 import { Module } from '@nestjs/common';
-import { CryptographyModule } from '../cryptography/cryptography.module.js';
-import { CreateUserUseCase } from '../../core/use-cases/create-user-use-case.js';
-import { AuthenticateUserUseCase } from '../../core/use-cases/authenticate-user-use-case.js';
-import { CreateUserController } from './controllers/create-user.controller.js';
-import { AuthenticateController } from './controllers/authenticate.controller.js';
+import { AuthenticateUserUseCase } from '@/core/use-cases/authenticate-user-use-case.js';
+import { CreateUserUseCase } from '@/core/use-cases/create-user-use-case.js';
+import { DatabaseModule } from '@/infra/database/database.module.js';
+import { CryptographyModule } from '@/infra/cryptography/cryptography.module.js';
+import { CreateUserController } from '@/infra/http/controllers/create-user.controller.js';
+import { AuthenticateController } from '@/infra/http/controllers/authenticate.controller.js';
 
 @Module({
   imports: [DatabaseModule, CryptographyModule],

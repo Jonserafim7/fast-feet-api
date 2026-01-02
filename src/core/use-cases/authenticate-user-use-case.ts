@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Either, left, right } from '../errors/either.js';
-import { InvalidCredentialsError } from '../errors/invalid-credentials-errors.js';
-import { UsersRepository } from '../repositories/users-repository.js';
-import { HashComparer } from '../cryptography/hash-comparer.js';
-import { Encrypter } from '../cryptography/encrypter.js';
+import { Either, left, right } from '@/core/errors/either.js';
+import { InvalidCredentialsError } from '@/core/errors/invalid-credentials-errors.js';
+import { UsersRepository } from '@/core/repositories/users-repository.js';
+import { HashComparer } from '@/core/cryptography/hash-comparer.js';
+import { Encrypter } from '@/core/cryptography/encrypter.js';
 
 interface AuthenticateUserUseCaseRequest {
   cpf: string;

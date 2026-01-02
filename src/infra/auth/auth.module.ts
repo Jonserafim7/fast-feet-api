@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { PrismaService } from '../database/prisma/prisma.service.js';
-import { JwtStrategy } from './jwt.strategy.js';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './jwt-auth.guard.js';
-import { RolesGuard } from './roles.guard.js';
-import { EnvService } from '../env/env.service.js';
-import { EnvModule } from '../env/env.module.js';
+import { PrismaService } from '@/infra/database/prisma/prisma.service.js';
+import { EnvService } from '@/infra/env/env.service.js';
+import { EnvModule } from '@/infra/env/env.module.js';
+import { JwtStrategy } from '@/infra/auth/jwt.strategy.js';
+import { JwtAuthGuard } from '@/infra/auth/jwt-auth.guard.js';
+import { RolesGuard } from '@/infra/auth/roles.guard.js';
 
 @Module({
   imports: [

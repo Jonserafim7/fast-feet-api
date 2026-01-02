@@ -7,10 +7,10 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { z } from 'zod';
-import { ZodValidationPipe } from '../pipes/zod-validation.pipe.js';
-import { AuthenticateUserUseCase } from '../../../core/use-cases/authenticate-user-use-case.js';
-import { InvalidCredentialsError } from '../../../core/errors/invalid-credentials-errors.js';
-import { Public } from '../../auth/public.decorator.js';
+import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js';
+import { AuthenticateUserUseCase } from '@/core/use-cases/authenticate-user-use-case.js';
+import { InvalidCredentialsError } from '@/core/errors/invalid-credentials-errors.js';
+import { Public } from '@/infra/auth/public.decorator.js';
 
 const authenticateBodySchema = z.object({
   cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/),
