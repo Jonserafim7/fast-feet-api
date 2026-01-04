@@ -11,10 +11,11 @@ import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js';
 import { AuthenticateUserUseCase } from '@/core/use-cases/authenticate-user-use-case.js';
 import { InvalidCredentialsError } from '@/core/errors/invalid-credentials-errors.js';
 import { Public } from '@/infra/auth/public.decorator.js';
+import { cpfSchema } from '@/infra/http/validators/cpf.schema.js';
 
 const authenticateBodySchema = z.object({
-  cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/),
-  password: z.string(),
+  cpf: cpfSchema,
+  password: z.string().min(6),
 });
 
 type AuthenticateBody = z.infer<typeof authenticateBodySchema>;

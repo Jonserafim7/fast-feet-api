@@ -12,11 +12,12 @@ import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js';
 import { CreateUserUseCase } from '@/core/use-cases/create-user-use-case.js';
 import { UserAlreadyExistsError } from '@/core/errors/user-already-exists-errors.js';
 import { Roles } from '@/infra/auth/roles.decorator.js';
+import { cpfSchema } from '@/infra/http/validators/cpf.schema.js';
 
 const createUserBodySchema = z.object({
-  name: z.string(),
-  cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/),
-  password: z.string(),
+  name: z.string().trim().min(3),
+  cpf: cpfSchema,
+  password: z.string().min(6),
   role: z.enum(['ADMIN', 'COURIER']).default('COURIER'),
 });
 

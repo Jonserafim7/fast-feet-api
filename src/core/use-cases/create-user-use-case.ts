@@ -33,12 +33,12 @@ export class CreateUserUseCase {
       return left(new UserAlreadyExistsError(cpf));
     }
 
-    const hashedPassword = await this.hashGenerator.hash(password);
+    const passwordHash = await this.hashGenerator.hash(password);
 
     await this.usersRepository.create({
       name,
       cpf,
-      password: hashedPassword,
+      passwordHash,
       role,
     });
 

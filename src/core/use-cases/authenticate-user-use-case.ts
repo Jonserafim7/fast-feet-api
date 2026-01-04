@@ -37,7 +37,7 @@ export class AuthenticateUserUseCase {
 
     const isPasswordValid = await this.hashComparer.compare(
       password,
-      user.password,
+      user.passwordHash,
     );
 
     if (!isPasswordValid) {
