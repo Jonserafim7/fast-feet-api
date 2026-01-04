@@ -17,10 +17,14 @@ import { RolesGuard } from '@/infra/auth/roles.guard.js';
       inject: [EnvService],
       useFactory: (envService: EnvService) => {
         const secret = envService.get('JWT_SECRET');
+        const accessTokenExpiresIn = envService.get(
+          'JWT_ACCESS_TOKEN_EXPIRES_IN',
+        );
         return {
-          secret: secret,
+          secret,
           signOptions: {
             algorithm: 'HS256',
+            expiresIn: accessTokenExpiresIn,
           },
         };
       },
