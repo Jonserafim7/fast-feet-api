@@ -11,6 +11,7 @@ export default defineConfig({
 
     setupFiles: ['./src/test/setup-e2e.ts'],
     hookTimeout: 1000 * 30, // 30000 milliseconds = 30 seconds
+    fileParallelism: false,
   },
   plugins: [
     tsconfigPaths(),
