@@ -21,7 +21,7 @@ describe('Authenticate (E2E)', () => {
   });
 
   test('[POST] /sessions', async () => {
-    const user = await prisma.user.create({
+    await prisma.user.create({
       data: {
         name: 'Admin User',
         cpf: '12345678909',
@@ -30,14 +30,10 @@ describe('Authenticate (E2E)', () => {
       },
     });
 
-    console.log(user);
-
     const response = await request(app.getHttpServer()).post('/sessions').send({
       cpf: '123.456.789-09',
       password: '123456',
     });
-
-    console.log(response.body);
 
     expect(response.statusCode).toBe(201);
   });

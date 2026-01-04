@@ -16,13 +16,11 @@ import { RolesGuard } from '@/infra/auth/roles.guard.js';
       global: true,
       inject: [EnvService],
       useFactory: (envService: EnvService) => {
-        const privateKey = envService.get('JWT_PRIVATE_KEY');
-        const publicKey = envService.get('JWT_PUBLIC_KEY');
+        const secret = envService.get('JWT_SECRET');
         return {
-          privateKey: Buffer.from(privateKey, 'base64'),
-          publicKey: Buffer.from(publicKey, 'base64'),
+          secret: secret,
           signOptions: {
-            algorithm: 'RS256',
+            algorithm: 'HS256',
           },
         };
       },
