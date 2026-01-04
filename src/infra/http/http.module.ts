@@ -11,6 +11,7 @@ import { DatabaseModule } from '@/infra/database/database.module.js';
 import { CryptographyModule } from '@/infra/cryptography/cryptography.module.js';
 import { CreateUserController } from '@/infra/http/controllers/create-user.controller.js';
 import { AuthenticateController } from '@/infra/http/controllers/authenticate.controller.js';
+import { CourierProfileController } from '@/infra/http/controllers/courier-profile.controller.js';
 import { CreateCourierController } from '@/infra/http/controllers/create-courier.controller.js';
 import { DeleteCourierController } from '@/infra/http/controllers/delete-courier.controller.js';
 import { GetCourierController } from '@/infra/http/controllers/get-courier.controller.js';
@@ -25,6 +26,7 @@ import { UpdateUserPasswordController } from '@/infra/http/controllers/update-us
     CreateUserController,
     AuthenticateController,
     CreateCourierController,
+    CourierProfileController,
     ListCouriersController,
     GetCourierController,
     UpdateCourierController,
