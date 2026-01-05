@@ -68,7 +68,7 @@ describe('Create Order (E2E)', () => {
     })
 
     expect(orderOnDatabase).toBeTruthy()
-    expect(orderOnDatabase?.status).toBe('WAITING')
+    expect(orderOnDatabase?.status).toBe('PENDING')
     expect(orderOnDatabase?.street).toBe('Av Paulista')
   })
 })

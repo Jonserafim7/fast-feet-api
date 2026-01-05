@@ -39,4 +39,5 @@ export abstract class OrdersRepository {
   abstract findMany(params: { page: number; perPage: number }): Promise<Order[]>
   abstract save(data: UpdateOrderData): Promise<void>
   abstract delete(id: string): Promise<void>
+  abstract updateStatus(id: string, status: OrderStatus): Promise<void>
 }

@@ -19,6 +19,7 @@ enum Role {
 }
 
 enum OrderStatus {
+  PENDING
   WAITING
   WITHDRAWN
   DELIVERED
@@ -55,7 +56,7 @@ model Recipient {
 
 model Order {
   id     String      @id @default(uuid())
-  status OrderStatus @default(WAITING)
+  status OrderStatus @default(PENDING)
 
   latitude   Decimal
   longitude  Decimal

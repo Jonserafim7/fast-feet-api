@@ -5,7 +5,7 @@ import {
   UpdateOrderData,
 } from '@/core/repositories/orders-repository.js'
 import { PrismaService } from '@/infra/database/prisma/prisma.service.js'
-import { Prisma } from '@/generated/prisma/client.js'
+import { Prisma, OrderStatus } from '@/generated/prisma/client.js'
 
 @Injectable()
 export class PrismaOrdersRepository implements OrdersRepository {
@@ -75,5 +75,12 @@ export class PrismaOrdersRepository implements OrdersRepository {
 
   async delete(id: string) {
     await this.prisma.order.delete({ where: { id } })
+  }
+
+  async updateStatus(id: string, status: OrderStatus) {
+    await this.prisma.order.update({
+      where: { id },
+      data: { status },
+    })
   }
 }

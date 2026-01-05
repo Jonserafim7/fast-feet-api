@@ -3,7 +3,7 @@ import {
   CreateOrderData,
   UpdateOrderData,
 } from '@/core/repositories/orders-repository.js'
-import { Order, Prisma } from '@/generated/prisma/client.js'
+import { Order, Prisma, OrderStatus } from '@/generated/prisma/client.js'
 import { randomUUID } from 'node:crypto'
 
 export class InMemoryOrdersRepository implements OrdersRepository {
@@ -95,6 +95,20 @@ export class InMemoryOrdersRepository implements OrdersRepository {
 
   delete(id: string): Promise<void> {
     this.items = this.items.filter((item) => item.id !== id)
+    return Promise.resolve()
+  }
+
+  updateStatus(id: string, status: OrderStatus): Promise<void> {
+    const itemIndex = this.items.findIndex((item) => item.id === id)
+
+    if (itemIndex >= 0) {
+      this.items[itemIndex] = {
+        ...this.items[itemIndex],
+        status,
+        updatedAt: new Date(),
+      }
+    }
+
     return Promise.resolve()
   }
 }

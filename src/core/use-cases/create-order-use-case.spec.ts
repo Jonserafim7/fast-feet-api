@@ -37,7 +37,7 @@ describe('create order use case', () => {
     expect(result.isRight()).toBe(true)
     expect(ordersRepository.items).toHaveLength(1)
     expect(ordersRepository.items[0]).toMatchObject({
-      status: 'WAITING',
+      status: 'PENDING',
       recipientId: 'recipient-1',
       street: 'Av Paulista',
       number: '1000',

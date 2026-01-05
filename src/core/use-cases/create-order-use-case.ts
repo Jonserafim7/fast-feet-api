@@ -45,7 +45,7 @@ export class CreateOrderUseCase {
     }
 
     await this.ordersRepository.create({
-      status: 'WAITING',
+      status: 'PENDING',
       recipientId,
       latitude,
       longitude,
