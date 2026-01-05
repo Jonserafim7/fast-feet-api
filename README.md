@@ -12,8 +12,8 @@ Use este checklist para ajudar a organizar a sua entrega:
 - [x] Desenvolver o CRUD dos destinatários, com acesso restrito a usuários 'admin'
 - [x] Desenvolver o CRUD das encomendas, com acesso restrito a usuários 'admin'
 - [x] Implementar a funcionalidade para alterar a senha de qualquer usuário, com acesso restrito a usuários 'admin'
-- [ ] Implementar a funcionalidade para marcar uma encomenda como "aguardando" (disponível para retirada)
-- [ ] Implementar a funcionalidade para um entregador registrar a "retirada" de uma encomenda
+- [x] Implementar a funcionalidade para marcar uma encomenda como "aguardando" (disponível para retirada)
+- [x] Implementar a funcionalidade para um entregador registrar a "retirada" de uma encomenda
 - [ ] Implementar a funcionalidade para marcar uma encomenda como "entregue", exigindo o envio de uma foto e garantindo que apenas o entregador que a retirou possa fazer a marcação
 - [ ] Implementar a funcionalidade para marcar uma encomenda como "devolvida"
 - [ ] Desenvolver a listagem de encomendas com endereços próximos à localização do entregador
@@ -35,8 +35,8 @@ A API deve seguir um conjunto de funcionalidades e regras de negócio.
 [x] Deve ser possível realizar o CRUD dos entregadores
 [x] Deve ser possível realizar o CRUD das encomendas
 [x] Deve ser possível realizar o CRUD dos destinatários
-[ ] Deve ser possível marcar uma encomenda como aguardando (Disponível para retirada)
-[ ] Deve ser possível retirar uma encomenda
+[x] Deve ser possível marcar uma encomenda como aguardando (Disponível para retirada)
+[x] Deve ser possível retirar uma encomenda
 [ ] Deve ser possível marcar uma encomenda como entregue
 [ ] Deve ser possível marcar uma encomenda como devolvida
 [ ] Deve ser possível listar as encomendas com endereços de entrega próximo ao local do entregador

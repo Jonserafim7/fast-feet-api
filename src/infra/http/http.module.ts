@@ -18,6 +18,7 @@ import { ListOrdersUseCase } from '@/core/use-cases/list-orders-use-case.js'
 import { UpdateOrderUseCase } from '@/core/use-cases/update-order-use-case.js'
 import { DeleteOrderUseCase } from '@/core/use-cases/delete-order-use-case.js'
 import { MarkOrderAsWaitingUseCase } from '@/core/use-cases/mark-order-as-waiting-use-case.js'
+import { WithdrawOrderUseCase } from '@/core/use-cases/withdraw-order-use-case.js'
 import { DatabaseModule } from '@/infra/database/database.module.js'
 import { CryptographyModule } from '@/infra/cryptography/cryptography.module.js'
 import { CreateUserController } from '@/infra/http/controllers/create-user.controller.js'
@@ -40,6 +41,7 @@ import { ListOrdersController } from '@/infra/http/controllers/list-orders.contr
 import { UpdateOrderController } from '@/infra/http/controllers/update-order.controller.js'
 import { DeleteOrderController } from '@/infra/http/controllers/delete-order.controller.js'
 import { MarkOrderAsWaitingController } from '@/infra/http/controllers/mark-order-as-waiting.controller.js'
+import { WithdrawOrderController } from '@/infra/http/controllers/withdraw-order.controller.js'
 
 @Module({
   imports: [DatabaseModule, CryptographyModule],
@@ -65,6 +67,7 @@ import { MarkOrderAsWaitingController } from '@/infra/http/controllers/mark-orde
     UpdateOrderController,
     DeleteOrderController,
     MarkOrderAsWaitingController,
+    WithdrawOrderController,
   ],
   providers: [
     CreateUserUseCase,
@@ -86,6 +89,7 @@ import { MarkOrderAsWaitingController } from '@/infra/http/controllers/mark-orde
     UpdateOrderUseCase,
     DeleteOrderUseCase,
     MarkOrderAsWaitingUseCase,
+    WithdrawOrderUseCase,
   ],
 })
 export class HttpModule {}

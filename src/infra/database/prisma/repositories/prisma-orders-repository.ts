@@ -83,4 +83,15 @@ export class PrismaOrdersRepository implements OrdersRepository {
       data: { status },
     })
   }
+
+  async withdraw(id: string, courierId: string, pickupDate: Date) {
+    await this.prisma.order.update({
+      where: { id },
+      data: {
+        status: 'WITHDRAWN',
+        courierId,
+        pickupDate,
+      },
+    })
+  }
 }

@@ -111,4 +111,18 @@ export class InMemoryOrdersRepository implements OrdersRepository {
 
     return Promise.resolve()
   }
+
+  async withdraw(id: string, courierId: string, pickupDate: Date) {
+    const itemIndex = this.items.findIndex((item) => item.id === id)
+
+    if (itemIndex >= 0) {
+      this.items[itemIndex] = {
+        ...this.items[itemIndex],
+        status: 'WITHDRAWN',
+        courierId,
+        pickupDate,
+        updatedAt: new Date(),
+      }
+    }
+  }
 }

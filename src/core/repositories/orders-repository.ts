@@ -40,4 +40,9 @@ export abstract class OrdersRepository {
   abstract save(data: UpdateOrderData): Promise<void>
   abstract delete(id: string): Promise<void>
   abstract updateStatus(id: string, status: OrderStatus): Promise<void>
+  abstract withdraw(
+    id: string,
+    courierId: string,
+    pickupDate: Date
+  ): Promise<void>
 }
