@@ -12,6 +12,11 @@ import { ListRecipientsUseCase } from '@/core/use-cases/list-recipients-use-case
 import { UpdateCourierUseCase } from '@/core/use-cases/update-courier-use-case.js'
 import { UpdateRecipientUseCase } from '@/core/use-cases/update-recipient-use-case.js'
 import { UpdateUserPasswordUseCase } from '@/core/use-cases/update-user-password-use-case.js'
+import { CreateOrderUseCase } from '@/core/use-cases/create-order-use-case.js'
+import { GetOrderUseCase } from '@/core/use-cases/get-order-use-case.js'
+import { ListOrdersUseCase } from '@/core/use-cases/list-orders-use-case.js'
+import { UpdateOrderUseCase } from '@/core/use-cases/update-order-use-case.js'
+import { DeleteOrderUseCase } from '@/core/use-cases/delete-order-use-case.js'
 import { DatabaseModule } from '@/infra/database/database.module.js'
 import { CryptographyModule } from '@/infra/cryptography/cryptography.module.js'
 import { CreateUserController } from '@/infra/http/controllers/create-user.controller.js'
@@ -28,6 +33,11 @@ import { ListRecipientsController } from '@/infra/http/controllers/list-recipien
 import { UpdateCourierController } from '@/infra/http/controllers/update-courier.controller.js'
 import { UpdateRecipientController } from '@/infra/http/controllers/update-recipient.controller.js'
 import { UpdateUserPasswordController } from '@/infra/http/controllers/update-user-password.controller.js'
+import { CreateOrderController } from '@/infra/http/controllers/create-order.controller.js'
+import { GetOrderController } from '@/infra/http/controllers/get-order.controller.js'
+import { ListOrdersController } from '@/infra/http/controllers/list-orders.controller.js'
+import { UpdateOrderController } from '@/infra/http/controllers/update-order.controller.js'
+import { DeleteOrderController } from '@/infra/http/controllers/delete-order.controller.js'
 
 @Module({
   imports: [DatabaseModule, CryptographyModule],
@@ -47,6 +57,11 @@ import { UpdateUserPasswordController } from '@/infra/http/controllers/update-us
     UpdateRecipientController,
     DeleteRecipientController,
     UpdateUserPasswordController,
+    CreateOrderController,
+    GetOrderController,
+    ListOrdersController,
+    UpdateOrderController,
+    DeleteOrderController,
   ],
   providers: [
     CreateUserUseCase,
@@ -62,6 +77,11 @@ import { UpdateUserPasswordController } from '@/infra/http/controllers/update-us
     UpdateRecipientUseCase,
     DeleteRecipientUseCase,
     UpdateUserPasswordUseCase,
+    CreateOrderUseCase,
+    GetOrderUseCase,
+    ListOrdersUseCase,
+    UpdateOrderUseCase,
+    DeleteOrderUseCase,
   ],
 })
 export class HttpModule {}

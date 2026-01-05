@@ -5,6 +5,8 @@ import { UsersRepository } from '@/core/repositories/users-repository.js'
 import { PrismaUsersRepository } from '@/infra/database/prisma/repositories/prisma-users-repository.js'
 import { RecipientsRepository } from '@/core/repositories/recipients-repository.js'
 import { PrismaRecipientsRepository } from '@/infra/database/prisma/repositories/prisma-recipients-repository.js'
+import { OrdersRepository } from '@/core/repositories/orders-repository.js'
+import { PrismaOrdersRepository } from '@/infra/database/prisma/repositories/prisma-orders-repository.js'
 
 @Module({
   imports: [EnvModule],
@@ -18,7 +20,16 @@ import { PrismaRecipientsRepository } from '@/infra/database/prisma/repositories
       provide: RecipientsRepository,
       useClass: PrismaRecipientsRepository,
     },
+    {
+      provide: OrdersRepository,
+      useClass: PrismaOrdersRepository,
+    },
   ],
-  exports: [PrismaService, UsersRepository, RecipientsRepository],
+  exports: [
+    PrismaService,
+    UsersRepository,
+    RecipientsRepository,
+    OrdersRepository,
+  ],
 })
 export class DatabaseModule {}

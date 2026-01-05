@@ -1,0 +1,70 @@
+import { InMemoryOrdersRepository } from '@/test/repositories/in-memory-orders-repository.js'
+import { InMemoryRecipientsRepository } from '@/test/repositories/in-memory-recipients-repository.js'
+import { CreateOrderUseCase } from './create-order-use-case.js'
+import { ResourceNotFoundError } from '../errors/resource-not-found-error.js'
+
+describe('create order use case', () => {
+  let ordersRepository: InMemoryOrdersRepository
+  let recipientsRepository: InMemoryRecipientsRepository
+  let sut: CreateOrderUseCase
+
+  beforeEach(() => {
+    ordersRepository = new InMemoryOrdersRepository()
+    recipientsRepository = new InMemoryRecipientsRepository()
+    sut = new CreateOrderUseCase(ordersRepository, recipientsRepository)
+  })
+
+  it('should create an order when recipient exists', async () => {
+    await recipientsRepository.create({
+      id: 'recipient-1',
+      name: 'John Doe',
+      email: 'john@example.com',
+    })
+
+    const result = await sut.execute({
+      recipientId: 'recipient-1',
+      latitude: -23.55052,
+      longitude: -46.633308,
+      street: 'Av Paulista',
+      number: '1000',
+      city: 'São Paulo',
+      state: 'SP',
+      zip: '01310100',
+      country: 'Brasil',
+      complement: 'Apto 101',
+    })
+
+    expect(result.isRight()).toBe(true)
+    expect(ordersRepository.items).toHaveLength(1)
+    expect(ordersRepository.items[0]).toMatchObject({
+      status: 'WAITING',
+      recipientId: 'recipient-1',
+      street: 'Av Paulista',
+      number: '1000',
+      city: 'São Paulo',
+      state: 'SP',
+      zip: '01310100',
+      country: 'Brasil',
+      complement: 'Apto 101',
+      courierId: null,
+    })
+  })
+
+  it('should not create an order when recipient does not exist', async () => {
+    const result = await sut.execute({
+      recipientId: 'non-existent-recipient',
+      latitude: -23.55052,
+      longitude: -46.633308,
+      street: 'Av Paulista',
+      number: '1000',
+      city: 'São Paulo',
+      state: 'SP',
+      zip: '01310100',
+      country: 'Brasil',
+    })
+
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toBeInstanceOf(ResourceNotFoundError)
+    expect(ordersRepository.items).toHaveLength(0)
+  })
+})
