@@ -3,6 +3,7 @@ import request from 'supertest'
 import { Test } from '@nestjs/testing'
 import { PrismaService } from '@/infra/database/prisma/prisma.service.js'
 import { JwtService } from '@nestjs/jwt'
+import { makeAdmin, makeAccessToken } from '@/test/factories/index.js'
 
 describe('Create User (E2E)', () => {
   let app: INestApplication
@@ -23,17 +24,14 @@ describe('Create User (E2E)', () => {
     await app.init()
   })
 
-  test('[POST] /users', async () => {
-    const adminUser = await prisma.user.create({
-      data: {
-        name: 'Admin User',
-        cpf: '52998224725',
-        passwordHash: '123456',
-        role: 'ADMIN',
-      },
-    })
+  afterAll(async () => {
+    await app.close()
+  })
 
-    const accessToken = await jwt.signAsync({
+  test('[POST] /users', async () => {
+    const adminUser = await makeAdmin(prisma, { cpf: '52998224725' })
+
+    const accessToken = await makeAccessToken(jwt, {
       sub: adminUser.id,
       role: adminUser.role,
     })

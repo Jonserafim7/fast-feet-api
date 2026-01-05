@@ -16,6 +16,22 @@ function getDatabaseUrlWithSchema(databaseUrl: string, schema: string) {
   return url.toString()
 }
 
+async function truncateAllTables() {
+  const tables = await prisma.$queryRaw<Array<{ tablename: string }>>`
+    SELECT tablename
+    FROM pg_tables
+    WHERE schemaname = ${schemaId}
+    AND tablename != '_prisma_migrations'
+  `
+
+  if (tables.length === 0) return
+
+  const tableNames = tables
+    .map((t) => `"${schemaId}"."${t.tablename}"`)
+    .join(', ')
+  await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${tableNames} CASCADE`)
+}
+
 beforeAll(async () => {
   const databaseUrl = process.env.DATABASE_URL
 
@@ -25,7 +41,7 @@ beforeAll(async () => {
 
   const databaseUrlWithSchema = getDatabaseUrlWithSchema(databaseUrl, schemaId)
 
-  console.log(`\n🔧 Database URL with Schema: ${databaseUrlWithSchema}\n`)
+  console.log(`\n[E2E Setup] Schema: ${schemaId}\n`)
 
   process.env.DATABASE_URL = databaseUrlWithSchema
 
@@ -42,9 +58,7 @@ beforeAll(async () => {
 })
 
 afterEach(async () => {
-  await prisma.$executeRawUnsafe(
-    'TRUNCATE TABLE "attachments", "notifications", "orders", "recipients", "users" CASCADE'
-  )
+  await truncateAllTables()
 })
 
 afterAll(async () => {

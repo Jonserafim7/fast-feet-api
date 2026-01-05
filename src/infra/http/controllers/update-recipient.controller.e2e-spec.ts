@@ -3,6 +3,11 @@ import request from 'supertest'
 import { Test } from '@nestjs/testing'
 import { PrismaService } from '@/infra/database/prisma/prisma.service.js'
 import { JwtService } from '@nestjs/jwt'
+import {
+  makeAdmin,
+  makeAccessToken,
+  makeRecipient,
+} from '@/test/factories/index.js'
 
 describe('Update Recipient (E2E)', () => {
   let app: INestApplication
@@ -28,23 +33,13 @@ describe('Update Recipient (E2E)', () => {
   })
 
   test('[PATCH] /recipients/:id', async () => {
-    const adminUser = await prisma.user.create({
-      data: {
-        name: 'Admin User',
-        cpf: '65719483205',
-        passwordHash: 'admin-hash',
-        role: 'ADMIN',
-      },
+    const adminUser = await makeAdmin(prisma, { cpf: '65719483205' })
+
+    const recipient = await makeRecipient(prisma, {
+      email: 'recipient.update.before@example.com',
     })
 
-    const recipient = await prisma.recipient.create({
-      data: {
-        name: 'Recipient One',
-        email: 'recipient.update.before@example.com',
-      },
-    })
-
-    const accessToken = await jwt.signAsync({
+    const accessToken = await makeAccessToken(jwt, {
       sub: adminUser.id,
       role: adminUser.role,
     })

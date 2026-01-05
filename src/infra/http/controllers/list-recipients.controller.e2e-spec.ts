@@ -3,6 +3,11 @@ import request from 'supertest'
 import { Test } from '@nestjs/testing'
 import { PrismaService } from '@/infra/database/prisma/prisma.service.js'
 import { JwtService } from '@nestjs/jwt'
+import {
+  makeAdmin,
+  makeAccessToken,
+  makeRecipient,
+} from '@/test/factories/index.js'
 
 describe('List Recipients (E2E)', () => {
   let app: INestApplication
@@ -28,38 +33,27 @@ describe('List Recipients (E2E)', () => {
   })
 
   test('[GET] /recipients', async () => {
-    const adminUser = await prisma.user.create({
-      data: {
-        name: 'Admin User',
-        cpf: '59130468722',
-        passwordHash: 'admin-hash',
-        role: 'ADMIN',
-      },
-    })
+    const adminUser = await makeAdmin(prisma, { cpf: '59130468722' })
 
-    const accessToken = await jwt.signAsync({
+    const accessToken = await makeAccessToken(jwt, {
       sub: adminUser.id,
       role: adminUser.role,
     })
 
-    await prisma.recipient.createMany({
-      data: [
-        {
-          name: 'Recipient One',
-          email: 'recipient.list.one@example.com',
-          phone: '11999999999',
-        },
-        {
-          name: 'Recipient Two',
-          email: 'recipient.list.two@example.com',
-          phone: '11888888888',
-        },
-        {
-          name: 'Recipient Three',
-          email: 'recipient.list.three@example.com',
-          phone: '11777777777',
-        },
-      ],
+    await makeRecipient(prisma, {
+      name: 'Recipient One',
+      email: 'recipient.list.one@example.com',
+      phone: '11999999999',
+    })
+    await makeRecipient(prisma, {
+      name: 'Recipient Two',
+      email: 'recipient.list.two@example.com',
+      phone: '11888888888',
+    })
+    await makeRecipient(prisma, {
+      name: 'Recipient Three',
+      email: 'recipient.list.three@example.com',
+      phone: '11777777777',
     })
 
     const response = await request(app.getHttpServer())

@@ -3,6 +3,11 @@ import request from 'supertest'
 import { Test } from '@nestjs/testing'
 import { PrismaService } from '@/infra/database/prisma/prisma.service.js'
 import { JwtService } from '@nestjs/jwt'
+import {
+  makeAdmin,
+  makeCourier,
+  makeAccessToken,
+} from '@/test/factories/index.js'
 
 describe('Get Courier (E2E)', () => {
   let app: INestApplication
@@ -28,25 +33,11 @@ describe('Get Courier (E2E)', () => {
   })
 
   test('[GET] /couriers/:id', async () => {
-    const adminUser = await prisma.user.create({
-      data: {
-        name: 'Admin User',
-        cpf: '92106781415',
-        passwordHash: 'admin-hash',
-        role: 'ADMIN',
-      },
-    })
+    const adminUser = await makeAdmin(prisma, { cpf: '92106781415' })
 
-    const courier = await prisma.user.create({
-      data: {
-        name: 'Courier User',
-        cpf: '86577694842',
-        passwordHash: 'courier-hash',
-        role: 'COURIER',
-      },
-    })
+    const courier = await makeCourier(prisma, { cpf: '86577694842' })
 
-    const accessToken = await jwt.signAsync({
+    const accessToken = await makeAccessToken(jwt, {
       sub: adminUser.id,
       role: adminUser.role,
     })

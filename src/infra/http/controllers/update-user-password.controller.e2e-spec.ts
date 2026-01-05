@@ -4,6 +4,11 @@ import { Test } from '@nestjs/testing'
 import { PrismaService } from '@/infra/database/prisma/prisma.service.js'
 import { JwtService } from '@nestjs/jwt'
 import { BcryptHasher } from '@/infra/cryptography/bcrypt-hasher.js'
+import {
+  makeAdmin,
+  makeCourier,
+  makeAccessToken,
+} from '@/test/factories/index.js'
 
 describe('Update User Password (E2E)', () => {
   let app: INestApplication
@@ -31,25 +36,14 @@ describe('Update User Password (E2E)', () => {
   })
 
   test('[PATCH] /users/:id/password', async () => {
-    const adminUser = await prisma.user.create({
-      data: {
-        name: 'Admin User',
-        cpf: '62143827911',
-        passwordHash: 'admin-hash',
-        role: 'ADMIN',
-      },
+    const adminUser = await makeAdmin(prisma, { cpf: '62143827911' })
+
+    const courier = await makeCourier(prisma, {
+      cpf: '99073268281',
+      password: 'old-password',
     })
 
-    const courier = await prisma.user.create({
-      data: {
-        name: 'Courier User',
-        cpf: '99073268281',
-        passwordHash: await bcryptHasher.hash('old-password'),
-        role: 'COURIER',
-      },
-    })
-
-    const accessToken = await jwt.signAsync({
+    const accessToken = await makeAccessToken(jwt, {
       sub: adminUser.id,
       role: adminUser.role,
     })
