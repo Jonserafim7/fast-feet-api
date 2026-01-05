@@ -5,6 +5,7 @@ import {
   HttpCode,
   NotFoundException,
   Param,
+  ParseUUIDPipe,
   Patch,
 } from '@nestjs/common'
 import { z } from 'zod'
@@ -17,8 +18,6 @@ const updateUserPasswordBodySchema = z.object({
   password: z.string().min(6),
 })
 
-const userIdSchema = z.string().uuid()
-
 type UpdateUserPasswordBody = z.infer<typeof updateUserPasswordBodySchema>
 
 @Controller('/users')
@@ -29,7 +28,7 @@ export class UpdateUserPasswordController {
   @Patch('/:id/password')
   @HttpCode(204)
   async handle(
-    @Param('id', new ZodValidationPipe(userIdSchema)) userId: string,
+    @Param('id', new ParseUUIDPipe()) userId: string,
     @Body(new ZodValidationPipe(updateUserPasswordBodySchema))
     body: UpdateUserPasswordBody
   ) {

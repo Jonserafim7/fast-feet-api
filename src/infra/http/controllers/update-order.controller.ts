@@ -4,6 +4,7 @@ import {
   Controller,
   NotFoundException,
   Param,
+  ParseUUIDPipe,
   Patch,
 } from '@nestjs/common'
 import { z } from 'zod'
@@ -11,8 +12,6 @@ import { UpdateOrderUseCase } from '@/core/use-cases/update-order-use-case.js'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
 import { Roles } from '@/infra/auth/roles.decorator.js'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js'
-
-const orderIdSchema = z.uuid()
 
 const updateOrderBodySchema = z.object({
   latitude: z.number().optional(),
@@ -35,7 +34,7 @@ export class UpdateOrderController {
 
   @Patch('/:id')
   async handle(
-    @Param('id', new ZodValidationPipe(orderIdSchema)) orderId: string,
+    @Param('id', new ParseUUIDPipe()) orderId: string,
     @Body(new ZodValidationPipe(updateOrderBodySchema))
     body: UpdateOrderBody
   ) {

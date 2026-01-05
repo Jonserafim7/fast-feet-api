@@ -5,6 +5,7 @@ import {
   Controller,
   NotFoundException,
   Param,
+  ParseUUIDPipe,
   Patch,
 } from '@nestjs/common'
 import { z } from 'zod'
@@ -13,8 +14,6 @@ import { RecipientAlreadyExistsError } from '@/core/errors/recipient-already-exi
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
 import { Roles } from '@/infra/auth/roles.decorator.js'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js'
-
-const recipientIdSchema = z.uuid()
 
 const updateRecipientBodySchema = z
   .object({
@@ -35,8 +34,7 @@ export class UpdateRecipientController {
 
   @Patch('/:id')
   async handle(
-    @Param('id', new ZodValidationPipe(recipientIdSchema))
-    recipientId: string,
+    @Param('id', new ParseUUIDPipe()) recipientId: string,
     @Body(new ZodValidationPipe(updateRecipientBodySchema))
     body: UpdateRecipientBody
   ) {

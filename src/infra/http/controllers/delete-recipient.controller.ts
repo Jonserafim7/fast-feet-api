@@ -5,14 +5,11 @@ import {
   HttpCode,
   NotFoundException,
   Param,
+  ParseUUIDPipe,
 } from '@nestjs/common'
-import { z } from 'zod'
 import { DeleteRecipientUseCase } from '@/core/use-cases/delete-recipient-use-case.js'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
 import { Roles } from '@/infra/auth/roles.decorator.js'
-import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js'
-
-const recipientIdSchema = z.uuid()
 
 @Controller('/recipients')
 @Roles('ADMIN')
@@ -21,10 +18,7 @@ export class DeleteRecipientController {
 
   @Delete('/:id')
   @HttpCode(204)
-  async handle(
-    @Param('id', new ZodValidationPipe(recipientIdSchema))
-    recipientId: string
-  ) {
+  async handle(@Param('id', new ParseUUIDPipe()) recipientId: string) {
     const result = await this.deleteRecipient.execute({ recipientId })
 
     if (result.isLeft()) {

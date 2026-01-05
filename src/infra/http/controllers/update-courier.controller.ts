@@ -5,6 +5,7 @@ import {
   Controller,
   NotFoundException,
   Param,
+  ParseUUIDPipe,
   Patch,
 } from '@nestjs/common'
 import { z } from 'zod'
@@ -14,8 +15,6 @@ import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js
 import { Roles } from '@/infra/auth/roles.decorator.js'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js'
 import { cpfSchema } from '@/infra/http/validators/cpf.schema.js'
-
-const courierIdSchema = z.string().uuid()
 
 const updateCourierBodySchema = z
   .object({
@@ -35,7 +34,7 @@ export class UpdateCourierController {
 
   @Patch('/:id')
   async handle(
-    @Param('id', new ZodValidationPipe(courierIdSchema)) courierId: string,
+    @Param('id', new ParseUUIDPipe()) courierId: string,
     @Body(new ZodValidationPipe(updateCourierBodySchema))
     body: UpdateCourierBody
   ) {

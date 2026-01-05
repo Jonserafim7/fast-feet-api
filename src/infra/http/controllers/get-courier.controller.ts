@@ -4,15 +4,12 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseUUIDPipe,
 } from '@nestjs/common'
-import { z } from 'zod'
 import { GetCourierUseCase } from '@/core/use-cases/get-courier-use-case.js'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
 import { Roles } from '@/infra/auth/roles.decorator.js'
-import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js'
 import { CourierPresenter } from '@/infra/http/presenters/courier-presenter.js'
-
-const courierIdSchema = z.uuid()
 
 @Controller('/couriers')
 @Roles('ADMIN')
@@ -20,9 +17,7 @@ export class GetCourierController {
   constructor(private readonly getCourier: GetCourierUseCase) {}
 
   @Get('/:id')
-  async handle(
-    @Param('id', new ZodValidationPipe(courierIdSchema)) courierId: string
-  ) {
+  async handle(@Param('id', new ParseUUIDPipe()) courierId: string) {
     const result = await this.getCourier.execute({ courierId })
 
     if (result.isLeft()) {
