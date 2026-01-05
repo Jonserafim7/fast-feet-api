@@ -61,7 +61,7 @@ npm run test:e2e:watch
 
 - Unit tests (`**/*.spec.ts`): Test use cases in isolation with in-memory repositories
 - E2E tests (`**/*.e2e-spec.ts`): Test full HTTP flow with real NestJS app and test database
-- E2E setup auto-runs `prisma migrate reset --force` before tests
+- E2E setup creates isolated schema per test run using UUID, runs `prisma migrate deploy`, truncates tables after each test, and drops schema after all tests
 
 ### Database
 
@@ -144,15 +144,15 @@ Use the `Either` pattern in use cases:
 
 ```typescript
 // In use case
-return left(new UserAlreadyExistsError());
-return right(user);
+return left(new UserAlreadyExistsError())
+return right(user)
 
 // In controller
-const result = await useCase.execute(data);
+const result = await useCase.execute(data)
 if (result.isLeft()) {
-  throw new ConflictException(result.value.message);
+  throw new ConflictException(result.value.message)
 }
-return result.value;
+return result.value
 ```
 
 ## Environment Variables
@@ -168,7 +168,7 @@ Required variables (validated with Zod in `src/infra/env/`):
 Import using `@/*` instead of relative paths:
 
 ```typescript
-import { UsersRepository } from '@/core/repositories/users-repository';
+import { UsersRepository } from '@/core/repositories/users-repository'
 ```
 
 Build process uses `tsc-alias` to resolve aliases in compiled output.

@@ -61,7 +61,7 @@ npm run test:e2e:watch
 
 - Unit tests (`**/*.spec.ts`): Test use cases in isolation with in-memory repositories
 - E2E tests (`**/*.e2e-spec.ts`): Test full HTTP flow with real NestJS app and test database
-- E2E setup auto-runs `prisma migrate reset --force` before tests
+- E2E setup creates isolated schema per test run using UUID, runs `prisma migrate deploy`, truncates tables after each test, and drops schema after all tests
 
 ### Database
 

@@ -3,7 +3,6 @@ import request from 'supertest'
 import { Test } from '@nestjs/testing'
 import { JwtService } from '@nestjs/jwt'
 import { PrismaService } from '@/infra/database/prisma/prisma.service.js'
-import { AppModule } from '@/infra/app.module.js'
 import { BcryptHasher } from '@/infra/cryptography/bcrypt-hasher.js'
 
 describe('Authenticate (E2E)', () => {
@@ -11,7 +10,10 @@ describe('Authenticate (E2E)', () => {
   let prisma: PrismaService
   let bcryptHasher: BcryptHasher
   let jwt: JwtService
-  beforeEach(async () => {
+
+  beforeAll(async () => {
+    const { AppModule } = await import('@/infra/app.module.js')
+
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
     }).compile()
@@ -20,7 +22,12 @@ describe('Authenticate (E2E)', () => {
     prisma = moduleRef.get(PrismaService)
     jwt = moduleRef.get(JwtService)
     bcryptHasher = new BcryptHasher()
+
     await app.init()
+  })
+
+  afterAll(async () => {
+    await app.close()
   })
 
   test('[POST] /sessions', async () => {

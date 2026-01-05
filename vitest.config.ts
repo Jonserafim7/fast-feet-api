@@ -1,5 +1,5 @@
-import { defineConfig } from 'vitest/config';
-import tsconfigPaths from 'vite-tsconfig-paths';
+import { defineConfig } from 'vitest/config'
+import tsconfigPaths from 'vite-tsconfig-paths'
 
 export default defineConfig({
   test: {
@@ -9,4 +9,4 @@ export default defineConfig({
     exclude: ['node_modules', 'dist', '**/*.spec.js', '**/*.e2e-spec.ts'],
   },
   plugins: [tsconfigPaths()],
-});
+})

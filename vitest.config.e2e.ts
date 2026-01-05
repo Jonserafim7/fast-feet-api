@@ -1,6 +1,6 @@
-import { defineConfig } from 'vitest/config';
-import tsconfigPaths from 'vite-tsconfig-paths';
-import swc from 'unplugin-swc';
+import { defineConfig } from 'vitest/config'
+import tsconfigPaths from 'vite-tsconfig-paths'
+import swc from 'unplugin-swc'
 
 export default defineConfig({
   test: {
@@ -11,7 +11,6 @@ export default defineConfig({
 
     setupFiles: ['./src/test/setup-e2e.ts'],
     hookTimeout: 1000 * 30, // 30000 milliseconds = 30 seconds
-    fileParallelism: false,
   },
   plugins: [
     tsconfigPaths(),
@@ -19,4 +18,4 @@ export default defineConfig({
       module: { type: 'es6' },
     }),
   ],
-});
+})

@@ -2,7 +2,6 @@ import type { INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import { Test } from '@nestjs/testing'
 import { PrismaService } from '@/infra/database/prisma/prisma.service.js'
-import { AppModule } from '@/infra/app.module.js'
 import { JwtService } from '@nestjs/jwt'
 
 describe('Courier Profile (E2E)', () => {
@@ -11,6 +10,8 @@ describe('Courier Profile (E2E)', () => {
   let jwt: JwtService
 
   beforeAll(async () => {
+    const { AppModule } = await import('@/infra/app.module.js')
+
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
     }).compile()
