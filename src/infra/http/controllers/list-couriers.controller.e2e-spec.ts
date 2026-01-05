@@ -1,30 +1,30 @@
-import type { INestApplication } from '@nestjs/common';
-import request from 'supertest';
-import { Test } from '@nestjs/testing';
-import { PrismaService } from '@/infra/database/prisma/prisma.service.js';
-import { AppModule } from '@/infra/app.module.js';
-import { JwtService } from '@nestjs/jwt';
+import type { INestApplication } from '@nestjs/common'
+import request from 'supertest'
+import { Test } from '@nestjs/testing'
+import { PrismaService } from '@/infra/database/prisma/prisma.service.js'
+import { AppModule } from '@/infra/app.module.js'
+import { JwtService } from '@nestjs/jwt'
 
 describe('List Couriers (E2E)', () => {
-  let app: INestApplication;
-  let prisma: PrismaService;
-  let jwt: JwtService;
+  let app: INestApplication
+  let prisma: PrismaService
+  let jwt: JwtService
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    }).compile()
 
-    app = moduleRef.createNestApplication();
-    prisma = moduleRef.get(PrismaService);
-    jwt = moduleRef.get(JwtService);
+    app = moduleRef.createNestApplication()
+    prisma = moduleRef.get(PrismaService)
+    jwt = moduleRef.get(JwtService)
 
-    await app.init();
-  });
+    await app.init()
+  })
 
   afterAll(async () => {
-    await app.close();
-  });
+    await app.close()
+  })
 
   test('[GET] /couriers', async () => {
     const adminUser = await prisma.user.create({
@@ -34,12 +34,12 @@ describe('List Couriers (E2E)', () => {
         passwordHash: 'admin-hash',
         role: 'ADMIN',
       },
-    });
+    })
 
     const accessToken = await jwt.signAsync({
       sub: adminUser.id,
       role: adminUser.role,
-    });
+    })
 
     await prisma.user.createMany({
       data: [
@@ -62,18 +62,18 @@ describe('List Couriers (E2E)', () => {
           role: 'COURIER',
         },
       ],
-    });
+    })
 
     const response = await request(app.getHttpServer())
       .get('/couriers?page=1&perPage=2')
-      .set('Authorization', `Bearer ${accessToken}`);
+      .set('Authorization', `Bearer ${accessToken}`)
 
-    expect(response.statusCode).toBe(200);
-    expect(response.body.couriers).toHaveLength(2);
+    expect(response.statusCode).toBe(200)
+    expect(response.body.couriers).toHaveLength(2)
     expect(
       response.body.couriers.every(
-        (courier: { role: string }) => courier.role === 'COURIER',
-      ),
-    ).toBe(true);
-  });
-});
+        (courier: { role: string }) => courier.role === 'COURIER'
+      )
+    ).toBe(true)
+  })
+})

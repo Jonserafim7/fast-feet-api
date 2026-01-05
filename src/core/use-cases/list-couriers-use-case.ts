@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { Either, right } from '@/core/errors/either.js';
-import { UsersRepository } from '@/core/repositories/users-repository.js';
-import { Role, User } from '@/generated/prisma/client.js';
+import { Injectable } from '@nestjs/common'
+import { Either, right } from '@/core/errors/either.js'
+import { UsersRepository } from '@/core/repositories/users-repository.js'
+import { Role, User } from '@/generated/prisma/client.js'
 
 interface ListCouriersUseCaseRequest {
-  page: number;
-  perPage: number;
+  page: number
+  perPage: number
 }
 
-type ListCouriersUseCaseResponse = Either<null, { couriers: User[] }>;
+type ListCouriersUseCaseResponse = Either<null, { couriers: User[] }>
 
 @Injectable()
 export class ListCouriersUseCase {
@@ -22,8 +22,8 @@ export class ListCouriersUseCase {
       role: Role.COURIER,
       page,
       perPage,
-    });
+    })
 
-    return right({ couriers });
+    return right({ couriers })
   }
 }

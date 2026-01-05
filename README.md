@@ -8,10 +8,10 @@ Use este checklist para ajudar a organizar a sua entrega:
 
 - [x] Criar os dois tipos de usuário: 'admin' e 'entregador'
 - [x] Implementar um sistema de login com CPF e Senha
-- [ ] Desenvolver o CRUD (Criar, Ler, Atualizar, Deletar) dos entregadores, com acesso restrito a usuários 'admin'
-- [ ] Desenvolver o CRUD dos destinatários, com acesso restrito a usuários 'admin'
+- [x] Desenvolver o CRUD (Criar, Ler, Atualizar, Deletar) dos entregadores, com acesso restrito a usuários 'admin'
+- [x] Desenvolver o CRUD dos destinatários, com acesso restrito a usuários 'admin'
 - [ ] Desenvolver o CRUD das encomendas, com acesso restrito a usuários 'admin'
-- [ ] Implementar a funcionalidade para alterar a senha de qualquer usuário, com acesso restrito a usuários 'admin'
+- [x] Implementar a funcionalidade para alterar a senha de qualquer usuário, com acesso restrito a usuários 'admin'
 - [ ] Implementar a funcionalidade para marcar uma encomenda como "aguardando" (disponível para retirada)
 - [ ] Implementar a funcionalidade para um entregador registrar a "retirada" de uma encomenda
 - [ ] Implementar a funcionalidade para marcar uma encomenda como "entregue", exigindo o envio de uma foto e garantindo que apenas o entregador que a retirou possa fazer a marcação
@@ -32,9 +32,9 @@ A API deve seguir um conjunto de funcionalidades e regras de negócio.
 
 [x] A aplicação deve ter dois tipos de usuário, entregador e/ou admin
 [x] Deve ser possível realizar login com CPF e Senha
-[ ] Deve ser possível realizar o CRUD dos entregadores
+[x] Deve ser possível realizar o CRUD dos entregadores
 [ ] Deve ser possível realizar o CRUD das encomendas
-[ ] Deve ser possível realizar o CRUD dos destinatários
+[x] Deve ser possível realizar o CRUD dos destinatários
 [ ] Deve ser possível marcar uma encomenda como aguardando (Disponível para retirada)
 [ ] Deve ser possível retirar uma encomenda
 [ ] Deve ser possível marcar uma encomenda como entregue
@@ -47,11 +47,11 @@ A API deve seguir um conjunto de funcionalidades e regras de negócio.
 ### Regras de Negócio
 
 [ ] Somente usuário do tipo admin pode realizar operações de CRUD nas encomendas
-[ ] Somente usuário do tipo admin pode realizar operações de CRUD dos entregadores
-[ ] Somente usuário do tipo admin pode realizar operações de CRUD dos destinatários
+[x] Somente usuário do tipo admin pode realizar operações de CRUD dos entregadores
+[x] Somente usuário do tipo admin pode realizar operações de CRUD dos destinatários
 [ ] Para marcar uma encomenda como entregue é obrigatório o envio de uma foto
 [ ] Somente o entregador que retirou a encomenda pode marcar ela como entregue
-[ ] Somente o admin pode alterar a senha de um usuário
+[x] Somente o admin pode alterar a senha de um usuário
 [ ] Não deve ser possível um entregador listar as encomendas de outro entregador
 
 ## Conceitos que Pode Praticar

@@ -1,7 +1,7 @@
-import { Encrypter } from '@/core/cryptography/encrypter.js';
+import { Encrypter } from '@/core/cryptography/encrypter.js'
 
 export class FakeEncrypter implements Encrypter {
   encrypt(payload: Record<string, unknown>): Promise<string> {
-    return Promise.resolve(JSON.stringify(payload));
+    return Promise.resolve(JSON.stringify(payload))
   }
 }

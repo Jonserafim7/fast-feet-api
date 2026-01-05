@@ -1,24 +1,24 @@
-import { Injectable } from '@nestjs/common';
-import { UsersRepository } from '@/core/repositories/users-repository.js';
-import { PrismaService } from '@/infra/database/prisma/prisma.service.js';
-import { Prisma, Role, User } from '@/generated/prisma/client.js';
+import { Injectable } from '@nestjs/common'
+import { UsersRepository } from '@/core/repositories/users-repository.js'
+import { PrismaService } from '@/infra/database/prisma/prisma.service.js'
+import { Prisma, Role, User } from '@/generated/prisma/client.js'
 
 @Injectable()
 export class PrismaUsersRepository implements UsersRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: Prisma.UserUncheckedCreateInput) {
-    await this.prisma.user.create({ data });
+    await this.prisma.user.create({ data })
   }
 
   async findByCpf(cpf: string) {
-    const user = await this.prisma.user.findUnique({ where: { cpf } });
-    return user;
+    const user = await this.prisma.user.findUnique({ where: { cpf } })
+    return user
   }
 
   async findById(id: string) {
-    const user = await this.prisma.user.findUnique({ where: { id } });
-    return user;
+    const user = await this.prisma.user.findUnique({ where: { id } })
+    return user
   }
 
   async findManyByRole({
@@ -26,18 +26,18 @@ export class PrismaUsersRepository implements UsersRepository {
     page,
     perPage,
   }: {
-    role: Role;
-    page: number;
-    perPage: number;
+    role: Role
+    page: number
+    perPage: number
   }) {
-    const skip = (page - 1) * perPage;
+    const skip = (page - 1) * perPage
     const users = await this.prisma.user.findMany({
       where: { role },
       skip,
       take: perPage,
       orderBy: { createdAt: 'desc' },
-    });
-    return users;
+    })
+    return users
   }
 
   async save(user: User) {
@@ -49,10 +49,10 @@ export class PrismaUsersRepository implements UsersRepository {
         passwordHash: user.passwordHash,
         role: user.role,
       },
-    });
+    })
   }
 
   async delete(id: string) {
-    await this.prisma.user.delete({ where: { id } });
+    await this.prisma.user.delete({ where: { id } })
   }
 }

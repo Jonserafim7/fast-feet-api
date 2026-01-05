@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { Either, left, right } from '@/core/errors/either.js';
-import { UsersRepository } from '@/core/repositories/users-repository.js';
-import { UserNotFoundError } from '@/core/errors/user-not-found-errors.js';
-import { Role } from '@/generated/prisma/client.js';
+import { Injectable } from '@nestjs/common'
+import { Either, left, right } from '@/core/errors/either.js'
+import { UsersRepository } from '@/core/repositories/users-repository.js'
+import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
+import { Role } from '@/generated/prisma/client.js'
 
 interface DeleteCourierUseCaseRequest {
-  courierId: string;
+  courierId: string
 }
 
-type DeleteCourierUseCaseResponse = Either<UserNotFoundError, null>;
+type DeleteCourierUseCaseResponse = Either<ResourceNotFoundError, null>
 
 @Injectable()
 export class DeleteCourierUseCase {
@@ -17,14 +17,14 @@ export class DeleteCourierUseCase {
   async execute({
     courierId,
   }: DeleteCourierUseCaseRequest): Promise<DeleteCourierUseCaseResponse> {
-    const courier = await this.usersRepository.findById(courierId);
+    const courier = await this.usersRepository.findById(courierId)
 
     if (!courier || courier.role !== Role.COURIER) {
-      return left(new UserNotFoundError(courierId));
+      return left(new ResourceNotFoundError(courierId))
     }
 
-    await this.usersRepository.delete(courierId);
+    await this.usersRepository.delete(courierId)
 
-    return right(null);
+    return right(null)
   }
 }

@@ -1,26 +1,26 @@
-import type { INestApplication } from '@nestjs/common';
-import request from 'supertest';
-import { Test } from '@nestjs/testing';
-import { PrismaService } from '@/infra/database/prisma/prisma.service.js';
-import { AppModule } from '@/infra/app.module.js';
-import { JwtService } from '@nestjs/jwt';
+import type { INestApplication } from '@nestjs/common'
+import request from 'supertest'
+import { Test } from '@nestjs/testing'
+import { PrismaService } from '@/infra/database/prisma/prisma.service.js'
+import { AppModule } from '@/infra/app.module.js'
+import { JwtService } from '@nestjs/jwt'
 
 describe('Create User (E2E)', () => {
-  let app: INestApplication;
-  let prisma: PrismaService;
-  let jwt: JwtService;
+  let app: INestApplication
+  let prisma: PrismaService
+  let jwt: JwtService
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    }).compile()
 
-    app = moduleRef.createNestApplication();
-    prisma = moduleRef.get(PrismaService);
-    jwt = moduleRef.get(JwtService);
+    app = moduleRef.createNestApplication()
+    prisma = moduleRef.get(PrismaService)
+    jwt = moduleRef.get(JwtService)
 
-    await app.init();
-  });
+    await app.init()
+  })
 
   test('[POST] /users', async () => {
     const adminUser = await prisma.user.create({
@@ -30,12 +30,12 @@ describe('Create User (E2E)', () => {
         passwordHash: '123456',
         role: 'ADMIN',
       },
-    });
+    })
 
     const accessToken = await jwt.signAsync({
       sub: adminUser.id,
       role: adminUser.role,
-    });
+    })
 
     const response = await request(app.getHttpServer())
       .post('/users')
@@ -45,16 +45,16 @@ describe('Create User (E2E)', () => {
         password: '123456',
         role: 'ADMIN',
       })
-      .set('Authorization', `Bearer ${accessToken}`);
+      .set('Authorization', `Bearer ${accessToken}`)
 
-    expect(response.statusCode).toBe(201);
+    expect(response.statusCode).toBe(201)
 
     const userOnDatabase = await prisma.user.findUnique({
       where: {
         cpf: '98765432100',
       },
-    });
+    })
 
-    expect(userOnDatabase).toBeTruthy();
-  });
-});
+    expect(userOnDatabase).toBeTruthy()
+  })
+})

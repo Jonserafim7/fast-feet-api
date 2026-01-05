@@ -1,9 +1,9 @@
-import { UsersRepository } from '@/core/repositories/users-repository.js';
-import { User, Prisma, Role } from '@/generated/prisma/client.js';
-import { randomUUID } from 'node:crypto';
+import { UsersRepository } from '@/core/repositories/users-repository.js'
+import { User, Prisma, Role } from '@/generated/prisma/client.js'
+import { randomUUID } from 'node:crypto'
 
 export class InMemoryUsersRepository implements UsersRepository {
-  public items: User[] = [];
+  public items: User[] = []
 
   async create(data: Prisma.UserUncheckedCreateInput): Promise<void> {
     const user: User = {
@@ -14,31 +14,31 @@ export class InMemoryUsersRepository implements UsersRepository {
       role: data.role ?? Role.COURIER,
       createdAt: new Date(),
       updatedAt: new Date(),
-    };
+    }
 
-    this.items.push(user);
+    this.items.push(user)
 
-    return Promise.resolve();
+    return Promise.resolve()
   }
 
   findByCpf(cpf: string): Promise<User | null> {
-    const user = this.items.find((item) => item.cpf === cpf);
+    const user = this.items.find((item) => item.cpf === cpf)
 
     if (!user) {
-      return Promise.resolve(null);
+      return Promise.resolve(null)
     }
 
-    return Promise.resolve(user);
+    return Promise.resolve(user)
   }
 
   findById(id: string): Promise<User | null> {
-    const user = this.items.find((item) => item.id === id);
+    const user = this.items.find((item) => item.id === id)
 
     if (!user) {
-      return Promise.resolve(null);
+      return Promise.resolve(null)
     }
 
-    return Promise.resolve(user);
+    return Promise.resolve(user)
   }
 
   findManyByRole({
@@ -46,33 +46,33 @@ export class InMemoryUsersRepository implements UsersRepository {
     page,
     perPage,
   }: {
-    role: Role;
-    page: number;
-    perPage: number;
+    role: Role
+    page: number
+    perPage: number
   }): Promise<User[]> {
-    const start = (page - 1) * perPage;
+    const start = (page - 1) * perPage
     const users = this.items
       .filter((item) => item.role === role)
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 
-    return Promise.resolve(users.slice(start, start + perPage));
+    return Promise.resolve(users.slice(start, start + perPage))
   }
 
   save(user: User): Promise<void> {
-    const itemIndex = this.items.findIndex((item) => item.id === user.id);
+    const itemIndex = this.items.findIndex((item) => item.id === user.id)
 
     if (itemIndex >= 0) {
       this.items[itemIndex] = {
         ...user,
         updatedAt: new Date(),
-      };
+      }
     }
 
-    return Promise.resolve();
+    return Promise.resolve()
   }
 
   delete(id: string): Promise<void> {
-    this.items = this.items.filter((item) => item.id !== id);
-    return Promise.resolve();
+    this.items = this.items.filter((item) => item.id !== id)
+    return Promise.resolve()
   }
 }

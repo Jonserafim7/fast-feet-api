@@ -1,7 +1,7 @@
-import { UseCaseError } from './use-case-error.js';
+import { UseCaseError } from './use-case-error.js'
 
 export class InvalidCredentialsError extends Error implements UseCaseError {
   constructor() {
-    super('Invalid credentials');
+    super('Invalid credentials')
   }
 }

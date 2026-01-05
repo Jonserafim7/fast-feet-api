@@ -1,4 +1,4 @@
-import { User } from '@/generated/prisma/client.js';
+import { User } from '@/generated/prisma/client.js'
 
 export class CourierPresenter {
   static toHTTP(user: User) {
@@ -9,6 +9,6 @@ export class CourierPresenter {
       role: user.role,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
-    };
+    }
   }
 }
