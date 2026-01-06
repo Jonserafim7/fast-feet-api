@@ -24,6 +24,7 @@ export class InMemoryOrdersRepository implements OrdersRepository {
       complement: data.complement ?? null,
       pickupDate: data.pickupDate ?? null,
       deliveryDate: data.deliveryDate ?? null,
+      returnDate: null,
       createdAt: new Date(),
       updatedAt: new Date(),
       recipientId: data.recipientId,
@@ -134,6 +135,19 @@ export class InMemoryOrdersRepository implements OrdersRepository {
         ...this.items[itemIndex],
         status: 'DELIVERED',
         deliveryDate,
+        updatedAt: new Date(),
+      }
+    }
+  }
+
+  async return(id: string, returnDate: Date) {
+    const itemIndex = this.items.findIndex((item) => item.id === id)
+
+    if (itemIndex >= 0) {
+      this.items[itemIndex] = {
+        ...this.items[itemIndex],
+        status: 'RETURNED',
+        returnDate,
         updatedAt: new Date(),
       }
     }

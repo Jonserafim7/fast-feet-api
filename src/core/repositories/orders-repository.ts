@@ -46,4 +46,5 @@ export abstract class OrdersRepository {
     pickupDate: Date
   ): Promise<void>
   abstract deliver(id: string, deliveryDate: Date): Promise<void>
+  abstract return(id: string, returnDate: Date): Promise<void>
 }

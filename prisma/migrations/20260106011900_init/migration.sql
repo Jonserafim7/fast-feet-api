@@ -2,7 +2,7 @@
 CREATE TYPE "Role" AS ENUM ('ADMIN', 'COURIER');
 
 -- CreateEnum
-CREATE TYPE "OrderStatus" AS ENUM ('WAITING', 'WITHDRAWN', 'DELIVERED', 'RETURNED');
+CREATE TYPE "OrderStatus" AS ENUM ('PENDING', 'WAITING', 'WITHDRAWN', 'DELIVERED', 'RETURNED');
 
 -- CreateTable
 CREATE TABLE "users" (
@@ -32,7 +32,7 @@ CREATE TABLE "recipients" (
 -- CreateTable
 CREATE TABLE "orders" (
     "id" TEXT NOT NULL,
-    "status" "OrderStatus" NOT NULL DEFAULT 'WAITING',
+    "status" "OrderStatus" NOT NULL DEFAULT 'PENDING',
     "latitude" DECIMAL(65,30) NOT NULL,
     "longitude" DECIMAL(65,30) NOT NULL,
     "street" TEXT NOT NULL,
@@ -44,6 +44,7 @@ CREATE TABLE "orders" (
     "complement" TEXT,
     "pickup_date" TIMESTAMP(3),
     "delivery_date" TIMESTAMP(3),
+    "return_date" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "recipient_id" TEXT NOT NULL,
