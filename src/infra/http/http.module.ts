@@ -19,8 +19,10 @@ import { UpdateOrderUseCase } from '@/core/use-cases/update-order-use-case.js'
 import { DeleteOrderUseCase } from '@/core/use-cases/delete-order-use-case.js'
 import { MarkOrderAsWaitingUseCase } from '@/core/use-cases/mark-order-as-waiting-use-case.js'
 import { WithdrawOrderUseCase } from '@/core/use-cases/withdraw-order-use-case.js'
+import { DeliverOrderUseCase } from '@/core/use-cases/deliver-order-use-case.js'
 import { DatabaseModule } from '@/infra/database/database.module.js'
 import { CryptographyModule } from '@/infra/cryptography/cryptography.module.js'
+import { StorageModule } from '@/infra/storage/storage.module.js'
 import { CreateUserController } from '@/infra/http/controllers/create-user.controller.js'
 import { AuthenticateController } from '@/infra/http/controllers/authenticate.controller.js'
 import { CourierProfileController } from '@/infra/http/controllers/courier-profile.controller.js'
@@ -42,9 +44,10 @@ import { UpdateOrderController } from '@/infra/http/controllers/update-order.con
 import { DeleteOrderController } from '@/infra/http/controllers/delete-order.controller.js'
 import { MarkOrderAsWaitingController } from '@/infra/http/controllers/mark-order-as-waiting.controller.js'
 import { WithdrawOrderController } from '@/infra/http/controllers/withdraw-order.controller.js'
+import { DeliverOrderController } from '@/infra/http/controllers/deliver-order.controller.js'
 
 @Module({
-  imports: [DatabaseModule, CryptographyModule],
+  imports: [DatabaseModule, CryptographyModule, StorageModule],
   exports: [],
   controllers: [
     CreateUserController,
@@ -68,6 +71,7 @@ import { WithdrawOrderController } from '@/infra/http/controllers/withdraw-order
     DeleteOrderController,
     MarkOrderAsWaitingController,
     WithdrawOrderController,
+    DeliverOrderController,
   ],
   providers: [
     CreateUserUseCase,
@@ -90,6 +94,7 @@ import { WithdrawOrderController } from '@/infra/http/controllers/withdraw-order
     DeleteOrderUseCase,
     MarkOrderAsWaitingUseCase,
     WithdrawOrderUseCase,
+    DeliverOrderUseCase,
   ],
 })
 export class HttpModule {}

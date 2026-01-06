@@ -94,4 +94,14 @@ export class PrismaOrdersRepository implements OrdersRepository {
       },
     })
   }
+
+  async deliver(id: string, deliveryDate: Date) {
+    await this.prisma.order.update({
+      where: { id },
+      data: {
+        status: 'DELIVERED',
+        deliveryDate,
+      },
+    })
+  }
 }

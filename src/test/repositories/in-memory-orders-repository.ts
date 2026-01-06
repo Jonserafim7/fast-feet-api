@@ -125,4 +125,17 @@ export class InMemoryOrdersRepository implements OrdersRepository {
       }
     }
   }
+
+  async deliver(id: string, deliveryDate: Date) {
+    const itemIndex = this.items.findIndex((item) => item.id === id)
+
+    if (itemIndex >= 0) {
+      this.items[itemIndex] = {
+        ...this.items[itemIndex],
+        status: 'DELIVERED',
+        deliveryDate,
+        updatedAt: new Date(),
+      }
+    }
+  }
 }

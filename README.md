@@ -14,7 +14,7 @@ Use este checklist para ajudar a organizar a sua entrega:
 - [x] Implementar a funcionalidade para alterar a senha de qualquer usuário, com acesso restrito a usuários 'admin'
 - [x] Implementar a funcionalidade para marcar uma encomenda como "aguardando" (disponível para retirada)
 - [x] Implementar a funcionalidade para um entregador registrar a "retirada" de uma encomenda
-- [ ] Implementar a funcionalidade para marcar uma encomenda como "entregue", exigindo o envio de uma foto e garantindo que apenas o entregador que a retirou possa fazer a marcação
+- [x] Implementar a funcionalidade para marcar uma encomenda como "entregue", exigindo o envio de uma foto e garantindo que apenas o entregador que a retirou possa fazer a marcação
 - [ ] Implementar a funcionalidade para marcar uma encomenda como "devolvida"
 - [ ] Desenvolver a listagem de encomendas com endereços próximos à localização do entregador
 - [ ] Desenvolver a listagem das entregas de um entregador, garantindo que ele só possa ver as suas próprias
@@ -37,7 +37,7 @@ A API deve seguir um conjunto de funcionalidades e regras de negócio.
 [x] Deve ser possível realizar o CRUD dos destinatários
 [x] Deve ser possível marcar uma encomenda como aguardando (Disponível para retirada)
 [x] Deve ser possível retirar uma encomenda
-[ ] Deve ser possível marcar uma encomenda como entregue
+[x] Deve ser possível marcar uma encomenda como entregue
 [ ] Deve ser possível marcar uma encomenda como devolvida
 [ ] Deve ser possível listar as encomendas com endereços de entrega próximo ao local do entregador
 [x] Deve ser possível alterar a senha de um usuário
@@ -49,8 +49,8 @@ A API deve seguir um conjunto de funcionalidades e regras de negócio.
 [x] Somente usuário do tipo admin pode realizar operações de CRUD nas encomendas
 [x] Somente usuário do tipo admin pode realizar operações de CRUD dos entregadores
 [x] Somente usuário do tipo admin pode realizar operações de CRUD dos destinatários
-[ ] Para marcar uma encomenda como entregue é obrigatório o envio de uma foto
-[ ] Somente o entregador que retirou a encomenda pode marcar ela como entregue
+[x] Para marcar uma encomenda como entregue é obrigatório o envio de uma foto
+[x] Somente o entregador que retirou a encomenda pode marcar ela como entregue
 [x] Somente o admin pode alterar a senha de um usuário
 [ ] Não deve ser possível um entregador listar as encomendas de outro entregador
 
