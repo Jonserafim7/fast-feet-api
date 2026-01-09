@@ -81,6 +81,25 @@ export class PrismaOrdersRepository implements OrdersRepository {
     return orders
   }
 
+  async findManyByCourierId({
+    courierId,
+    page,
+    perPage,
+  }: {
+    courierId: string
+    page: number
+    perPage: number
+  }) {
+    const skip = (page - 1) * perPage
+    const orders = await this.prisma.order.findMany({
+      where: { courierId },
+      skip,
+      take: perPage,
+      orderBy: { createdAt: 'desc' },
+    })
+    return orders
+  }
+
   async save(data: UpdateOrderData) {
     await this.prisma.order.update({
       where: { id: data.id },
