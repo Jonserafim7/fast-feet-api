@@ -17,7 +17,7 @@ Use este checklist para ajudar a organizar a sua entrega:
 - [x] Implementar a funcionalidade para marcar uma encomenda como "entregue", exigindo o envio de uma foto e garantindo que apenas o entregador que a retirou possa fazer a marcação
 - [x] Implementar a funcionalidade para marcar uma encomenda como "devolvida"
 - [x] Desenvolver a listagem de encomendas com endereços próximos à localização do entregador
-- [ ] Desenvolver a listagem das entregas de um entregador, garantindo que ele só possa ver as suas próprias
+- [x] Desenvolver a listagem das entregas de um entregador, garantindo que ele só possa ver as suas próprias
 - [ ] Implementar o envio de notificação ao destinatário a cada alteração no status da sua encomenda
 
 ## Instruções
@@ -52,7 +52,7 @@ A API deve seguir um conjunto de funcionalidades e regras de negócio.
 [x] Para marcar uma encomenda como entregue é obrigatório o envio de uma foto
 [x] Somente o entregador que retirou a encomenda pode marcar ela como entregue
 [x] Somente o admin pode alterar a senha de um usuário
-[ ] Não deve ser possível um entregador listar as encomendas de outro entregador
+[x] Não deve ser possível um entregador listar as encomendas de outro entregador
 
 ## Conceitos que Pode Praticar
 
