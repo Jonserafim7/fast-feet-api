@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { OrdersRepository } from '@/core/repositories/orders-repository.js'
+import { RecipientsRepository } from '@/core/repositories/recipients-repository.js'
+import { SendNotificationUseCase } from '@/core/use-cases/send-notification-use-case.js'
 import { Either, left, right } from '@/core/errors/either.js'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
 import { InvalidOrderStatusError } from '@/core/errors/invalid-order-status-error.js'
@@ -15,7 +17,11 @@ type MarkOrderAsWaitingUseCaseResponse = Either<
 
 @Injectable()
 export class MarkOrderAsWaitingUseCase {
-  constructor(private readonly ordersRepository: OrdersRepository) {}
+  constructor(
+    private readonly ordersRepository: OrdersRepository,
+    private readonly recipientsRepository: RecipientsRepository,
+    private readonly sendNotification: SendNotificationUseCase
+  ) {}
 
   async execute({
     orderId,
@@ -31,6 +37,26 @@ export class MarkOrderAsWaitingUseCase {
     }
 
     await this.ordersRepository.updateStatus(orderId, 'WAITING')
+
+    // Send notification to recipient (best-effort)
+    try {
+      const recipient = await this.recipientsRepository.findById(
+        order.recipientId
+      )
+
+      if (recipient) {
+        await this.sendNotification.execute({
+          recipientId: recipient.id,
+          recipientEmail: recipient.email,
+          title: 'Pedido disponível para retirada',
+          content:
+            'Seu pedido está pronto e aguardando retirada pelo entregador.',
+        })
+      }
+    } catch (error) {
+      // Log failure but don't throw - notification is best-effort
+      console.error('Failed to send notification for order', orderId, error)
+    }
 
     return right(null)
   }

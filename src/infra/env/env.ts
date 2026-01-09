@@ -16,6 +16,11 @@ export const envSchema = z.object({
   AWS_SECRET_ACCESS_KEY: z.string(),
   AWS_BUCKET_NAME: z.string(),
   CLOUDFLARE_ACCOUNT_ID: z.string(),
+  MAIL_HOST: z.string(),
+  MAIL_PORT: z.coerce.number().default(587),
+  MAIL_USER: z.string(),
+  MAIL_PASS: z.string(),
+  MAIL_FROM: z.string().email(),
 })
 
 export type Env = z.infer<typeof envSchema>

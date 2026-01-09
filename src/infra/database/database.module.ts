@@ -9,6 +9,8 @@ import { OrdersRepository } from '@/core/repositories/orders-repository.js'
 import { PrismaOrdersRepository } from '@/infra/database/prisma/repositories/prisma-orders-repository.js'
 import { AttachmentsRepository } from '@/core/repositories/attachments-repository.js'
 import { PrismaAttachmentsRepository } from '@/infra/database/prisma/repositories/prisma-attachments-repository.js'
+import { NotificationsRepository } from '@/core/repositories/notifications-repository.js'
+import { PrismaNotificationsRepository } from '@/infra/database/prisma/repositories/prisma-notifications-repository.js'
 
 @Module({
   imports: [EnvModule],
@@ -30,6 +32,10 @@ import { PrismaAttachmentsRepository } from '@/infra/database/prisma/repositorie
       provide: AttachmentsRepository,
       useClass: PrismaAttachmentsRepository,
     },
+    {
+      provide: NotificationsRepository,
+      useClass: PrismaNotificationsRepository,
+    },
   ],
   exports: [
     PrismaService,
@@ -37,6 +43,7 @@ import { PrismaAttachmentsRepository } from '@/infra/database/prisma/repositorie
     RecipientsRepository,
     OrdersRepository,
     AttachmentsRepository,
+    NotificationsRepository,
   ],
 })
 export class DatabaseModule {}
