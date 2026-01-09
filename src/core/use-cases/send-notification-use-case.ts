@@ -25,17 +25,30 @@ export class SendNotificationUseCase {
     title,
     content,
   }: SendNotificationUseCaseRequest): Promise<SendNotificationUseCaseResponse> {
-    await this.notificationsRepository.create({
-      recipientId,
-      title,
-      content,
-    })
+    try {
+      await this.notificationsRepository.create({
+        recipientId,
+        title,
+        content,
+      })
+    } catch (error) {
+      console.error('Failed to store notification', { recipientId }, error)
+      throw error
+    }
 
-    await this.mailer.send({
-      to: recipientEmail,
-      subject: title,
-      body: content,
-    })
+    try {
+      await this.mailer.send({
+        to: recipientEmail,
+        subject: title,
+        body: content,
+      })
+    } catch (error) {
+      console.error(
+        'Failed to send email notification',
+        { recipientId, recipientEmail },
+        error
+      )
+    }
 
     return right(null)
   }
