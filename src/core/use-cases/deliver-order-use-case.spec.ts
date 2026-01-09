@@ -81,7 +81,17 @@ describe('deliver order use case', () => {
     expect(attachmentsRepository.items[0].orderId).toBe('order-1')
     expect(uploader.uploads).toHaveLength(1)
     expect(notificationsRepository.items).toHaveLength(1)
+    expect(notificationsRepository.items[0]).toMatchObject({
+      recipientId: 'recipient-1',
+      title: 'Pedido entregue',
+      content: 'Seu pedido foi entregue com sucesso.',
+    })
     expect(mailer.emails).toHaveLength(1)
+    expect(mailer.emails[0]).toMatchObject({
+      to: 'john@example.com',
+      subject: 'Pedido entregue',
+      body: 'Seu pedido foi entregue com sucesso.',
+    })
   })
 
   it('should not deliver order if courier is not the owner', async () => {

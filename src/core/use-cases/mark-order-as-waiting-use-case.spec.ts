@@ -59,7 +59,17 @@ describe('mark order as waiting use case', () => {
     expect(result.isRight()).toBe(true)
     expect(ordersRepository.items[0].status).toBe('WAITING')
     expect(notificationsRepository.items).toHaveLength(1)
+    expect(notificationsRepository.items[0]).toMatchObject({
+      recipientId: 'recipient-1',
+      title: 'Pedido disponível para retirada',
+      content: 'Seu pedido está pronto e aguardando retirada pelo entregador.',
+    })
     expect(mailer.emails).toHaveLength(1)
+    expect(mailer.emails[0]).toMatchObject({
+      to: 'john@example.com',
+      subject: 'Pedido disponível para retirada',
+      body: 'Seu pedido está pronto e aguardando retirada pelo entregador.',
+    })
   })
 
   it('should return ResourceNotFoundError when order does not exist', async () => {

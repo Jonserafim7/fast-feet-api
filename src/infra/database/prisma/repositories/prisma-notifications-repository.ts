@@ -30,7 +30,7 @@ export class PrismaNotificationsRepository implements NotificationsRepository {
   }
 
   async markAsRead(id: string): Promise<void> {
-    await this.prisma.notification.update({
+    await this.prisma.notification.updateMany({
       where: { id },
       data: { readAt: new Date() },
     })

@@ -63,7 +63,17 @@ describe('return order use case', () => {
     expect(ordersRepository.items[0].status).toBe('RETURNED')
     expect(ordersRepository.items[0].returnDate).toBeInstanceOf(Date)
     expect(notificationsRepository.items).toHaveLength(1)
+    expect(notificationsRepository.items[0]).toMatchObject({
+      recipientId: 'recipient-1',
+      title: 'Pedido devolvido',
+      content: 'Infelizmente seu pedido foi devolvido. Entre em contato para mais informações.',
+    })
     expect(mailer.emails).toHaveLength(1)
+    expect(mailer.emails[0]).toMatchObject({
+      to: 'john@example.com',
+      subject: 'Pedido devolvido',
+      body: 'Infelizmente seu pedido foi devolvido. Entre em contato para mais informações.',
+    })
   })
 
   it('should not be able to return a non-existent order', async () => {

@@ -49,19 +49,24 @@ export class ReturnOrderUseCase {
     // 4. Update order status to RETURNED
     await this.ordersRepository.return(orderId, new Date())
 
-    // 5. Send notification to recipient
-    const recipient = await this.recipientsRepository.findById(
-      order.recipientId
-    )
+    // 5. Send notification to recipient (best-effort)
+    try {
+      const recipient = await this.recipientsRepository.findById(
+        order.recipientId
+      )
 
-    if (recipient) {
-      await this.sendNotification.execute({
-        recipientId: recipient.id,
-        recipientEmail: recipient.email,
-        title: 'Pedido devolvido',
-        content:
-          'Infelizmente seu pedido foi devolvido. Entre em contato para mais informações.',
-      })
+      if (recipient) {
+        await this.sendNotification.execute({
+          recipientId: recipient.id,
+          recipientEmail: recipient.email,
+          title: 'Pedido devolvido',
+          content:
+            'Infelizmente seu pedido foi devolvido. Entre em contato para mais informações.',
+        })
+      }
+    } catch (error) {
+      // Log failure but don't throw - notification is best-effort
+      console.error('Failed to send notification for order', orderId, error)
     }
 
     return right(null)

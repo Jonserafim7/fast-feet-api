@@ -62,7 +62,17 @@ describe('withdraw order use case', () => {
     expect(ordersRepository.items[0].courierId).toBe('courier-1')
     expect(ordersRepository.items[0].pickupDate).toBeInstanceOf(Date)
     expect(notificationsRepository.items).toHaveLength(1)
+    expect(notificationsRepository.items[0]).toMatchObject({
+      recipientId: 'recipient-1',
+      title: 'Pedido saiu para entrega',
+      content: 'Seu pedido saiu para entrega e está a caminho!',
+    })
     expect(mailer.emails).toHaveLength(1)
+    expect(mailer.emails[0]).toMatchObject({
+      to: 'john@example.com',
+      subject: 'Pedido saiu para entrega',
+      body: 'Seu pedido saiu para entrega e está a caminho!',
+    })
   })
 
   it('should not be able to withdraw a non-existent order', async () => {
