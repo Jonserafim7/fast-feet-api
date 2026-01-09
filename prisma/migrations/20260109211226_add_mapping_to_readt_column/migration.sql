@@ -1,9 +1,8 @@
 /*
   Warnings:
 
-  - You are about to drop the column `readAt` on the `notifications` table. All the data in the column will be lost.
+  - You are about to rename the column `readAt` on the `notifications` table to `read_at`. Existing data will be preserved.
 
 */
 -- AlterTable
-ALTER TABLE "notifications" DROP COLUMN "readAt",
-ADD COLUMN     "read_at" TIMESTAMP(3);
+ALTER TABLE "notifications" RENAME COLUMN "readAt" TO "read_at";
