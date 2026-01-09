@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { OrdersRepository } from '@/core/repositories/orders-repository.js'
+import { SendNotificationUseCase } from './send-notification-use-case.js'
 import { Either, left, right } from '@/core/errors/either.js'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
 import { InvalidOrderStatusError } from '@/core/errors/invalid-order-status-error.js'
@@ -16,7 +17,10 @@ type WithdrawOrderUseCaseResponse = Either<
 
 @Injectable()
 export class WithdrawOrderUseCase {
-  constructor(private readonly ordersRepository: OrdersRepository) {}
+  constructor(
+    private readonly ordersRepository: OrdersRepository,
+    private readonly sendNotification: SendNotificationUseCase
+  ) {}
 
   async execute({
     orderId,
@@ -33,6 +37,12 @@ export class WithdrawOrderUseCase {
     }
 
     await this.ordersRepository.withdraw(orderId, courierId, new Date())
+
+    await this.sendNotification.execute({
+      recipientId: order.recipientId,
+      title: 'Sua encomenda saiu para entrega',
+      content: `Sua encomenda com ID ${order.id} foi retirada por um entregador e está a caminho.`,
+    })
 
     return right(null)
   }

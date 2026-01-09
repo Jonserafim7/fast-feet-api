@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { OrdersRepository } from '@/core/repositories/orders-repository.js'
+import { SendNotificationUseCase } from './send-notification-use-case.js'
 import { Either, left, right } from '@/core/errors/either.js'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
 import { InvalidOrderStatusError } from '@/core/errors/invalid-order-status-error.js'
@@ -15,7 +16,10 @@ type MarkOrderAsWaitingUseCaseResponse = Either<
 
 @Injectable()
 export class MarkOrderAsWaitingUseCase {
-  constructor(private readonly ordersRepository: OrdersRepository) {}
+  constructor(
+    private readonly ordersRepository: OrdersRepository,
+    private readonly sendNotification: SendNotificationUseCase
+  ) {}
 
   async execute({
     orderId,
@@ -31,6 +35,12 @@ export class MarkOrderAsWaitingUseCase {
     }
 
     await this.ordersRepository.updateStatus(orderId, 'WAITING')
+
+    await this.sendNotification.execute({
+      recipientId: order.recipientId,
+      title: 'Encomenda disponível para retirada',
+      content: `Sua encomenda com ID ${order.id} agora está disponível para retirada.`,
+    })
 
     return right(null)
   }

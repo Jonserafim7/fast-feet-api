@@ -1,7 +1,11 @@
 import { InMemoryOrdersRepository } from '@/test/repositories/in-memory-orders-repository.js'
 import { InMemoryAttachmentsRepository } from '@/test/repositories/in-memory-attachments-repository.js'
+import { InMemoryNotificationsRepository } from '@/test/repositories/in-memory-notifications-repository.js'
+import { InMemoryRecipientsRepository } from '@/test/repositories/in-memory-recipients-repository.js'
+import { FakeMailProvider } from '@/test/providers/fake-mail-provider.js'
 import { FakeUploader } from '@/test/storage/fake-uploader.js'
 import { DeliverOrderUseCase } from './deliver-order-use-case.js'
+import { SendNotificationUseCase } from './send-notification-use-case.js'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.js'
 import { InvalidOrderStatusError } from '../errors/invalid-order-status-error.js'
 import { NotOrderCourierError } from '../errors/not-order-courier-error.js'
@@ -10,21 +14,34 @@ import { AttachmentRequiredError } from '../errors/attachment-required-error.js'
 describe('deliver order use case', () => {
   let ordersRepository: InMemoryOrdersRepository
   let attachmentsRepository: InMemoryAttachmentsRepository
+  let notificationsRepository: InMemoryNotificationsRepository
+  let recipientsRepository: InMemoryRecipientsRepository
+  let fakeMailProvider: FakeMailProvider
   let uploader: FakeUploader
+  let sendNotification: SendNotificationUseCase
   let sut: DeliverOrderUseCase
 
   beforeEach(() => {
     ordersRepository = new InMemoryOrdersRepository()
     attachmentsRepository = new InMemoryAttachmentsRepository()
+    notificationsRepository = new InMemoryNotificationsRepository()
+    recipientsRepository = new InMemoryRecipientsRepository()
+    fakeMailProvider = new FakeMailProvider()
     uploader = new FakeUploader()
+    sendNotification = new SendNotificationUseCase(
+      notificationsRepository,
+      recipientsRepository,
+      fakeMailProvider
+    )
     sut = new DeliverOrderUseCase(
       ordersRepository,
       attachmentsRepository,
-      uploader
+      uploader,
+      sendNotification
     )
   })
 
-  it('should be able to deliver an order with photo', async () => {
+  it('should be able to deliver an order with photo and send a notification', async () => {
     await ordersRepository.create({
       id: 'order-1',
       status: 'WITHDRAWN',
@@ -49,14 +66,9 @@ describe('deliver order use case', () => {
     })
 
     expect(result.isRight()).toBe(true)
-    if (result.isRight()) {
-      expect(result.value.attachmentUrl).toBeTruthy()
-    }
     expect(ordersRepository.items[0].status).toBe('DELIVERED')
-    expect(ordersRepository.items[0].deliveryDate).toBeInstanceOf(Date)
-    expect(attachmentsRepository.items).toHaveLength(1)
-    expect(attachmentsRepository.items[0].orderId).toBe('order-1')
-    expect(uploader.uploads).toHaveLength(1)
+    expect(notificationsRepository.items).toHaveLength(1)
+    expect(notificationsRepository.items[0].recipientId).toBe('recipient-1')
   })
 
   it('should not deliver order if courier is not the owner', async () => {

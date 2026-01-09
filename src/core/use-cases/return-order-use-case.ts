@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { OrdersRepository } from '@/core/repositories/orders-repository.js'
+import { SendNotificationUseCase } from './send-notification-use-case.js'
 import { Either, left, right } from '@/core/errors/either.js'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
 import { InvalidOrderStatusError } from '@/core/errors/invalid-order-status-error.js'
@@ -17,7 +18,10 @@ type ReturnOrderUseCaseResponse = Either<
 
 @Injectable()
 export class ReturnOrderUseCase {
-  constructor(private readonly ordersRepository: OrdersRepository) {}
+  constructor(
+    private readonly ordersRepository: OrdersRepository,
+    private readonly sendNotification: SendNotificationUseCase
+  ) {}
 
   async execute({
     orderId,
@@ -42,6 +46,12 @@ export class ReturnOrderUseCase {
 
     // 4. Update order status to RETURNED
     await this.ordersRepository.return(orderId, new Date())
+
+    await this.sendNotification.execute({
+      recipientId: order.recipientId,
+      title: 'Sua encomenda foi devolvida',
+      content: `Sua encomenda com ID ${order.id} foi devolvida ao centro de distribuição.`,
+    })
 
     return right(null)
   }
