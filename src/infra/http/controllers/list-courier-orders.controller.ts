@@ -32,7 +32,7 @@ export class ListCourierOrdersController {
       perPage,
     })
 
-    if (result.isRight() && result.value.orders.length > 0) {
+    if (result.isRight()) {
       return {
         orders: result.value.orders.map((order) => OrderPresenter.toHTTP(order)),
       }
