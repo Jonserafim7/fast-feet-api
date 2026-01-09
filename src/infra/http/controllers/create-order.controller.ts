@@ -3,12 +3,14 @@ import {
   Body,
   Controller,
   HttpCode,
+  InternalServerErrorException,
   NotFoundException,
   Post,
 } from '@nestjs/common'
 import { z } from 'zod'
 import { CreateOrderUseCase } from '@/core/use-cases/create-order-use-case.js'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
+import { NotificationSendError } from '@/core/errors/notification-send-error.js'
 import { Roles } from '@/infra/auth/roles.decorator.js'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js'
 
@@ -70,6 +72,8 @@ export class CreateOrderController {
       switch (error.constructor) {
         case ResourceNotFoundError:
           throw new NotFoundException(error.message)
+        case NotificationSendError:
+          throw new InternalServerErrorException(error.message)
         default:
           throw new BadRequestException(error.message)
       }

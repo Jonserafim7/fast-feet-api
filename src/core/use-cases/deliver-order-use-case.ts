@@ -1,12 +1,17 @@
 import { Injectable } from '@nestjs/common'
 import { OrdersRepository } from '@/core/repositories/orders-repository.js'
 import { AttachmentsRepository } from '@/core/repositories/attachments-repository.js'
+import { RecipientsRepository } from '@/core/repositories/recipients-repository.js'
+import { NotificationsRepository } from '@/core/repositories/notifications-repository.js'
 import { Uploader } from '@/core/storage/uploader.js'
+import { NotificationSender } from '@/core/notifications/notification-sender.js'
+import { buildOrderStatusNotification } from '@/core/notifications/order-status-notification.js'
 import { Either, left, right } from '@/core/errors/either.js'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
 import { InvalidOrderStatusError } from '@/core/errors/invalid-order-status-error.js'
 import { NotOrderCourierError } from '@/core/errors/not-order-courier-error.js'
 import { AttachmentRequiredError } from '@/core/errors/attachment-required-error.js'
+import { NotificationSendError } from '@/core/errors/notification-send-error.js'
 
 interface DeliverOrderUseCaseRequest {
   orderId: string
@@ -20,7 +25,8 @@ type DeliverOrderUseCaseResponse = Either<
   | ResourceNotFoundError
   | InvalidOrderStatusError
   | NotOrderCourierError
-  | AttachmentRequiredError,
+  | AttachmentRequiredError
+  | NotificationSendError,
   { attachmentUrl: string }
 >
 
@@ -29,7 +35,10 @@ export class DeliverOrderUseCase {
   constructor(
     private readonly ordersRepository: OrdersRepository,
     private readonly attachmentsRepository: AttachmentsRepository,
-    private readonly uploader: Uploader
+    private readonly recipientsRepository: RecipientsRepository,
+    private readonly notificationsRepository: NotificationsRepository,
+    private readonly uploader: Uploader,
+    private readonly notificationSender: NotificationSender
   ) {}
 
   async execute({
@@ -61,22 +70,48 @@ export class DeliverOrderUseCase {
       return left(new AttachmentRequiredError())
     }
 
-    // 5. Upload file to R2
+    // 5. Load recipient data for notification
+    const recipient = await this.recipientsRepository.findById(order.recipientId)
+
+    if (!recipient) {
+      return left(new ResourceNotFoundError(order.recipientId))
+    }
+
+    // 6. Upload file to R2
     const { url } = await this.uploader.upload({
       fileName,
       fileType,
       body,
     })
 
-    // 6. Create attachment record
+    // 7. Create attachment record
     await this.attachmentsRepository.create({
       title: fileName,
       url,
       orderId,
     })
 
-    // 7. Update order status to DELIVERED
+    // 8. Update order status to DELIVERED
     await this.ordersRepository.deliver(orderId, new Date())
+
+    const { title, content } = buildOrderStatusNotification(orderId, 'DELIVERED')
+
+    try {
+      await this.notificationSender.send({
+        recipientEmail: recipient.email,
+        recipientName: recipient.name,
+        subject: title,
+        content,
+      })
+
+      await this.notificationsRepository.create({
+        recipientId: recipient.id,
+        title,
+        content,
+      })
+    } catch {
+      return left(new NotificationSendError())
+    }
 
     return right({ attachmentUrl: url })
   }

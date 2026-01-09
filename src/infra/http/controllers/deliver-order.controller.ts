@@ -4,6 +4,7 @@ import {
   FileTypeValidator,
   ForbiddenException,
   HttpCode,
+  InternalServerErrorException,
   MaxFileSizeValidator,
   NotFoundException,
   Param,
@@ -22,6 +23,7 @@ import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js
 import { InvalidOrderStatusError } from '@/core/errors/invalid-order-status-error.js'
 import { NotOrderCourierError } from '@/core/errors/not-order-courier-error.js'
 import { AttachmentRequiredError } from '@/core/errors/attachment-required-error.js'
+import { NotificationSendError } from '@/core/errors/notification-send-error.js'
 
 @Controller('/orders')
 @Roles('COURIER')
@@ -66,6 +68,8 @@ export class DeliverOrderController {
           throw new BadRequestException(error.message)
         case NotOrderCourierError:
           throw new ForbiddenException(error.message)
+        case NotificationSendError:
+          throw new InternalServerErrorException(error.message)
         default:
           throw new BadRequestException(error.message)
       }

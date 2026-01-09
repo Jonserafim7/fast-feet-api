@@ -1,17 +1,28 @@
 import { InMemoryOrdersRepository } from '@/test/repositories/in-memory-orders-repository.js'
 import { InMemoryRecipientsRepository } from '@/test/repositories/in-memory-recipients-repository.js'
+import { InMemoryNotificationsRepository } from '@/test/repositories/in-memory-notifications-repository.js'
+import { FakeNotificationSender } from '@/test/notifications/fake-notification-sender.js'
 import { CreateOrderUseCase } from './create-order-use-case.js'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.js'
 
 describe('create order use case', () => {
   let ordersRepository: InMemoryOrdersRepository
   let recipientsRepository: InMemoryRecipientsRepository
+  let notificationsRepository: InMemoryNotificationsRepository
+  let notificationSender: FakeNotificationSender
   let sut: CreateOrderUseCase
 
   beforeEach(() => {
     ordersRepository = new InMemoryOrdersRepository()
     recipientsRepository = new InMemoryRecipientsRepository()
-    sut = new CreateOrderUseCase(ordersRepository, recipientsRepository)
+    notificationsRepository = new InMemoryNotificationsRepository()
+    notificationSender = new FakeNotificationSender()
+    sut = new CreateOrderUseCase(
+      ordersRepository,
+      recipientsRepository,
+      notificationsRepository,
+      notificationSender
+    )
   })
 
   it('should create an order when recipient exists', async () => {
@@ -48,6 +59,8 @@ describe('create order use case', () => {
       complement: 'Apto 101',
       courierId: null,
     })
+    expect(notificationsRepository.items).toHaveLength(1)
+    expect(notificationSender.sent).toHaveLength(1)
   })
 
   it('should not create an order when recipient does not exist', async () => {
@@ -66,5 +79,7 @@ describe('create order use case', () => {
     expect(result.isLeft()).toBe(true)
     expect(result.value).toBeInstanceOf(ResourceNotFoundError)
     expect(ordersRepository.items).toHaveLength(0)
+    expect(notificationsRepository.items).toHaveLength(0)
+    expect(notificationSender.sent).toHaveLength(0)
   })
 })

@@ -26,6 +26,7 @@ import { ReturnOrderUseCase } from '@/core/use-cases/return-order-use-case.js'
 import { DatabaseModule } from '@/infra/database/database.module.js'
 import { CryptographyModule } from '@/infra/cryptography/cryptography.module.js'
 import { StorageModule } from '@/infra/storage/storage.module.js'
+import { NotificationsModule } from '@/infra/notifications/notifications.module.js'
 import { CreateUserController } from '@/infra/http/controllers/create-user.controller.js'
 import { AuthenticateController } from '@/infra/http/controllers/authenticate.controller.js'
 import { CourierProfileController } from '@/infra/http/controllers/courier-profile.controller.js'
@@ -53,7 +54,7 @@ import { DeliverOrderController } from '@/infra/http/controllers/deliver-order.c
 import { ReturnOrderController } from '@/infra/http/controllers/return-order.controller.js'
 
 @Module({
-  imports: [DatabaseModule, CryptographyModule, StorageModule],
+  imports: [DatabaseModule, CryptographyModule, StorageModule, NotificationsModule],
   exports: [],
   controllers: [
     CreateUserController,

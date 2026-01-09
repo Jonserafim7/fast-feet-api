@@ -3,6 +3,7 @@ import {
   Controller,
   ForbiddenException,
   HttpCode,
+  InternalServerErrorException,
   NotFoundException,
   Param,
   ParseUUIDPipe,
@@ -15,6 +16,7 @@ import { ReturnOrderUseCase } from '@/core/use-cases/return-order-use-case.js'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
 import { InvalidOrderStatusError } from '@/core/errors/invalid-order-status-error.js'
 import { NotOrderCourierError } from '@/core/errors/not-order-courier-error.js'
+import { NotificationSendError } from '@/core/errors/notification-send-error.js'
 
 @Controller('/orders')
 @Roles('COURIER')
@@ -42,6 +44,8 @@ export class ReturnOrderController {
           throw new BadRequestException(error.message)
         case NotOrderCourierError:
           throw new ForbiddenException(error.message)
+        case NotificationSendError:
+          throw new InternalServerErrorException(error.message)
         default:
           throw new BadRequestException(error.message)
       }
