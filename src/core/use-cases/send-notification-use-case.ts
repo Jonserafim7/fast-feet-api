@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { Either, left, right } from '@/core/errors/either.js'
-import { NotificationsRepository } from '@/core/repositories/notifications-repository.js'
+import {
+  NotificationsRepository,
+  NotificationStatus,
+} from '@/core/repositories/notifications-repository.js'
 import { Mailer } from '@/core/messaging/mailer.js'
 import { NotificationFailureError } from '@/core/errors/notification-failure-error.js'
 
@@ -26,11 +29,32 @@ export class SendNotificationUseCase {
     title,
     content,
   }: SendNotificationUseCaseRequest): Promise<SendNotificationUseCaseResponse> {
+    let status: NotificationStatus = 'SENT'
+    let sendErrorMessage: string | null = null
+
+    try {
+      await this.mailer.send({
+        to: recipientEmail,
+        subject: title,
+        body: content,
+      })
+    } catch (error) {
+      status = 'FAILED'
+      sendErrorMessage =
+        error instanceof Error ? error.message : 'Failed to send notification'
+      console.error(
+        'Failed to send email notification',
+        { recipientId, recipientEmail },
+        error
+      )
+    }
+
     try {
       await this.notificationsRepository.create({
         recipientId,
         title,
         content,
+        status,
       })
     } catch (error) {
       console.error('Failed to store notification', { recipientId }, error)
@@ -41,19 +65,12 @@ export class SendNotificationUseCase {
       )
     }
 
-    try {
-      await this.mailer.send({
-        to: recipientEmail,
-        subject: title,
-        body: content,
-      })
-    } catch (error) {
-      console.error(
-        'Failed to send email notification',
-        { recipientId, recipientEmail },
-        error
+    if (status === 'FAILED') {
+      return left(
+        new NotificationFailureError(
+          sendErrorMessage ?? 'Failed to send notification'
+        )
       )
-      // Email failure is non-critical, don't return error
     }
 
     return right(null)

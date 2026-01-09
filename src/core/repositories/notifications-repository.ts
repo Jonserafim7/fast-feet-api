@@ -1,7 +1,10 @@
+export type NotificationStatus = 'SENT' | 'FAILED'
+
 export interface CreateNotificationData {
   recipientId: string
   title: string
   content: string
+  status: NotificationStatus
 }
 
 export interface Notification {
@@ -9,6 +12,7 @@ export interface Notification {
   recipientId: string
   title: string
   content: string
+  status: NotificationStatus
   readAt: Date | null
   createdAt: Date
 }

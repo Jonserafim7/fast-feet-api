@@ -5,9 +5,7 @@ import {
 } from '@/core/repositories/notifications-repository.js'
 import { randomUUID } from 'node:crypto'
 
-export class InMemoryNotificationsRepository
-  implements NotificationsRepository
-{
+export class InMemoryNotificationsRepository implements NotificationsRepository {
   public items: Notification[] = []
 
   async create(data: CreateNotificationData): Promise<void> {
@@ -16,6 +14,7 @@ export class InMemoryNotificationsRepository
       recipientId: data.recipientId,
       title: data.title,
       content: data.content,
+      status: data.status,
       readAt: null,
       createdAt: new Date(),
     }
