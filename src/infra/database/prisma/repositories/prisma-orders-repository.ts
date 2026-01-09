@@ -57,14 +57,20 @@ export class PrismaOrdersRepository implements OrdersRepository {
   }: FindManyNearbyParams): Promise<Order[]> {
     const MAX_DISTANCE_IN_KM = 20
 
+    // Security: getSchema() validates that schema is UUID format or undefined,
+    // making it safe to use with Prisma.raw()
+    const schema = this.prisma.getSchema()
+    const tableName = schema ? `"${schema}"."orders"` : 'orders'
+
+    // Use Prisma.sql for safe parameterization with Prisma.raw for validated identifier
     const orders = await this.prisma.$queryRaw<Order[]>`
-      SELECT * FROM orders
+      SELECT * FROM ${Prisma.raw(tableName)}
       WHERE status = 'WAITING'
       AND (
         6371 * acos(
-          cos(radians(${latitude})) * cos(radians(latitude::double precision)) *
-          cos(radians(longitude::double precision) - radians(${longitude})) +
-          sin(radians(${latitude})) * sin(radians(latitude::double precision))
+          cos(radians(${latitude})) * cos(radians(latitude)) *
+          cos(radians(longitude) - radians(${longitude})) +
+          sin(radians(${latitude})) * sin(radians(latitude))
         )
       ) <= ${MAX_DISTANCE_IN_KM}
     `
