@@ -3,9 +3,7 @@ import { ListCourierOrdersUseCase } from './list-courier-orders-use-case.js'
 import type { CreateOrderData } from '@/core/repositories/orders-repository.js'
 import { randomUUID } from 'node:crypto'
 
-function makeOrderData(
-  overrides?: Partial<CreateOrderData>
-): CreateOrderData {
+function makeOrderData(overrides?: Partial<CreateOrderData>): CreateOrderData {
   return {
     id: randomUUID(),
     status: 'WAITING',
@@ -75,7 +73,9 @@ describe('list courier orders use case', () => {
     expect(result.isRight()).toBe(true)
     if (result.isRight()) {
       expect(result.value.orders).toHaveLength(5)
-      expect(result.value.orders.every((order) => order.courierId === courierId1)).toBe(true)
+      expect(
+        result.value.orders.every((order) => order.courierId === courierId1)
+      ).toBe(true)
     }
   })
 
@@ -120,12 +120,16 @@ describe('list courier orders use case', () => {
 
     if (resultPage1.isRight()) {
       expect(resultPage1.value.orders).toHaveLength(10)
-      expect(resultPage1.value.orders.every((order) => order.courierId === courierId)).toBe(true)
+      expect(
+        resultPage1.value.orders.every((order) => order.courierId === courierId)
+      ).toBe(true)
     }
 
     if (resultPage2.isRight()) {
       expect(resultPage2.value.orders).toHaveLength(5)
-      expect(resultPage2.value.orders.every((order) => order.courierId === courierId)).toBe(true)
+      expect(
+        resultPage2.value.orders.every((order) => order.courierId === courierId)
+      ).toBe(true)
     }
   })
 

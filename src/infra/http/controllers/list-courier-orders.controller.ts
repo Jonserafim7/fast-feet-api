@@ -17,9 +17,7 @@ type PaginationQuery = z.infer<typeof paginationQuerySchema>
 @Controller('/orders')
 @Roles('COURIER')
 export class ListCourierOrdersController {
-  constructor(
-    private readonly listCourierOrders: ListCourierOrdersUseCase
-  ) {}
+  constructor(private readonly listCourierOrders: ListCourierOrdersUseCase) {}
 
   @Get('/me')
   async handle(
