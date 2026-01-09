@@ -32,11 +32,17 @@ export interface UpdateOrderData {
   complement?: string
 }
 
+export interface FindManyNearbyParams {
+  latitude: number
+  longitude: number
+}
+
 @Injectable()
 export abstract class OrdersRepository {
   abstract create(data: CreateOrderData): Promise<void>
   abstract findById(id: string): Promise<Order | null>
   abstract findMany(params: { page: number; perPage: number }): Promise<Order[]>
+  abstract findManyNearby(params: FindManyNearbyParams): Promise<Order[]>
   abstract save(data: UpdateOrderData): Promise<void>
   abstract delete(id: string): Promise<void>
   abstract updateStatus(id: string, status: OrderStatus): Promise<void>

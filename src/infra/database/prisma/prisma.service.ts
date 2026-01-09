@@ -14,6 +14,7 @@ export class PrismaService
 {
   constructor(private envService: EnvService) {
     const databaseUrl = envService.get('DATABASE_URL')
+    const nodeEnv = envService.get('NODE_ENV')
 
     const schema = new URL(databaseUrl).searchParams.get('schema') ?? undefined
 
@@ -22,7 +23,13 @@ export class PrismaService
       schema ? { schema } : undefined
     )
 
-    super({ adapter })
+    super({
+      adapter,
+      log:
+        nodeEnv === 'development'
+          ? ['query', 'info', 'warn', 'error']
+          : ['warn', 'error'],
+    })
   }
 
   async onModuleInit() {

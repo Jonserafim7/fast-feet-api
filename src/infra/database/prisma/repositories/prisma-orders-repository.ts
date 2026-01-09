@@ -3,9 +3,10 @@ import {
   OrdersRepository,
   CreateOrderData,
   UpdateOrderData,
+  FindManyNearbyParams,
 } from '@/core/repositories/orders-repository.js'
 import { PrismaService } from '@/infra/database/prisma/prisma.service.js'
-import { Prisma, OrderStatus } from '@/generated/prisma/client.js'
+import { Prisma, OrderStatus, Order } from '@/generated/prisma/client.js'
 
 @Injectable()
 export class PrismaOrdersRepository implements OrdersRepository {
@@ -47,6 +48,27 @@ export class PrismaOrdersRepository implements OrdersRepository {
       take: perPage,
       orderBy: { createdAt: 'desc' },
     })
+    return orders
+  }
+
+  async findManyNearby({
+    latitude,
+    longitude,
+  }: FindManyNearbyParams): Promise<Order[]> {
+    const MAX_DISTANCE_IN_KM = 20
+
+    const orders = await this.prisma.$queryRaw<Order[]>`
+      SELECT * FROM orders
+      WHERE status = 'WAITING'
+      AND (
+        6371 * acos(
+          cos(radians(${latitude})) * cos(radians(latitude::double precision)) *
+          cos(radians(longitude::double precision) - radians(${longitude})) +
+          sin(radians(${latitude})) * sin(radians(latitude::double precision))
+        )
+      ) <= ${MAX_DISTANCE_IN_KM}
+    `
+
     return orders
   }
 

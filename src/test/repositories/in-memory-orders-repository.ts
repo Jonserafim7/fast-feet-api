@@ -2,9 +2,11 @@ import {
   OrdersRepository,
   CreateOrderData,
   UpdateOrderData,
+  FindManyNearbyParams,
 } from '@/core/repositories/orders-repository.js'
 import { Order, Prisma, OrderStatus } from '@/generated/prisma/client.js'
 import { randomUUID } from 'node:crypto'
+import { getDistanceBetweenCoordinates } from '@/core/utils/get-distance-between-coordinates.js'
 
 export class InMemoryOrdersRepository implements OrdersRepository {
   public items: Order[] = []
@@ -60,6 +62,27 @@ export class InMemoryOrdersRepository implements OrdersRepository {
       .slice(start, start + perPage)
 
     return Promise.resolve(orders)
+  }
+
+  async findManyNearby({
+    latitude,
+    longitude,
+  }: FindManyNearbyParams): Promise<Order[]> {
+    const MAX_DISTANCE_IN_KM = 20
+
+    return this.items.filter((order) => {
+      if (order.status !== 'WAITING') return false
+
+      const distance = getDistanceBetweenCoordinates(
+        { latitude, longitude },
+        {
+          latitude: order.latitude.toNumber(),
+          longitude: order.longitude.toNumber(),
+        }
+      )
+
+      return distance <= MAX_DISTANCE_IN_KM
+    })
   }
 
   save(data: UpdateOrderData): Promise<void> {
