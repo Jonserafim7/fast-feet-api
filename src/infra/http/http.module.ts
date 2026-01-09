@@ -16,6 +16,7 @@ import { CreateOrderUseCase } from '@/core/use-cases/create-order-use-case.js'
 import { GetOrderUseCase } from '@/core/use-cases/get-order-use-case.js'
 import { ListOrdersUseCase } from '@/core/use-cases/list-orders-use-case.js'
 import { ListNearbyOrdersUseCase } from '@/core/use-cases/list-nearby-orders-use-case.js'
+import { ListCourierOrdersUseCase } from '@/core/use-cases/list-courier-orders-use-case.js'
 import { UpdateOrderUseCase } from '@/core/use-cases/update-order-use-case.js'
 import { DeleteOrderUseCase } from '@/core/use-cases/delete-order-use-case.js'
 import { MarkOrderAsWaitingUseCase } from '@/core/use-cases/mark-order-as-waiting-use-case.js'
@@ -43,6 +44,7 @@ import { CreateOrderController } from '@/infra/http/controllers/create-order.con
 import { GetOrderController } from '@/infra/http/controllers/get-order.controller.js'
 import { ListOrdersController } from '@/infra/http/controllers/list-orders.controller.js'
 import { ListNearbyOrdersController } from '@/infra/http/controllers/list-nearby-orders.controller.js'
+import { ListCourierOrdersController } from '@/infra/http/controllers/list-courier-orders.controller.js'
 import { UpdateOrderController } from '@/infra/http/controllers/update-order.controller.js'
 import { DeleteOrderController } from '@/infra/http/controllers/delete-order.controller.js'
 import { MarkOrderAsWaitingController } from '@/infra/http/controllers/mark-order-as-waiting.controller.js'
@@ -71,6 +73,7 @@ import { ReturnOrderController } from '@/infra/http/controllers/return-order.con
     CreateOrderController,
     ListOrdersController,
     ListNearbyOrdersController,
+    ListCourierOrdersController,
     GetOrderController,
     UpdateOrderController,
     DeleteOrderController,
@@ -97,6 +100,7 @@ import { ReturnOrderController } from '@/infra/http/controllers/return-order.con
     GetOrderUseCase,
     ListOrdersUseCase,
     ListNearbyOrdersUseCase,
+    ListCourierOrdersUseCase,
     UpdateOrderUseCase,
     DeleteOrderUseCase,
     MarkOrderAsWaitingUseCase,

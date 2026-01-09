@@ -43,6 +43,11 @@ export abstract class OrdersRepository {
   abstract findById(id: string): Promise<Order | null>
   abstract findMany(params: { page: number; perPage: number }): Promise<Order[]>
   abstract findManyNearby(params: FindManyNearbyParams): Promise<Order[]>
+  abstract findManyByCourierId(params: {
+    courierId: string
+    page: number
+    perPage: number
+  }): Promise<Order[]>
   abstract save(data: UpdateOrderData): Promise<void>
   abstract delete(id: string): Promise<void>
   abstract updateStatus(id: string, status: OrderStatus): Promise<void>

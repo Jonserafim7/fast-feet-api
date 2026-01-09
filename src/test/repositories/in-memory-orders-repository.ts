@@ -85,6 +85,25 @@ export class InMemoryOrdersRepository implements OrdersRepository {
     })
   }
 
+  findManyByCourierId({
+    courierId,
+    page,
+    perPage,
+  }: {
+    courierId: string
+    page: number
+    perPage: number
+  }): Promise<Order[]> {
+    const start = (page - 1) * perPage
+    const orders = this.items
+      .filter((order) => order.courierId === courierId)
+      .slice()
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice(start, start + perPage)
+
+    return Promise.resolve(orders)
+  }
+
   save(data: UpdateOrderData): Promise<void> {
     const itemIndex = this.items.findIndex((item) => item.id === data.id)
 
