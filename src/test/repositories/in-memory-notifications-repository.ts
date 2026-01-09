@@ -34,8 +34,10 @@ export class InMemoryNotificationsRepository
   async markAsRead(id: string): Promise<void> {
     const itemIndex = this.items.findIndex((item) => item.id === id)
 
-    if (itemIndex >= 0) {
-      this.items[itemIndex].readAt = new Date()
+    if (itemIndex < 0) {
+      throw new Error(`Notification with ID ${id} not found`)
     }
+
+    this.items[itemIndex].readAt = new Date()
   }
 }

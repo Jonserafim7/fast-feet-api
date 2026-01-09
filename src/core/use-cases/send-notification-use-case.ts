@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common'
-import { Either, right } from '@/core/errors/either.js'
+import { Either, left, right } from '@/core/errors/either.js'
 import { NotificationsRepository } from '@/core/repositories/notifications-repository.js'
 import { Mailer } from '@/core/messaging/mailer.js'
+import { NotificationFailureError } from '@/core/errors/notification-failure-error.js'
 
 interface SendNotificationUseCaseRequest {
   recipientId: string
@@ -10,7 +11,7 @@ interface SendNotificationUseCaseRequest {
   content: string
 }
 
-type SendNotificationUseCaseResponse = Either<null, null>
+type SendNotificationUseCaseResponse = Either<NotificationFailureError, null>
 
 @Injectable()
 export class SendNotificationUseCase {
@@ -33,7 +34,11 @@ export class SendNotificationUseCase {
       })
     } catch (error) {
       console.error('Failed to store notification', { recipientId }, error)
-      throw error
+      return left(
+        new NotificationFailureError(
+          error instanceof Error ? error.message : 'Failed to store notification'
+        )
+      )
     }
 
     try {
@@ -48,6 +53,7 @@ export class SendNotificationUseCase {
         { recipientId, recipientEmail },
         error
       )
+      // Email failure is non-critical, don't return error
     }
 
     return right(null)
