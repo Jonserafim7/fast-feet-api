@@ -39,16 +39,19 @@ beforeAll(async () => {
     throw new Error('DATABASE_URL is not defined')
   }
 
-  const databaseUrlWithSchema = getDatabaseUrlWithSchema(databaseUrl, schemaId)
-
   console.log(`\n[E2E Setup] Schema: ${schemaId}\n`)
 
+  // Prisma CLI migrations need schema in DATABASE_URL query param
+  const databaseUrlWithSchema = getDatabaseUrlWithSchema(databaseUrl, schemaId)
   process.env.DATABASE_URL = databaseUrlWithSchema
+
+  // Runtime app uses DATABASE_SCHEMA (validated by env schema)
+  process.env.DATABASE_SCHEMA = schemaId
 
   execSync('npx prisma migrate deploy')
 
   const adapter = new PrismaPg(
-    { connectionString: process.env.DATABASE_URL },
+    { connectionString: databaseUrlWithSchema },
     { schema: schemaId }
   )
 

@@ -6,11 +6,15 @@ import {
   FindManyNearbyParams,
 } from '@/core/repositories/orders-repository.js'
 import { PrismaService } from '@/infra/database/prisma/prisma.service.js'
+import { EnvService } from '@/infra/env/env.service.js'
 import { Prisma, OrderStatus, Order } from '@/generated/prisma/client.js'
 
 @Injectable()
 export class PrismaOrdersRepository implements OrdersRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly env: EnvService
+  ) {}
 
   async create(data: CreateOrderData) {
     await this.prisma.order.create({
@@ -57,9 +61,8 @@ export class PrismaOrdersRepository implements OrdersRepository {
   }: FindManyNearbyParams): Promise<Order[]> {
     const MAX_DISTANCE_IN_KM = 20
 
-    // Security: getSchema() validates that schema is UUID format or undefined,
-    // making it safe to use with Prisma.raw()
-    const schema = this.prisma.getSchema()
+    // Security: DATABASE_SCHEMA is validated by env schema (UUIDs or valid PostgreSQL identifiers)
+    const schema = this.env.get('DATABASE_SCHEMA')
     const tableName = schema ? `"${schema}"."orders"` : 'orders'
 
     // Use Prisma.sql for safe parameterization with Prisma.raw for validated identifier
