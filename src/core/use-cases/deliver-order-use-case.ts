@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { OrdersRepository } from '@/core/repositories/orders-repository.js'
 import { AttachmentsRepository } from '@/core/repositories/attachments-repository.js'
+import { RecipientsRepository } from '@/core/repositories/recipients-repository.js'
+import { SendNotificationUseCase } from '@/core/use-cases/send-notification-use-case.js'
 import { Uploader } from '@/core/storage/uploader.js'
 import { Either, left, right } from '@/core/errors/either.js'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
@@ -29,6 +31,8 @@ export class DeliverOrderUseCase {
   constructor(
     private readonly ordersRepository: OrdersRepository,
     private readonly attachmentsRepository: AttachmentsRepository,
+    private readonly recipientsRepository: RecipientsRepository,
+    private readonly sendNotification: SendNotificationUseCase,
     private readonly uploader: Uploader
   ) {}
 
@@ -77,6 +81,20 @@ export class DeliverOrderUseCase {
 
     // 7. Update order status to DELIVERED
     await this.ordersRepository.deliver(orderId, new Date())
+
+    // 8. Send notification to recipient
+    const recipient = await this.recipientsRepository.findById(
+      order.recipientId
+    )
+
+    if (recipient) {
+      await this.sendNotification.execute({
+        recipientId: recipient.id,
+        recipientEmail: recipient.email,
+        title: 'Pedido entregue',
+        content: 'Seu pedido foi entregue com sucesso.',
+      })
+    }
 
     return right({ attachmentUrl: url })
   }

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { OrdersRepository } from '@/core/repositories/orders-repository.js'
+import { RecipientsRepository } from '@/core/repositories/recipients-repository.js'
+import { SendNotificationUseCase } from '@/core/use-cases/send-notification-use-case.js'
 import { Either, left, right } from '@/core/errors/either.js'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
 import { InvalidOrderStatusError } from '@/core/errors/invalid-order-status-error.js'
@@ -16,7 +18,11 @@ type WithdrawOrderUseCaseResponse = Either<
 
 @Injectable()
 export class WithdrawOrderUseCase {
-  constructor(private readonly ordersRepository: OrdersRepository) {}
+  constructor(
+    private readonly ordersRepository: OrdersRepository,
+    private readonly recipientsRepository: RecipientsRepository,
+    private readonly sendNotification: SendNotificationUseCase
+  ) {}
 
   async execute({
     orderId,
@@ -33,6 +39,19 @@ export class WithdrawOrderUseCase {
     }
 
     await this.ordersRepository.withdraw(orderId, courierId, new Date())
+
+    const recipient = await this.recipientsRepository.findById(
+      order.recipientId
+    )
+
+    if (recipient) {
+      await this.sendNotification.execute({
+        recipientId: recipient.id,
+        recipientEmail: recipient.email,
+        title: 'Pedido saiu para entrega',
+        content: 'Seu pedido saiu para entrega e está a caminho!',
+      })
+    }
 
     return right(null)
   }

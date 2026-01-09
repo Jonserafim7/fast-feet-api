@@ -23,9 +23,11 @@ import { MarkOrderAsWaitingUseCase } from '@/core/use-cases/mark-order-as-waitin
 import { WithdrawOrderUseCase } from '@/core/use-cases/withdraw-order-use-case.js'
 import { DeliverOrderUseCase } from '@/core/use-cases/deliver-order-use-case.js'
 import { ReturnOrderUseCase } from '@/core/use-cases/return-order-use-case.js'
+import { SendNotificationUseCase } from '@/core/use-cases/send-notification-use-case.js'
 import { DatabaseModule } from '@/infra/database/database.module.js'
 import { CryptographyModule } from '@/infra/cryptography/cryptography.module.js'
 import { StorageModule } from '@/infra/storage/storage.module.js'
+import { MessagingModule } from '@/infra/messaging/messaging.module.js'
 import { CreateUserController } from '@/infra/http/controllers/create-user.controller.js'
 import { AuthenticateController } from '@/infra/http/controllers/authenticate.controller.js'
 import { CourierProfileController } from '@/infra/http/controllers/courier-profile.controller.js'
@@ -53,7 +55,7 @@ import { DeliverOrderController } from '@/infra/http/controllers/deliver-order.c
 import { ReturnOrderController } from '@/infra/http/controllers/return-order.controller.js'
 
 @Module({
-  imports: [DatabaseModule, CryptographyModule, StorageModule],
+  imports: [DatabaseModule, CryptographyModule, StorageModule, MessagingModule],
   exports: [],
   controllers: [
     CreateUserController,
@@ -107,6 +109,7 @@ import { ReturnOrderController } from '@/infra/http/controllers/return-order.con
     WithdrawOrderUseCase,
     DeliverOrderUseCase,
     ReturnOrderUseCase,
+    SendNotificationUseCase,
   ],
 })
 export class HttpModule {}
