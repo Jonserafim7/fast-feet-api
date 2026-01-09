@@ -66,7 +66,8 @@ describe('return order use case', () => {
     expect(notificationsRepository.items[0]).toMatchObject({
       recipientId: 'recipient-1',
       title: 'Pedido devolvido',
-      content: 'Infelizmente seu pedido foi devolvido. Entre em contato para mais informações.',
+      content:
+        'Infelizmente seu pedido foi devolvido. Entre em contato para mais informações.',
     })
     expect(mailer.emails).toHaveLength(1)
     expect(mailer.emails[0]).toMatchObject({

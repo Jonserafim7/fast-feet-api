@@ -49,7 +49,8 @@ export class MarkOrderAsWaitingUseCase {
           recipientId: recipient.id,
           recipientEmail: recipient.email,
           title: 'Pedido disponível para retirada',
-          content: 'Seu pedido está pronto e aguardando retirada pelo entregador.',
+          content:
+            'Seu pedido está pronto e aguardando retirada pelo entregador.',
         })
       }
     } catch (error) {
