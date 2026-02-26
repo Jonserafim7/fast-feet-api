@@ -43,10 +43,12 @@ describe('list couriers use case', () => {
     const result = await sut.execute({ page: 1, perPage: 2 })
 
     expect(result.isRight()).toBe(true)
-    expect(result.value.couriers).toHaveLength(2)
-    expect(
-      result.value.couriers.every((user) => user.role === Role.COURIER)
-    ).toBe(true)
+    if (result.isRight()) {
+      expect(result.value.couriers).toHaveLength(2)
+      expect(
+        result.value.couriers.every((user) => user.role === Role.COURIER)
+      ).toBe(true)
+    }
   })
 
   it('should return the next page of couriers when paginating', async () => {
@@ -74,6 +76,8 @@ describe('list couriers use case', () => {
     const result = await sut.execute({ page: 2, perPage: 2 })
 
     expect(result.isRight()).toBe(true)
-    expect(result.value.couriers).toHaveLength(1)
+    if (result.isRight()) {
+      expect(result.value.couriers).toHaveLength(1)
+    }
   })
 })
