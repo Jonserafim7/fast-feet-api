@@ -14,7 +14,7 @@
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
+                "id": "dba9ed3f-af3e-4a53-bf74-6b5691e0ba0b",
                 "exec": [
                   "pm.test('status is 2xx', function () {",
                   "  pm.expect(pm.response.code).to.be.within(200, 299);",
@@ -27,10 +27,24 @@
                   "if (token) {",
                   "  pm.collectionVariables.set('token', token);",
                   "}"
-                ]
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "f85a902a-13dd-4c2a-8e23-5c8e6c0f9967",
+                "exec": [""],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
+          "id": "04fd4f7c-78c9-4731-a98f-bf011847e9c6",
           "request": {
             "auth": {
               "type": "noauth"
@@ -44,7 +58,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"cpf\": \"00000000000\",\n  \"password\": \"password\"\n}",
+              "raw": "{\n  \"cpf\": \"96710062058\",\n  \"password\": \"password\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -59,7 +73,8 @@
           },
           "response": []
         }
-      ]
+      ],
+      "id": "781038f4-9327-401a-9ff9-9f97c6e3ab24"
     },
     {
       "name": "Users (ADMIN)",
@@ -70,7 +85,7 @@
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
+                "id": "e23df6b1-7273-45d3-83b0-4c3484cf3fca",
                 "exec": [
                   "pm.test('status is 201', function () {",
                   "  pm.expect(pm.response.code).to.eql(201);",
@@ -78,10 +93,24 @@
                   "pm.test('response time < 1000ms', function () {",
                   "  pm.expect(pm.response.responseTime).to.be.below(1000);",
                   "});"
-                ]
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "9551ef90-1f3b-478d-850e-51bf6acc3de7",
+                "exec": [""],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
+          "id": "2a19da09-bae0-46c5-86ee-78e6c82e3653",
           "request": {
             "method": "POST",
             "header": [
@@ -92,7 +121,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Admin User\",\n  \"cpf\": \"11111111111\",\n  \"password\": \"password\",\n  \"role\": \"ADMIN\"\n}",
+              "raw": "{\n  \"name\": \"Admin User\",\n  \"cpf\": \"205.870.600-50\",\n  \"password\": \"password\",\n  \"role\": \"ADMIN\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -122,6 +151,7 @@
               }
             }
           ],
+          "id": "cbc5e9b5-d377-498b-8870-971b8d3d5455",
           "request": {
             "method": "PATCH",
             "header": [
@@ -147,7 +177,8 @@
           },
           "response": []
         }
-      ]
+      ],
+      "id": "5a8eb2fd-6a8e-4c04-b7f7-7848f8129c56"
     },
     {
       "name": "Couriers (ADMIN)",
@@ -158,7 +189,7 @@
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
+                "id": "b4b1fcf8-d250-43c5-b474-f1133d983676",
                 "exec": [
                   "pm.test('status is 201', function () {",
                   "  pm.expect(pm.response.code).to.eql(201);",
@@ -166,10 +197,24 @@
                   "pm.test('response time < 1000ms', function () {",
                   "  pm.expect(pm.response.responseTime).to.be.below(1000);",
                   "});"
-                ]
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "dec8b2cb-c6a3-4c63-84f1-aff292d81137",
+                "exec": [""],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
+          "id": "cecb3506-7465-44cd-af2c-cf9f6e840b03",
           "request": {
             "method": "POST",
             "header": [
@@ -180,7 +225,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Courier One\",\n  \"cpf\": \"22222222222\",\n  \"password\": \"password\"\n}",
+              "raw": "{\n  \"name\": \"Courier One\",\n  \"cpf\": \"967.100.620-58\",\n  \"password\": \"password\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -210,6 +255,7 @@
               }
             }
           ],
+          "id": "4c531ab9-9c84-4ff4-b2f9-4e4ba05e790b",
           "request": {
             "method": "GET",
             "header": [],
@@ -246,6 +292,7 @@
               }
             }
           ],
+          "id": "1a5bfa21-f34c-40bb-8eca-31458956e924",
           "request": {
             "method": "GET",
             "header": [],
@@ -272,6 +319,7 @@
               }
             }
           ],
+          "id": "20e1d7ee-e198-477a-a67f-01ee3379ee6b",
           "request": {
             "method": "PATCH",
             "header": [
@@ -312,6 +360,7 @@
               }
             }
           ],
+          "id": "a6d51b1a-5ed9-4fa0-b1ae-808a47377ec0",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -323,7 +372,8 @@
           },
           "response": []
         }
-      ]
+      ],
+      "id": "b68ea494-40d1-456b-a276-cf5448cbe0b0"
     },
     {
       "name": "Courier (COURIER role)",
@@ -343,6 +393,7 @@
               }
             }
           ],
+          "id": "36f9d258-01f9-4d32-a27a-f404071c4e1e",
           "request": {
             "method": "GET",
             "header": [],
@@ -369,6 +420,7 @@
               }
             }
           ],
+          "id": "27e0c535-2722-4287-a6b3-946a970b6b6a",
           "request": {
             "method": "GET",
             "header": [],
@@ -405,6 +457,7 @@
               }
             }
           ],
+          "id": "8d368267-4886-41af-a52d-013d429a42ec",
           "request": {
             "method": "GET",
             "header": [],
@@ -441,6 +494,7 @@
               }
             }
           ],
+          "id": "127493ce-04e3-45df-bcb6-6c4e8932f13d",
           "request": {
             "method": "PATCH",
             "header": [],
@@ -467,6 +521,7 @@
               }
             }
           ],
+          "id": "057410e0-e682-4db0-a08c-2b1187564c38",
           "request": {
             "method": "PATCH",
             "header": [],
@@ -503,6 +558,7 @@
               }
             }
           ],
+          "id": "7530f95c-f4d9-43dc-a187-2d2283dc910a",
           "request": {
             "method": "PATCH",
             "header": [],
@@ -514,7 +570,8 @@
           },
           "response": []
         }
-      ]
+      ],
+      "id": "79b0408f-bc87-484d-892c-61406e872e5f"
     },
     {
       "name": "Recipients (ADMIN)",
@@ -542,6 +599,7 @@
               }
             }
           ],
+          "id": "0ca925b4-f54e-4e00-8ae5-920cc84d1393",
           "request": {
             "method": "POST",
             "header": [
@@ -582,6 +640,7 @@
               }
             }
           ],
+          "id": "52fc7dd2-cae1-4941-84d5-20de54639a22",
           "request": {
             "method": "GET",
             "header": [],
@@ -618,6 +677,7 @@
               }
             }
           ],
+          "id": "f03803f7-0d92-4282-a78b-32cf25b42d72",
           "request": {
             "method": "GET",
             "header": [],
@@ -644,6 +704,7 @@
               }
             }
           ],
+          "id": "46d094bd-60fa-4f39-b947-7625b06f4b26",
           "request": {
             "method": "PATCH",
             "header": [
@@ -684,6 +745,7 @@
               }
             }
           ],
+          "id": "3a9e06e1-4eef-4c28-8457-9a6f7f1f216b",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -695,7 +757,8 @@
           },
           "response": []
         }
-      ]
+      ],
+      "id": "a81798e0-a4a3-4657-a365-5a4c94f1e301"
     },
     {
       "name": "Orders (ADMIN)",
@@ -723,6 +786,7 @@
               }
             }
           ],
+          "id": "7e90ddea-bc0e-4143-94b6-b285dc6855b5",
           "request": {
             "method": "POST",
             "header": [
@@ -763,6 +827,7 @@
               }
             }
           ],
+          "id": "8450031c-1bf0-47b2-88de-ddb7d3b2581d",
           "request": {
             "method": "GET",
             "header": [],
@@ -799,6 +864,7 @@
               }
             }
           ],
+          "id": "9a3f5a63-16ae-4eb7-92e9-4c42a3466a9b",
           "request": {
             "method": "GET",
             "header": [],
@@ -825,6 +891,7 @@
               }
             }
           ],
+          "id": "591efab3-ae31-4ba6-b511-c61f2c6b905d",
           "request": {
             "method": "PATCH",
             "header": [
@@ -865,6 +932,7 @@
               }
             }
           ],
+          "id": "c10eee7d-f7d8-44b3-9000-54012dc3a9ea",
           "request": {
             "method": "PATCH",
             "header": [],
@@ -891,6 +959,7 @@
               }
             }
           ],
+          "id": "82cec767-77c3-4644-8242-654721a535fe",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -902,7 +971,8 @@
           },
           "response": []
         }
-      ]
+      ],
+      "id": "8fe29bf7-924d-4582-89f8-e2cbe4f304b0"
     }
   ],
   "auth": {
@@ -917,31 +987,37 @@
   },
   "variable": [
     {
+      "id": "990f0ca8-4884-4f40-98d7-a38bac129e40",
       "key": "baseUrl",
       "value": "http://localhost:3333",
       "type": "string"
     },
     {
+      "id": "a5b8b3e6-31c6-484a-bd3c-8ea21bf06546",
       "key": "token",
       "value": "",
       "type": "string"
     },
     {
+      "id": "67fbd2ff-31d3-4c10-bac0-a39be709a903",
       "key": "userId",
       "value": "",
       "type": "string"
     },
     {
+      "id": "ff1af09e-ca28-41c0-a2e0-9cc0cd02230a",
       "key": "courierId",
       "value": "",
       "type": "string"
     },
     {
+      "id": "503a4594-c352-49fe-80c4-e9c6c9c2302c",
       "key": "recipientId",
       "value": "",
       "type": "string"
     },
     {
+      "id": "ef4f1750-2e66-4f91-b80c-c7c08df5eda0",
       "key": "orderId",
       "value": "",
       "type": "string"
