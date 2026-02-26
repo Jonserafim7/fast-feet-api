@@ -13,26 +13,26 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DATABASE_URL: postgresql://root:123@localhost:5432/api-solid-db?schema=public
-      JWT_SECRET: 123456
-      JWT_ACCESS_TOKEN_EXPIRES_IN: 86400
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      JWT_ACCESS_TOKEN_EXPIRES_IN: ${{ secrets.JWT_ACCESS_TOKEN_EXPIRES_IN }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_BUCKET_NAME: fast-feet-test
+      AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      MAIL_HOST: smtp.ethereal.email
-      MAIL_PORT: 587
-      MAIL_USER: isobel.hagenes@ethereal.email
-      MAIL_PASS: YfV3Y7TJtTH87zDmgQ
-      MAIL_FROM: isobel.hagenes@ethereal.email
+      MAIL_HOST: ${{ secrets.MAIL_HOST }}
+      MAIL_PORT: ${{ secrets.MAIL_PORT }}
+      MAIL_USER: ${{ secrets.MAIL_USER }}
+      MAIL_PASS: ${{ secrets.MAIL_PASS }}
+      MAIL_FROM: ${{ secrets.MAIL_FROM }}
 
     services:
       db:
         image: postgres:latest
         env:
-          POSTGRES_USER: root
-          POSTGRES_PASSWORD: 123
-          POSTGRES_DB: api-solid-db
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
         ports:
           - 5432:5432
 
