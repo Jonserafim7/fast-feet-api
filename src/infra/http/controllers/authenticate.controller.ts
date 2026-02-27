@@ -12,6 +12,7 @@ import { AuthenticateUserUseCase } from '@/core/use-cases/authenticate-user-use-
 import { InvalidCredentialsError } from '@/core/errors/invalid-credentials-errors.js'
 import { Public } from '@/infra/auth/public.decorator.js'
 import { cpfSchema } from '@/infra/http/validators/cpf.schema.js'
+import { EnvService } from '@/infra/env/env.service.js'
 
 const authenticateBodySchema = z.object({
   cpf: cpfSchema,
@@ -22,7 +23,10 @@ type AuthenticateBody = z.infer<typeof authenticateBodySchema>
 
 @Controller('sessions')
 export class AuthenticateController {
-  constructor(private authenticateUser: AuthenticateUserUseCase) {}
+  constructor(
+    private authenticateUser: AuthenticateUserUseCase,
+    private envService: EnvService
+  ) {}
 
   @Public()
   @Post()
@@ -30,9 +34,13 @@ export class AuthenticateController {
   async handle(@Body() body: AuthenticateBody) {
     const { cpf, password } = body
 
+    const refreshTokenExpiresInMs =
+      this.envService.get('JWT_REFRESH_TOKEN_EXPIRES_IN') * 1000
+
     const result = await this.authenticateUser.execute({
       cpf,
       password,
+      refreshTokenExpiresInMs,
     })
 
     if (result.isLeft()) {
@@ -46,10 +54,11 @@ export class AuthenticateController {
       }
     }
 
-    const { accessToken } = result.value
+    const { accessToken, refreshToken } = result.value
 
     return {
       access_token: accessToken,
+      refresh_token: refreshToken,
     }
   }
 }

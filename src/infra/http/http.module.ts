@@ -24,6 +24,9 @@ import { WithdrawOrderUseCase } from '@/core/use-cases/withdraw-order-use-case.j
 import { DeliverOrderUseCase } from '@/core/use-cases/deliver-order-use-case.js'
 import { ReturnOrderUseCase } from '@/core/use-cases/return-order-use-case.js'
 import { SendNotificationUseCase } from '@/core/use-cases/send-notification-use-case.js'
+import { RefreshTokenUseCase } from '@/core/use-cases/refresh-token-use-case.js'
+import { RevokeUserSessionsUseCase } from '@/core/use-cases/revoke-user-sessions-use-case.js'
+import { EnvModule } from '@/infra/env/env.module.js'
 import { DatabaseModule } from '@/infra/database/database.module.js'
 import { CryptographyModule } from '@/infra/cryptography/cryptography.module.js'
 import { StorageModule } from '@/infra/storage/storage.module.js'
@@ -53,9 +56,17 @@ import { MarkOrderAsWaitingController } from '@/infra/http/controllers/mark-orde
 import { WithdrawOrderController } from '@/infra/http/controllers/withdraw-order.controller.js'
 import { DeliverOrderController } from '@/infra/http/controllers/deliver-order.controller.js'
 import { ReturnOrderController } from '@/infra/http/controllers/return-order.controller.js'
+import { RefreshTokenController } from '@/infra/http/controllers/refresh-token.controller.js'
+import { LogoutController } from '@/infra/http/controllers/logout.controller.js'
 
 @Module({
-  imports: [DatabaseModule, CryptographyModule, StorageModule, MessagingModule],
+  imports: [
+    EnvModule,
+    DatabaseModule,
+    CryptographyModule,
+    StorageModule,
+    MessagingModule,
+  ],
   exports: [],
   controllers: [
     CreateUserController,
@@ -83,6 +94,8 @@ import { ReturnOrderController } from '@/infra/http/controllers/return-order.con
     WithdrawOrderController,
     DeliverOrderController,
     ReturnOrderController,
+    RefreshTokenController,
+    LogoutController,
   ],
   providers: [
     CreateUserUseCase,
@@ -110,6 +123,8 @@ import { ReturnOrderController } from '@/infra/http/controllers/return-order.con
     DeliverOrderUseCase,
     ReturnOrderUseCase,
     SendNotificationUseCase,
+    RefreshTokenUseCase,
+    RevokeUserSessionsUseCase,
   ],
 })
 export class HttpModule {}
