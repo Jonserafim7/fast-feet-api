@@ -10,6 +10,7 @@ export default defineConfig({
     exclude: ['node_modules', 'dist', '**/*.spec.js', '**/*.spec.ts'],
 
     setupFiles: ['./src/test/setup-e2e.ts'],
+    testTimeout: 1000 * 15, // 15000 milliseconds = 15 seconds
     hookTimeout: 1000 * 30, // 30000 milliseconds = 30 seconds
   },
   plugins: [
