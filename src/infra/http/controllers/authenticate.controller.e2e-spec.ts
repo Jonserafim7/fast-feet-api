@@ -48,6 +48,7 @@ describe('Authenticate (E2E)', () => {
     expect(response.statusCode).toBe(201)
     expect(response.body).toEqual({
       access_token: expect.any(String),
+      refresh_token: expect.any(String),
     })
 
     const payload = await jwt.verifyAsync(response.body.access_token)
@@ -58,5 +59,10 @@ describe('Authenticate (E2E)', () => {
       })
     )
     expect(payload.exp).toBeGreaterThan(payload.iat)
+
+    // Verify refresh token was persisted
+    const refreshTokens = await prisma.refreshToken.findMany()
+    expect(refreshTokens).toHaveLength(1)
+    expect(refreshTokens[0].revoked).toBe(false)
   })
 })

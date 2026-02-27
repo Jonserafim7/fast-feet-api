@@ -11,6 +11,8 @@ import { AttachmentsRepository } from '@/core/repositories/attachments-repositor
 import { PrismaAttachmentsRepository } from '@/infra/database/prisma/repositories/prisma-attachments-repository.js'
 import { NotificationsRepository } from '@/core/repositories/notifications-repository.js'
 import { PrismaNotificationsRepository } from '@/infra/database/prisma/repositories/prisma-notifications-repository.js'
+import { RefreshTokensRepository } from '@/core/repositories/refresh-tokens-repository.js'
+import { PrismaRefreshTokensRepository } from '@/infra/database/prisma/repositories/prisma-refresh-tokens-repository.js'
 
 @Module({
   imports: [EnvModule],
@@ -36,6 +38,10 @@ import { PrismaNotificationsRepository } from '@/infra/database/prisma/repositor
       provide: NotificationsRepository,
       useClass: PrismaNotificationsRepository,
     },
+    {
+      provide: RefreshTokensRepository,
+      useClass: PrismaRefreshTokensRepository,
+    },
   ],
   exports: [
     PrismaService,
@@ -44,6 +50,7 @@ import { PrismaNotificationsRepository } from '@/infra/database/prisma/repositor
     OrdersRepository,
     AttachmentsRepository,
     NotificationsRepository,
+    RefreshTokensRepository,
   ],
 })
 export class DatabaseModule {}

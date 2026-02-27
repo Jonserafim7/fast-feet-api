@@ -11,7 +11,12 @@ export const envSchema = z.object({
     ])
     .optional(),
   JWT_SECRET: z.string().min(1),
-  JWT_ACCESS_TOKEN_EXPIRES_IN: z.coerce.number().int().positive().default(86400),
+  JWT_ACCESS_TOKEN_EXPIRES_IN: z.coerce.number().int().positive().default(900),
+  JWT_REFRESH_TOKEN_EXPIRES_IN: z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(604800),
   AWS_ACCESS_KEY_ID: z.string().min(1),
   AWS_SECRET_ACCESS_KEY: z.string().min(1),
   AWS_BUCKET_NAME: z.string().min(1),
