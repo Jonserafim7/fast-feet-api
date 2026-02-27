@@ -23,7 +23,7 @@ export class RevokeUserSessionsUseCase {
     const user = await this.usersRepository.findById(userId)
 
     if (!user) {
-      return left(new ResourceNotFoundError())
+      return left(new ResourceNotFoundError(userId))
     }
 
     await this.refreshTokensRepository.revokeAllByUserId(userId)

@@ -1,7 +1,6 @@
 import type { INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import { Test } from '@nestjs/testing'
-import { JwtService } from '@nestjs/jwt'
 import { PrismaService } from '@/infra/database/prisma/prisma.service.js'
 import { BcryptHasher } from '@/infra/cryptography/bcrypt-hasher.js'
 
@@ -9,7 +8,6 @@ describe('Logout (E2E)', () => {
   let app: INestApplication
   let prisma: PrismaService
   let bcryptHasher: BcryptHasher
-  let jwt: JwtService
 
   beforeAll(async () => {
     const { AppModule } = await import('@/infra/app.module.js')
@@ -20,7 +18,6 @@ describe('Logout (E2E)', () => {
 
     app = moduleRef.createNestApplication()
     prisma = moduleRef.get(PrismaService)
-    jwt = moduleRef.get(JwtService)
     bcryptHasher = new BcryptHasher()
 
     await app.init()
