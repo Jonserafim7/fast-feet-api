@@ -1,19 +1,24 @@
 import { Injectable } from '@nestjs/common'
+import { randomUUID } from 'node:crypto'
 import { Either, left, right } from '@/core/errors/either.js'
 import { InvalidCredentialsError } from '@/core/errors/invalid-credentials-errors.js'
 import { UsersRepository } from '@/core/repositories/users-repository.js'
+import { RefreshTokensRepository } from '@/core/repositories/refresh-tokens-repository.js'
 import { HashComparer } from '@/core/cryptography/hash-comparer.js'
 import { Encrypter } from '@/core/cryptography/encrypter.js'
+import { TokenHasher } from '@/core/cryptography/token-hasher.js'
 
 interface AuthenticateUserUseCaseRequest {
   cpf: string
   password: string
+  refreshTokenExpiresInMs: number
 }
 
 type AuthenticateUserUseCaseResponse = Either<
   InvalidCredentialsError,
   {
     accessToken: string
+    refreshToken: string
   }
 >
 
@@ -22,12 +27,15 @@ export class AuthenticateUserUseCase {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly hashComparer: HashComparer,
-    private readonly encrypter: Encrypter
+    private readonly encrypter: Encrypter,
+    private readonly refreshTokensRepository: RefreshTokensRepository,
+    private readonly tokenHasher: TokenHasher
   ) {}
 
   async execute({
     cpf,
     password,
+    refreshTokenExpiresInMs,
   }: AuthenticateUserUseCaseRequest): Promise<AuthenticateUserUseCaseResponse> {
     const user = await this.usersRepository.findByCpf(cpf)
 
@@ -49,6 +57,16 @@ export class AuthenticateUserUseCase {
       role: user.role,
     })
 
-    return right({ accessToken })
+    const rawRefreshToken = this.tokenHasher.generate()
+    const refreshTokenHash = this.tokenHasher.hash(rawRefreshToken)
+
+    await this.refreshTokensRepository.create({
+      token: refreshTokenHash,
+      userId: user.id,
+      familyId: randomUUID(),
+      expiresAt: new Date(Date.now() + refreshTokenExpiresInMs),
+    })
+
+    return right({ accessToken, refreshToken: rawRefreshToken })
   }
 }
