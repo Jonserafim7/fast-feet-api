@@ -20,7 +20,11 @@ export class PrismaService
     const schema = envService.get('DATABASE_SCHEMA')
 
     const adapter = new PrismaPg(
-      { connectionString: databaseUrl },
+      {
+        connectionString: databaseUrl,
+        connectionTimeoutMillis: 5_000,
+        idleTimeoutMillis: 300_000,
+      },
       schema ? { schema } : undefined
     )
 
@@ -35,6 +39,14 @@ export class PrismaService
 
   async onModuleInit() {
     await this.$connect()
+
+    try {
+      await this.$queryRawUnsafe('SELECT 1')
+    } catch (error) {
+      throw new Error(
+        `Failed to connect to database: ${error instanceof Error ? error.message : error}`
+      )
+    }
   }
 
   async onModuleDestroy() {

@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { TerminusModule } from '@nestjs/terminus'
 import { AuthenticateUserUseCase } from '@/core/use-cases/authenticate-user-use-case.js'
 import { CreateCourierUseCase } from '@/core/use-cases/create-courier-use-case.js'
 import { CreateUserUseCase } from '@/core/use-cases/create-user-use-case.js'
@@ -58,6 +59,7 @@ import { DeliverOrderController } from '@/infra/http/controllers/deliver-order.c
 import { ReturnOrderController } from '@/infra/http/controllers/return-order.controller.js'
 import { RefreshTokenController } from '@/infra/http/controllers/refresh-token.controller.js'
 import { LogoutController } from '@/infra/http/controllers/logout.controller.js'
+import { HealthController } from '@/infra/http/controllers/health.controller.js'
 
 @Module({
   imports: [
@@ -66,6 +68,7 @@ import { LogoutController } from '@/infra/http/controllers/logout.controller.js'
     CryptographyModule,
     StorageModule,
     MessagingModule,
+    TerminusModule,
   ],
   exports: [],
   controllers: [
@@ -96,6 +99,7 @@ import { LogoutController } from '@/infra/http/controllers/logout.controller.js'
     ReturnOrderController,
     RefreshTokenController,
     LogoutController,
+    HealthController,
   ],
   providers: [
     CreateUserUseCase,
