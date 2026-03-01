@@ -49,6 +49,12 @@ describe('Authenticate (E2E)', () => {
     expect(response.body).toEqual({
       access_token: expect.any(String),
       refresh_token: expect.any(String),
+      user: expect.objectContaining({
+        id: expect.any(String),
+        name: 'Admin User',
+        cpf: '12345678909',
+        role: 'ADMIN',
+      }),
     })
 
     const payload = await jwt.verifyAsync(response.body.access_token)

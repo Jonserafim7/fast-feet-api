@@ -4,21 +4,19 @@ import {
   Get,
   NotFoundException,
 } from '@nestjs/common'
-import { GetCourierUseCase } from '@/core/use-cases/get-courier-use-case.js'
+import { GetProfileUseCase } from '@/core/use-cases/get-profile-use-case.js'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
-import { Roles } from '@/infra/auth/roles.decorator.js'
 import { CurrentUser } from '@/infra/auth/current-user.decorator.js'
 import type { TokenPayload } from '@/infra/auth/jwt.strategy.js'
-import { CourierPresenter } from '@/infra/http/presenters/courier-presenter.js'
+import { UserPresenter } from '@/infra/http/presenters/user-presenter.js'
 
-@Controller('/couriers')
-@Roles('COURIER')
-export class CourierProfileController {
-  constructor(private readonly getCourier: GetCourierUseCase) {}
+@Controller('/me')
+export class ProfileController {
+  constructor(private readonly getProfile: GetProfileUseCase) {}
 
-  @Get('/me')
-  async handle(@CurrentUser() user: TokenPayload) {
-    const result = await this.getCourier.execute({ courierId: user.sub })
+  @Get()
+  async handle(@CurrentUser() currentUser: TokenPayload) {
+    const result = await this.getProfile.execute({ userId: currentUser.sub })
 
     if (result.isLeft()) {
       const error = result.value
@@ -32,7 +30,7 @@ export class CourierProfileController {
     }
 
     return {
-      courier: CourierPresenter.toHTTP(result.value.courier),
+      user: UserPresenter.toHTTP(result.value.user),
     }
   }
 }
