@@ -7,6 +7,7 @@ import { RefreshTokensRepository } from '@/core/repositories/refresh-tokens-repo
 import { HashComparer } from '@/core/cryptography/hash-comparer.js'
 import { Encrypter } from '@/core/cryptography/encrypter.js'
 import { TokenHasher } from '@/core/cryptography/token-hasher.js'
+import { User } from '@/generated/prisma/client.js'
 
 interface AuthenticateUserUseCaseRequest {
   cpf: string
@@ -19,6 +20,7 @@ type AuthenticateUserUseCaseResponse = Either<
   {
     accessToken: string
     refreshToken: string
+    user: User
   }
 >
 
@@ -67,6 +69,6 @@ export class AuthenticateUserUseCase {
       expiresAt: new Date(Date.now() + refreshTokenExpiresInMs),
     })
 
-    return right({ accessToken, refreshToken: rawRefreshToken })
+    return right({ accessToken, refreshToken: rawRefreshToken, user })
   }
 }

@@ -11,6 +11,7 @@ import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js'
 import { AuthenticateUserUseCase } from '@/core/use-cases/authenticate-user-use-case.js'
 import { InvalidCredentialsError } from '@/core/errors/invalid-credentials-errors.js'
 import { Public } from '@/infra/auth/public.decorator.js'
+import { UserPresenter } from '@/infra/http/presenters/user-presenter.js'
 import { cpfSchema } from '@/infra/http/validators/cpf.schema.js'
 import { EnvService } from '@/infra/env/env.service.js'
 
@@ -54,11 +55,12 @@ export class AuthenticateController {
       }
     }
 
-    const { accessToken, refreshToken } = result.value
+    const { accessToken, refreshToken, user } = result.value
 
     return {
       access_token: accessToken,
       refresh_token: refreshToken,
+      user: UserPresenter.toHTTP(user),
     }
   }
 }

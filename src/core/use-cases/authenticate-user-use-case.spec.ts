@@ -52,6 +52,13 @@ describe('authenticate user use case', () => {
     if (result.isRight()) {
       expect(result.value.accessToken).toEqual(expect.any(String))
       expect(result.value.refreshToken).toEqual(expect.any(String))
+      expect(result.value.user).toEqual(
+        expect.objectContaining({
+          cpf: '12345678909',
+          name: 'John Doe',
+          role: 'COURIER',
+        })
+      )
     }
   })
 

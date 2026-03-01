@@ -3,9 +3,13 @@ import request from 'supertest'
 import { Test } from '@nestjs/testing'
 import { PrismaService } from '@/infra/database/prisma/prisma.service.js'
 import { JwtService } from '@nestjs/jwt'
-import { makeCourier, makeAccessToken } from '@/test/factories/index.js'
+import {
+  makeCourier,
+  makeAdmin,
+  makeAccessToken,
+} from '@/test/factories/index.js'
 
-describe('Courier Profile (E2E)', () => {
+describe('Profile (E2E)', () => {
   let app: INestApplication
   let prisma: PrismaService
   let jwt: JwtService
@@ -28,7 +32,7 @@ describe('Courier Profile (E2E)', () => {
     await app.close()
   })
 
-  test('[GET] /couriers/me', async () => {
+  test('[GET] /me as courier', async () => {
     const courier = await makeCourier(prisma, { cpf: '57414331202' })
 
     const accessToken = await makeAccessToken(jwt, {
@@ -37,12 +41,34 @@ describe('Courier Profile (E2E)', () => {
     })
 
     const response = await request(app.getHttpServer())
-      .get('/couriers/me')
+      .get('/me')
       .set('Authorization', `Bearer ${accessToken}`)
 
     expect(response.statusCode).toBe(200)
+    expect(response.body.user.id).toBe(courier.id)
+    expect(response.body.user.role).toBe('COURIER')
+  })
 
-    const body = response.body as { courier: { id: string } }
-    expect(body.courier.id).toBe(courier.id)
+  test('[GET] /me as admin', async () => {
+    const admin = await makeAdmin(prisma, { cpf: '11122233396' })
+
+    const accessToken = await makeAccessToken(jwt, {
+      sub: admin.id,
+      role: admin.role,
+    })
+
+    const response = await request(app.getHttpServer())
+      .get('/me')
+      .set('Authorization', `Bearer ${accessToken}`)
+
+    expect(response.statusCode).toBe(200)
+    expect(response.body.user.id).toBe(admin.id)
+    expect(response.body.user.role).toBe('ADMIN')
+  })
+
+  test('[GET] /me without auth returns 401', async () => {
+    const response = await request(app.getHttpServer()).get('/me')
+
+    expect(response.statusCode).toBe(401)
   })
 })

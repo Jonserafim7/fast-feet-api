@@ -25,6 +25,7 @@ import { WithdrawOrderUseCase } from '@/core/use-cases/withdraw-order-use-case.j
 import { DeliverOrderUseCase } from '@/core/use-cases/deliver-order-use-case.js'
 import { ReturnOrderUseCase } from '@/core/use-cases/return-order-use-case.js'
 import { SendNotificationUseCase } from '@/core/use-cases/send-notification-use-case.js'
+import { GetProfileUseCase } from '@/core/use-cases/get-profile-use-case.js'
 import { RefreshTokenUseCase } from '@/core/use-cases/refresh-token-use-case.js'
 import { RevokeUserSessionsUseCase } from '@/core/use-cases/revoke-user-sessions-use-case.js'
 import { EnvModule } from '@/infra/env/env.module.js'
@@ -34,7 +35,7 @@ import { StorageModule } from '@/infra/storage/storage.module.js'
 import { MessagingModule } from '@/infra/messaging/messaging.module.js'
 import { CreateUserController } from '@/infra/http/controllers/create-user.controller.js'
 import { AuthenticateController } from '@/infra/http/controllers/authenticate.controller.js'
-import { CourierProfileController } from '@/infra/http/controllers/courier-profile.controller.js'
+import { ProfileController } from '@/infra/http/controllers/profile.controller.js'
 import { CreateCourierController } from '@/infra/http/controllers/create-courier.controller.js'
 import { CreateRecipientController } from '@/infra/http/controllers/create-recipient.controller.js'
 import { DeleteCourierController } from '@/infra/http/controllers/delete-courier.controller.js'
@@ -75,7 +76,7 @@ import { HealthController } from '@/infra/http/controllers/health.controller.js'
     CreateUserController,
     AuthenticateController,
     CreateCourierController,
-    CourierProfileController,
+    ProfileController,
     ListCouriersController,
     GetCourierController,
     UpdateCourierController,
@@ -127,6 +128,7 @@ import { HealthController } from '@/infra/http/controllers/health.controller.js'
     DeliverOrderUseCase,
     ReturnOrderUseCase,
     SendNotificationUseCase,
+    GetProfileUseCase,
     RefreshTokenUseCase,
     RevokeUserSessionsUseCase,
   ],
