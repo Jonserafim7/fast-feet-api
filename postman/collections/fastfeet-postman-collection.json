@@ -28,6 +28,9 @@
                   "}",
                   "if (json.refresh_token) {",
                   "  pm.collectionVariables.set('refreshToken', json.refresh_token);",
+                  "}",
+                  "if (json.user && json.user.id) {",
+                  "  pm.collectionVariables.set('userId', json.user.id);",
                   "}"
                 ],
                 "type": "text/javascript",
@@ -156,6 +159,39 @@
               "raw": "{{baseUrl}}/sessions",
               "host": ["{{baseUrl}}"],
               "path": ["sessions"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Profile (Me)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('status is 200', function () {",
+                  "  pm.expect(pm.response.code).to.eql(200);",
+                  "});",
+                  "pm.test('response has user object', function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.user).to.have.property('id');",
+                  "  pm.expect(json.user).to.have.property('name');",
+                  "  pm.expect(json.user).to.have.property('role');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["me"]
             }
           },
           "response": []
@@ -465,33 +501,6 @@
     {
       "name": "Courier (COURIER role)",
       "item": [
-        {
-          "name": "Courier Profile",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('status is 2xx', function () {",
-                  "  pm.expect(pm.response.code).to.be.within(200, 299);",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "id": "36f9d258-01f9-4d32-a27a-f404071c4e1e",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/couriers/me",
-              "host": ["{{baseUrl}}"],
-              "path": ["couriers", "me"]
-            }
-          },
-          "response": []
-        },
         {
           "name": "List My Orders",
           "event": [
