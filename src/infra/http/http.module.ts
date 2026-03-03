@@ -15,6 +15,7 @@ import { UpdateRecipientUseCase } from '@/core/use-cases/update-recipient-use-ca
 import { UpdateUserPasswordUseCase } from '@/core/use-cases/update-user-password-use-case.js'
 import { CreateOrderUseCase } from '@/core/use-cases/create-order-use-case.js'
 import { GetOrderUseCase } from '@/core/use-cases/get-order-use-case.js'
+import { GetCourierOrderUseCase } from '@/core/use-cases/get-courier-order-use-case.js'
 import { ListOrdersUseCase } from '@/core/use-cases/list-orders-use-case.js'
 import { ListNearbyOrdersUseCase } from '@/core/use-cases/list-nearby-orders-use-case.js'
 import { ListCourierOrdersUseCase } from '@/core/use-cases/list-courier-orders-use-case.js'
@@ -49,6 +50,7 @@ import { UpdateRecipientController } from '@/infra/http/controllers/update-recip
 import { UpdateUserPasswordController } from '@/infra/http/controllers/update-user-password.controller.js'
 import { CreateOrderController } from '@/infra/http/controllers/create-order.controller.js'
 import { GetOrderController } from '@/infra/http/controllers/get-order.controller.js'
+import { GetCourierOrderController } from '@/infra/http/controllers/get-courier-order.controller.js'
 import { ListOrdersController } from '@/infra/http/controllers/list-orders.controller.js'
 import { ListNearbyOrdersController } from '@/infra/http/controllers/list-nearby-orders.controller.js'
 import { ListCourierOrdersController } from '@/infra/http/controllers/list-courier-orders.controller.js'
@@ -92,6 +94,7 @@ import { HealthController } from '@/infra/http/controllers/health.controller.js'
     ListNearbyOrdersController,
     ListCourierOrdersController,
     GetOrderController,
+    GetCourierOrderController,
     UpdateOrderController,
     DeleteOrderController,
     MarkOrderAsWaitingController,
@@ -118,6 +121,7 @@ import { HealthController } from '@/infra/http/controllers/health.controller.js'
     UpdateUserPasswordUseCase,
     CreateOrderUseCase,
     GetOrderUseCase,
+    GetCourierOrderUseCase,
     ListOrdersUseCase,
     ListNearbyOrdersUseCase,
     ListCourierOrdersUseCase,
