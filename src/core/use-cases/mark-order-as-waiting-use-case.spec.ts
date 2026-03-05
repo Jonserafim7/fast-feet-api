@@ -60,7 +60,10 @@ describe('mark order as waiting use case', () => {
 
     expect(result.isRight()).toBe(true)
     expect(ordersRepository.items[0].status).toBe('WAITING')
-    expect(notificationsRepository.items).toHaveLength(1)
+
+    await vi.waitFor(() => {
+      expect(notificationsRepository.items).toHaveLength(1)
+    })
     expect(notificationsRepository.items[0]).toMatchObject({
       recipientId: 'recipient-1',
       title: 'Pedido disponível para retirada',

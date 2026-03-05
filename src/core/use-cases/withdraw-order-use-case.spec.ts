@@ -63,7 +63,10 @@ describe('withdraw order use case', () => {
     expect(ordersRepository.items[0].status).toBe('WITHDRAWN')
     expect(ordersRepository.items[0].courierId).toBe('courier-1')
     expect(ordersRepository.items[0].pickupDate).toBeInstanceOf(Date)
-    expect(notificationsRepository.items).toHaveLength(1)
+
+    await vi.waitFor(() => {
+      expect(notificationsRepository.items).toHaveLength(1)
+    })
     expect(notificationsRepository.items[0]).toMatchObject({
       recipientId: 'recipient-1',
       title: 'Pedido saiu para entrega',

@@ -64,7 +64,10 @@ describe('return order use case', () => {
     expect(result.isRight()).toBe(true)
     expect(ordersRepository.items[0].status).toBe('RETURNED')
     expect(ordersRepository.items[0].returnDate).toBeInstanceOf(Date)
-    expect(notificationsRepository.items).toHaveLength(1)
+
+    await vi.waitFor(() => {
+      expect(notificationsRepository.items).toHaveLength(1)
+    })
     expect(notificationsRepository.items[0]).toMatchObject({
       recipientId: 'recipient-1',
       title: 'Pedido devolvido',

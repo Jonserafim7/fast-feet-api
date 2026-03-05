@@ -82,7 +82,10 @@ describe('deliver order use case', () => {
     expect(attachmentsRepository.items).toHaveLength(1)
     expect(attachmentsRepository.items[0].orderId).toBe('order-1')
     expect(uploader.uploads).toHaveLength(1)
-    expect(notificationsRepository.items).toHaveLength(1)
+
+    await vi.waitFor(() => {
+      expect(notificationsRepository.items).toHaveLength(1)
+    })
     expect(notificationsRepository.items[0]).toMatchObject({
       recipientId: 'recipient-1',
       title: 'Pedido entregue',

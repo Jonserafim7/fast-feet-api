@@ -38,25 +38,22 @@ export class MarkOrderAsWaitingUseCase {
 
     await this.ordersRepository.updateStatus(orderId, 'WAITING')
 
-    // Send notification to recipient (best-effort)
-    try {
-      const recipient = await this.recipientsRepository.findById(
-        order.recipientId
-      )
-
-      if (recipient) {
-        await this.sendNotification.execute({
-          recipientId: recipient.id,
-          recipientEmail: recipient.email,
-          title: 'Pedido disponível para retirada',
-          content:
-            'Seu pedido está pronto e aguardando retirada pelo entregador.',
-        })
-      }
-    } catch (error) {
-      // Log failure but don't throw - notification is best-effort
-      console.error('Failed to send notification for order', orderId, error)
-    }
+    this.recipientsRepository
+      .findById(order.recipientId)
+      .then((recipient) => {
+        if (recipient) {
+          return this.sendNotification.execute({
+            recipientId: recipient.id,
+            recipientEmail: recipient.email,
+            title: 'Pedido disponível para retirada',
+            content:
+              'Seu pedido está pronto e aguardando retirada pelo entregador.',
+          })
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to send notification for order', orderId, error)
+      })
 
     return right(null)
   }
