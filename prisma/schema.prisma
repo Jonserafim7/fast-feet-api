@@ -61,8 +61,10 @@ model Recipient {
 }
 
 model Order {
-  id     String      @id @default(uuid())
-  status OrderStatus @default(PENDING)
+  id          String      @id @default(uuid())
+  title       String
+  description String?
+  status      OrderStatus @default(PENDING)
 
   latitude     Decimal
   longitude    Decimal

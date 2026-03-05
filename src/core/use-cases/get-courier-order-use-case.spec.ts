@@ -15,6 +15,7 @@ describe('get courier order use case', () => {
   it('should return a WAITING order for any courier', async () => {
     await ordersRepository.create({
       id: 'order-1',
+      title: 'Entrega',
       status: 'WAITING',
       recipientId: 'recipient-1',
       latitude: -23.55052,
@@ -42,6 +43,7 @@ describe('get courier order use case', () => {
   it('should return own order regardless of status', async () => {
     await ordersRepository.create({
       id: 'order-1',
+      title: 'Entrega',
       status: 'WITHDRAWN',
       recipientId: 'recipient-1',
       courierId: 'courier-1',
@@ -71,6 +73,7 @@ describe('get courier order use case', () => {
   it('should return error when courier tries to access another courier non-WAITING order', async () => {
     await ordersRepository.create({
       id: 'order-1',
+      title: 'Entrega',
       status: 'WITHDRAWN',
       recipientId: 'recipient-1',
       courierId: 'courier-1',

@@ -14,6 +14,7 @@ describe('delete order use case', () => {
   it('should delete an order', async () => {
     await ordersRepository.create({
       id: 'order-1',
+      title: 'Entrega',
       status: 'WAITING',
       recipientId: 'recipient-1',
       latitude: -23.55052,

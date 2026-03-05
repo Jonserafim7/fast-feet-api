@@ -5,6 +5,7 @@ let ordersRepository: InMemoryOrdersRepository
 let sut: ListAvailableOrdersUseCase
 
 const makeOrderData = (overrides = {}) => ({
+  title: 'Entrega',
   recipientId: 'recipient-1',
   latitude: -23.55052,
   longitude: -46.633308,

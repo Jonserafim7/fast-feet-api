@@ -12,6 +12,8 @@ export class InMemoryOrdersRepository implements OrdersRepository {
   async create(data: CreateOrderData): Promise<void> {
     const order: Order = {
       id: data.id ?? randomUUID(),
+      title: data.title,
+      description: data.description ?? null,
       status: data.status ?? 'WAITING',
       latitude: new Prisma.Decimal(data.latitude),
       longitude: new Prisma.Decimal(data.longitude),
@@ -66,6 +68,7 @@ export class InMemoryOrdersRepository implements OrdersRepository {
   private matchesSearch(order: Order, search: string): boolean {
     const lower = search.toLowerCase()
     return (
+      order.title.toLowerCase().includes(lower) ||
       order.street.toLowerCase().includes(lower) ||
       order.neighborhood.toLowerCase().includes(lower) ||
       order.city.toLowerCase().includes(lower) ||
@@ -128,6 +131,11 @@ export class InMemoryOrdersRepository implements OrdersRepository {
       const currentOrder = this.items[itemIndex]
       this.items[itemIndex] = {
         ...currentOrder,
+        title: data.title ?? currentOrder.title,
+        description:
+          data.description !== undefined
+            ? data.description
+            : currentOrder.description,
         latitude:
           data.latitude !== undefined
             ? new Prisma.Decimal(data.latitude)

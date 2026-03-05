@@ -40,6 +40,7 @@ describe('withdraw order use case', () => {
 
     await ordersRepository.create({
       id: 'order-1',
+      title: 'Entrega',
       status: 'WAITING',
       recipientId: 'recipient-1',
       latitude: -23.55052,
@@ -89,6 +90,7 @@ describe('withdraw order use case', () => {
   it('should not be able to withdraw an order that is not waiting', async () => {
     await ordersRepository.create({
       id: 'order-1',
+      title: 'Entrega',
       status: 'PENDING',
       recipientId: 'recipient-1',
       latitude: -23.55052,

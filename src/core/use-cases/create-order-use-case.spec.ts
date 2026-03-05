@@ -23,6 +23,8 @@ describe('create order use case', () => {
 
     const result = await sut.execute({
       recipientId: 'recipient-1',
+      title: 'Pacote frágil',
+      description: 'Cuidado ao manusear',
       latitude: -23.55052,
       longitude: -46.633308,
       street: 'Av Paulista',
@@ -40,6 +42,8 @@ describe('create order use case', () => {
     expect(ordersRepository.items[0]).toMatchObject({
       status: 'PENDING',
       recipientId: 'recipient-1',
+      title: 'Pacote frágil',
+      description: 'Cuidado ao manusear',
       street: 'Av Paulista',
       number: '1000',
       city: 'São Paulo',
@@ -54,6 +58,7 @@ describe('create order use case', () => {
   it('should not create an order when recipient does not exist', async () => {
     const result = await sut.execute({
       recipientId: 'non-existent-recipient',
+      title: 'Pacote',
       latitude: -23.55052,
       longitude: -46.633308,
       street: 'Av Paulista',

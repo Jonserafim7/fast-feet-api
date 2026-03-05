@@ -4,6 +4,8 @@ export class OrderPresenter {
   static toHTTP(order: Order) {
     return {
       id: order.id,
+      title: order.title,
+      description: order.description,
       status: order.status,
       latitude: order.latitude.toNumber(),
       longitude: order.longitude.toNumber(),

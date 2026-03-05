@@ -14,6 +14,7 @@ describe('list orders use case', () => {
     for (let i = 1; i <= 25; i++) {
       await ordersRepository.create({
         id: `order-${i}`,
+        title: 'Entrega',
         status: 'WAITING',
         recipientId: 'recipient-1',
         latitude: -23.55052,

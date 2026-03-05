@@ -47,6 +47,7 @@ describe('Create Order (E2E)', () => {
       .post('/orders')
       .send({
         recipientId: recipient.id,
+        title: 'Pacote frágil',
         latitude: -23.55052,
         longitude: -46.633308,
         street: 'Av Paulista',

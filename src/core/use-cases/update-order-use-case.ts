@@ -5,6 +5,8 @@ import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js
 
 interface UpdateOrderUseCaseRequest {
   orderId: string
+  title?: string
+  description?: string
   latitude?: number
   longitude?: number
   street?: string
@@ -25,6 +27,8 @@ export class UpdateOrderUseCase {
 
   async execute({
     orderId,
+    title,
+    description,
     latitude,
     longitude,
     street,
@@ -44,6 +48,8 @@ export class UpdateOrderUseCase {
 
     await this.ordersRepository.save({
       id: orderId,
+      title,
+      description,
       latitude,
       longitude,
       street,

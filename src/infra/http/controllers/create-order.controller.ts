@@ -14,6 +14,8 @@ import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js'
 
 const createOrderBodySchema = z.object({
   recipientId: z.uuid(),
+  title: z.string().trim().min(1),
+  description: z.string().trim().optional(),
   latitude: z.number(),
   longitude: z.number(),
   street: z.string().trim().min(1),
@@ -41,6 +43,8 @@ export class CreateOrderController {
   ) {
     const {
       recipientId,
+      title,
+      description,
       latitude,
       longitude,
       street,
@@ -55,6 +59,8 @@ export class CreateOrderController {
 
     const result = await this.createOrder.execute({
       recipientId,
+      title,
+      description,
       latitude,
       longitude,
       street,

@@ -40,6 +40,7 @@ describe('mark order as waiting use case', () => {
 
     await ordersRepository.create({
       id: 'order-1',
+      title: 'Entrega',
       status: 'PENDING',
       recipientId: 'recipient-1',
       latitude: -23.55052,
@@ -85,6 +86,7 @@ describe('mark order as waiting use case', () => {
   it('should return InvalidOrderStatusError when order is not pending', async () => {
     await ordersRepository.create({
       id: 'order-1',
+      title: 'Entrega',
       status: 'WAITING',
       recipientId: 'recipient-1',
       latitude: -23.55052,
@@ -109,6 +111,7 @@ describe('mark order as waiting use case', () => {
   it('should return InvalidOrderStatusError when order is already waiting', async () => {
     await ordersRepository.create({
       id: 'order-1',
+      title: 'Entrega',
       status: 'WAITING',
       recipientId: 'recipient-1',
       latitude: -23.55052,
@@ -134,6 +137,7 @@ describe('mark order as waiting use case', () => {
   it('should return InvalidOrderStatusError when order is withdrawn', async () => {
     await ordersRepository.create({
       id: 'order-1',
+      title: 'Entrega',
       status: 'WITHDRAWN',
       recipientId: 'recipient-1',
       latitude: -23.55052,

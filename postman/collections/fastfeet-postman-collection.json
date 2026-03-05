@@ -934,7 +934,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"recipientId\": \"{{recipientId}}\",\n  \"latitude\": -23.5505,\n  \"longitude\": -46.6333,\n  \"street\": \"Rua josé oscar\",\n  \"number\": \"272\",\n  \"city\": \"Limeira\",\n  \"neighborhood\": \"Ragazzo\",\n  \"state\": \"SP\",\n  \"zip\": \"13485326\",\n  \"country\": \"Brasil\"\n}",
+              "raw": "{\n  \"recipientId\": \"{{recipientId}}\",\n  \"title\": \"Pacote eletrônicos\",\n  \"description\": \"Cuidado: itens frágeis\",\n  \"latitude\": -23.5505,\n  \"longitude\": -46.6333,\n  \"street\": \"Rua josé oscar\",\n  \"number\": \"272\",\n  \"city\": \"Limeira\",\n  \"neighborhood\": \"Ragazzo\",\n  \"state\": \"SP\",\n  \"zip\": \"13485326\",\n  \"country\": \"Brasil\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1039,7 +1039,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"street\": \"Rua Updated\",\n  \"city\": \"Rio de Janeiro\",\n  \"neighborhood\": \"Jardins\",\n  \"state\": \"RJ\"\n}",
+              "raw": "{\n  \"title\": \"Pacote atualizado\",\n  \"description\": \"Nova descrição\",\n  \"street\": \"Rua Updated\",\n  \"city\": \"Rio de Janeiro\",\n  \"neighborhood\": \"Jardins\",\n  \"state\": \"RJ\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1124,43 +1124,43 @@
   },
   "variable": [
     {
-      "id": "4c0504ef-9783-4bb6-bdec-383d6faa7b85",
+      "id": "dbbcfa5d-c4c4-4407-a2c9-dae24caea122",
       "key": "baseUrl",
       "value": "http://localhost:3333",
       "type": "string"
     },
     {
-      "id": "19fd425e-12d8-4565-ab5f-6d6def190e83",
+      "id": "261cc64a-7481-4af0-a243-311cfedbef4d",
       "key": "token",
       "value": "",
       "type": "string"
     },
     {
-      "id": "c653d313-709c-4ef6-b4ba-caec0b33f9d6",
+      "id": "c7952142-e1c7-4376-a943-910be6cbbd11",
       "key": "refreshToken",
       "value": "",
       "type": "string"
     },
     {
-      "id": "0a583588-662d-44d3-98b6-1e94fdd5d166",
+      "id": "38461a2b-836f-4f8c-994b-0c2675ccb8ab",
       "key": "userId",
       "value": "",
       "type": "string"
     },
     {
-      "id": "58881597-9784-4d9b-9e2d-7090df6d02c2",
+      "id": "9a45b77f-7716-4b6c-99d1-c04243e1ae59",
       "key": "courierId",
       "value": "",
       "type": "string"
     },
     {
-      "id": "af477b9a-bf43-480d-b513-2e79d4945c2b",
+      "id": "44d892a7-7f94-45c0-90f3-5e413054eb37",
       "key": "recipientId",
       "value": "",
       "type": "string"
     },
     {
-      "id": "7bc3fc21-9f5a-407d-b50d-87467fde894c",
+      "id": "e167873e-f01a-453c-9d35-0d4bb331a6a1",
       "key": "orderId",
       "value": "",
       "type": "string"

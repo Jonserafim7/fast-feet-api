@@ -6,6 +6,7 @@ import { randomUUID } from 'node:crypto'
 function makeOrderData(overrides?: Partial<CreateOrderData>): CreateOrderData {
   return {
     id: randomUUID(),
+    title: 'Entrega',
     status: 'WAITING',
     recipientId: 'recipient-1',
     courierId: undefined,

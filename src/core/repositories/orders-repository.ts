@@ -4,6 +4,8 @@ import { Order, OrderStatus } from '@/generated/prisma/client.js'
 export interface CreateOrderData {
   id?: string
   status?: OrderStatus
+  title: string
+  description?: string
   recipientId: string
   latitude: number
   longitude: number
@@ -22,6 +24,8 @@ export interface CreateOrderData {
 
 export interface UpdateOrderData {
   id: string
+  title?: string
+  description?: string
   latitude?: number
   longitude?: number
   street?: string

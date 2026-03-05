@@ -14,6 +14,8 @@ import { Roles } from '@/infra/auth/roles.decorator.js'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js'
 
 const updateOrderBodySchema = z.object({
+  title: z.string().trim().min(1).optional(),
+  description: z.string().trim().optional(),
   latitude: z.number().optional(),
   longitude: z.number().optional(),
   street: z.string().trim().min(1).optional(),
@@ -40,6 +42,8 @@ export class UpdateOrderController {
     body: UpdateOrderBody
   ) {
     const {
+      title,
+      description,
       latitude,
       longitude,
       street,
@@ -54,6 +58,8 @@ export class UpdateOrderController {
 
     const result = await this.updateOrder.execute({
       orderId,
+      title,
+      description,
       latitude,
       longitude,
       street,

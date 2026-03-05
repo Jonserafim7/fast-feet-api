@@ -14,6 +14,7 @@ export class PrismaOrdersRepository implements OrdersRepository {
   private buildSearchFilter(search: string): Prisma.OrderWhereInput {
     return {
       OR: [
+        { title: { contains: search, mode: 'insensitive' } },
         { street: { contains: search, mode: 'insensitive' } },
         { neighborhood: { contains: search, mode: 'insensitive' } },
         { city: { contains: search, mode: 'insensitive' } },
@@ -27,6 +28,8 @@ export class PrismaOrdersRepository implements OrdersRepository {
     await this.prisma.order.create({
       data: {
         id: data.id,
+        title: data.title,
+        description: data.description,
         status: data.status ?? 'WAITING',
         recipientId: data.recipientId,
         latitude: new Prisma.Decimal(data.latitude),
@@ -119,6 +122,8 @@ export class PrismaOrdersRepository implements OrdersRepository {
     await this.prisma.order.update({
       where: { id: data.id },
       data: {
+        title: data.title,
+        description: data.description,
         latitude:
           data.latitude !== undefined
             ? new Prisma.Decimal(data.latitude)

@@ -6,6 +6,8 @@ import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js
 
 interface CreateOrderUseCaseRequest {
   recipientId: string
+  title: string
+  description?: string
   latitude: number
   longitude: number
   street: string
@@ -29,6 +31,8 @@ export class CreateOrderUseCase {
 
   async execute({
     recipientId,
+    title,
+    description,
     latitude,
     longitude,
     street,
@@ -49,6 +53,8 @@ export class CreateOrderUseCase {
     await this.ordersRepository.create({
       status: 'PENDING',
       recipientId,
+      title,
+      description,
       latitude,
       longitude,
       street,

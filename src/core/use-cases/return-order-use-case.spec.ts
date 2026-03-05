@@ -41,6 +41,7 @@ describe('return order use case', () => {
 
     await ordersRepository.create({
       id: 'order-1',
+      title: 'Entrega',
       status: 'WITHDRAWN',
       recipientId: 'recipient-1',
       courierId: 'courier-1',
@@ -91,6 +92,7 @@ describe('return order use case', () => {
   it('should not be able to return an order that is not withdrawn', async () => {
     await ordersRepository.create({
       id: 'order-1',
+      title: 'Entrega',
       status: 'WAITING',
       recipientId: 'recipient-1',
       latitude: -23.55052,
@@ -116,6 +118,7 @@ describe('return order use case', () => {
   it('should not be able to return an order from a different courier', async () => {
     await ordersRepository.create({
       id: 'order-1',
+      title: 'Entrega',
       status: 'WITHDRAWN',
       recipientId: 'recipient-1',
       courierId: 'courier-1',

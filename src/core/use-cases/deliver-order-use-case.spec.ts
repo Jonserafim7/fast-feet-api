@@ -50,6 +50,7 @@ describe('deliver order use case', () => {
 
     await ordersRepository.create({
       id: 'order-1',
+      title: 'Entrega',
       status: 'WITHDRAWN',
       recipientId: 'recipient-1',
       courierId: 'courier-1',
@@ -98,6 +99,7 @@ describe('deliver order use case', () => {
   it('should not deliver order if courier is not the owner', async () => {
     await ordersRepository.create({
       id: 'order-1',
+      title: 'Entrega',
       status: 'WITHDRAWN',
       recipientId: 'recipient-1',
       courierId: 'courier-1',
@@ -127,6 +129,7 @@ describe('deliver order use case', () => {
   it('should not deliver order that is not withdrawn', async () => {
     await ordersRepository.create({
       id: 'order-1',
+      title: 'Entrega',
       status: 'WAITING',
       recipientId: 'recipient-1',
       latitude: -23.55052,
@@ -168,6 +171,7 @@ describe('deliver order use case', () => {
   it('should not deliver order without file', async () => {
     await ordersRepository.create({
       id: 'order-1',
+      title: 'Entrega',
       status: 'WITHDRAWN',
       recipientId: 'recipient-1',
       courierId: 'courier-1',

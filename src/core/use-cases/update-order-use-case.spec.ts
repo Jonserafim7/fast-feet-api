@@ -14,6 +14,7 @@ describe('update order use case', () => {
   it('should update an order', async () => {
     await ordersRepository.create({
       id: 'order-1',
+      title: 'Pacote original',
       status: 'WAITING',
       recipientId: 'recipient-1',
       latitude: -23.55052,

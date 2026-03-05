@@ -14,6 +14,7 @@ describe('get order use case', () => {
   it('should get an order by id', async () => {
     await ordersRepository.create({
       id: 'order-1',
+      title: 'Entrega',
       status: 'WAITING',
       recipientId: 'recipient-1',
       latitude: -23.55052,

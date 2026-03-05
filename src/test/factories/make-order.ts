@@ -5,6 +5,8 @@ import { Prisma } from '@/generated/prisma/client.js'
 
 export interface MakeOrderInput {
   id?: string
+  title?: string
+  description?: string | null
   status?: OrderStatus
   latitude?: number
   longitude?: number
@@ -24,6 +26,8 @@ export interface MakeOrderInput {
 
 export interface MakeOrderOutput {
   id: string
+  title: string
+  description: string | null
   status: OrderStatus
   latitude: Prisma.Decimal
   longitude: Prisma.Decimal
@@ -50,6 +54,8 @@ export async function makeOrder(
   orderCounter++
 
   const id = input.id ?? randomUUID()
+  const title = input.title ?? `Entrega ${orderCounter}`
+  const description = input.description !== undefined ? input.description : null
   const status = input.status ?? 'WAITING'
   const latitude = new Prisma.Decimal(input.latitude ?? -23.55052)
   const longitude = new Prisma.Decimal(input.longitude ?? -46.633308)
@@ -69,6 +75,8 @@ export async function makeOrder(
   await prisma.order.create({
     data: {
       id,
+      title,
+      description,
       status,
       latitude,
       longitude,
@@ -89,6 +97,8 @@ export async function makeOrder(
 
   return {
     id,
+    title,
+    description,
     status,
     latitude,
     longitude,
