@@ -1,6 +1,6 @@
 {
   "info": {
-    "_postman_id": "fbd347ba-a957-4a2c-a0b8-0015ed0969c9",
+    "_postman_id": "fb1b2d26-df38-45b0-bccc-7c07cc64d86c",
     "name": "FastFeet Collection",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -63,7 +63,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"cpf\": \"96710062058\",\n  \"password\": \"password\"\n}",
+              "raw": "{\n  \"cpf\": \"19918745029\",\n  \"password\": \"123456\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -693,7 +693,7 @@
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
+                "id": "b730de95-3fa5-443d-86a0-08282ce2101a",
                 "exec": [
                   "pm.test('status is 201', function () {",
                   "  pm.expect(pm.response.code).to.eql(201);",
@@ -706,7 +706,20 @@
                   "  const id = json.id || json.recipientId || (json.recipient && json.recipient.id);",
                   "  if (id) pm.collectionVariables.set('recipientId', id);",
                   "} catch (e) {}"
-                ]
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "a4389615-d015-4a0a-840e-8c16361b306e",
+                "exec": [""],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -721,7 +734,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Recipient One\",\n  \"email\": \"recipient@example.com\",\n  \"phone\": \"11999999999\"\n}",
+              "raw": "{\n  \"name\": \"Recipient Two\",\n  \"email\": \"recipient2@example.com\",\n  \"phone\": \"11999999999\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -880,7 +893,7 @@
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
+                "id": "0be09b79-07bb-4425-b3ae-81220ddf9285",
                 "exec": [
                   "pm.test('status is 201', function () {",
                   "  pm.expect(pm.response.code).to.eql(201);",
@@ -893,7 +906,20 @@
                   "  const id = json.id || json.orderId || (json.order && json.order.id);",
                   "  if (id) pm.collectionVariables.set('orderId', id);",
                   "} catch (e) {}"
-                ]
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "19760900-8eff-40f0-a33c-0782e34db712",
+                "exec": [""],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -908,7 +934,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"recipientId\": \"{{recipientId}}\",\n  \"latitude\": -23.5505,\n  \"longitude\": -46.6333,\n  \"street\": \"Rua Example\",\n  \"number\": \"123\",\n  \"city\": \"Sao Paulo\",\n  \"neighborhood\": \"Centro\",\n  \"state\": \"SP\",\n  \"zip\": \"01001000\",\n  \"country\": \"Brasil\"\n}",
+              "raw": "{\n  \"recipientId\": \"{{recipientId}}\",\n  \"latitude\": -23.5505,\n  \"longitude\": -46.6333,\n  \"street\": \"Rua josé oscar\",\n  \"number\": \"272\",\n  \"city\": \"Limeira\",\n  \"neighborhood\": \"Ragazzo\",\n  \"state\": \"SP\",\n  \"zip\": \"13485326\",\n  \"country\": \"Brasil\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1098,43 +1124,43 @@
   },
   "variable": [
     {
-      "id": "990f0ca8-4884-4f40-98d7-a38bac129e40",
+      "id": "4c0504ef-9783-4bb6-bdec-383d6faa7b85",
       "key": "baseUrl",
       "value": "http://localhost:3333",
       "type": "string"
     },
     {
-      "id": "a5b8b3e6-31c6-484a-bd3c-8ea21bf06546",
+      "id": "19fd425e-12d8-4565-ab5f-6d6def190e83",
       "key": "token",
       "value": "",
       "type": "string"
     },
     {
-      "id": "d6e7f8a9-b0c1-d2e3-f4a5-b6c7d8e9f0a1",
+      "id": "c653d313-709c-4ef6-b4ba-caec0b33f9d6",
       "key": "refreshToken",
       "value": "",
       "type": "string"
     },
     {
-      "id": "67fbd2ff-31d3-4c10-bac0-a39be709a903",
+      "id": "0a583588-662d-44d3-98b6-1e94fdd5d166",
       "key": "userId",
       "value": "",
       "type": "string"
     },
     {
-      "id": "ff1af09e-ca28-41c0-a2e0-9cc0cd02230a",
+      "id": "58881597-9784-4d9b-9e2d-7090df6d02c2",
       "key": "courierId",
       "value": "",
       "type": "string"
     },
     {
-      "id": "503a4594-c352-49fe-80c4-e9c6c9c2302c",
+      "id": "af477b9a-bf43-480d-b513-2e79d4945c2b",
       "key": "recipientId",
       "value": "",
       "type": "string"
     },
     {
-      "id": "ef4f1750-2e66-4f91-b80c-c7c08df5eda0",
+      "id": "7bc3fc21-9f5a-407d-b50d-87467fde894c",
       "key": "orderId",
       "value": "",
       "type": "string"
