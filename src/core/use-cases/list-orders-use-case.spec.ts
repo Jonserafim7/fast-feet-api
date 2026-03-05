@@ -21,6 +21,7 @@ describe('list orders use case', () => {
         street: `Street ${i}`,
         number: `${i}`,
         city: 'São Paulo',
+        neighborhood: 'Centro',
         state: 'SP',
         zip: '01310100',
         country: 'Brasil',

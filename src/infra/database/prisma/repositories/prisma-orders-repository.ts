@@ -3,18 +3,25 @@ import {
   OrdersRepository,
   CreateOrderData,
   UpdateOrderData,
-  FindManyNearbyParams,
 } from '@/core/repositories/orders-repository.js'
 import { PrismaService } from '@/infra/database/prisma/prisma.service.js'
-import { EnvService } from '@/infra/env/env.service.js'
 import { Prisma, OrderStatus, Order } from '@/generated/prisma/client.js'
 
 @Injectable()
 export class PrismaOrdersRepository implements OrdersRepository {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly env: EnvService
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
+
+  private buildSearchFilter(search: string): Prisma.OrderWhereInput {
+    return {
+      OR: [
+        { street: { contains: search, mode: 'insensitive' } },
+        { neighborhood: { contains: search, mode: 'insensitive' } },
+        { city: { contains: search, mode: 'insensitive' } },
+        { state: { contains: search, mode: 'insensitive' } },
+        { zip: { contains: search, mode: 'insensitive' } },
+      ],
+    }
+  }
 
   async create(data: CreateOrderData) {
     await this.prisma.order.create({
@@ -27,6 +34,7 @@ export class PrismaOrdersRepository implements OrdersRepository {
         street: data.street,
         number: data.number,
         city: data.city,
+        neighborhood: data.neighborhood,
         state: data.state,
         zip: data.zip,
         country: data.country,
@@ -55,49 +63,56 @@ export class PrismaOrdersRepository implements OrdersRepository {
     return orders
   }
 
-  async findManyNearby({
-    latitude,
-    longitude,
-  }: FindManyNearbyParams): Promise<Order[]> {
-    const MAX_DISTANCE_IN_KM = 20
+  async findManyAvailable({
+    page,
+    perPage,
+    search,
+  }: {
+    page: number
+    perPage: number
+    search?: string
+  }): Promise<Order[]> {
+    const skip = (page - 1) * perPage
+    const where: Prisma.OrderWhereInput = {
+      status: 'WAITING',
+      courierId: null,
+      ...(search && this.buildSearchFilter(search)),
+    }
 
-    // Security: DATABASE_SCHEMA is validated by env schema (UUIDs or valid PostgreSQL identifiers)
-    const schema = this.env.get('DATABASE_SCHEMA')
-    const tableName = schema ? `"${schema}"."orders"` : 'orders'
-
-    // Use Prisma.sql for safe parameterization with Prisma.raw for validated identifier
-    const orders = await this.prisma.$queryRaw<Order[]>`
-      SELECT * FROM ${Prisma.raw(tableName)}
-      WHERE status = 'WAITING'
-      AND (
-        6371 * acos(
-          cos(radians(${latitude})) * cos(radians(latitude)) *
-          cos(radians(longitude) - radians(${longitude})) +
-          sin(radians(${latitude})) * sin(radians(latitude))
-        )
-      ) <= ${MAX_DISTANCE_IN_KM}
-    `
-
-    return orders
+    return this.prisma.order.findMany({
+      where,
+      skip,
+      take: perPage,
+      orderBy: { createdAt: 'desc' },
+    })
   }
 
   async findManyByCourierId({
     courierId,
     page,
     perPage,
+    status,
+    search,
   }: {
     courierId: string
     page: number
     perPage: number
+    status?: OrderStatus
+    search?: string
   }) {
     const skip = (page - 1) * perPage
-    const orders = await this.prisma.order.findMany({
-      where: { courierId },
+    const where: Prisma.OrderWhereInput = {
+      courierId,
+      ...(status && { status }),
+      ...(search && this.buildSearchFilter(search)),
+    }
+
+    return this.prisma.order.findMany({
+      where,
       skip,
       take: perPage,
       orderBy: { createdAt: 'desc' },
     })
-    return orders
   }
 
   async save(data: UpdateOrderData) {
@@ -115,6 +130,7 @@ export class PrismaOrdersRepository implements OrdersRepository {
         street: data.street,
         number: data.number,
         city: data.city,
+        neighborhood: data.neighborhood,
         state: data.state,
         zip: data.zip,
         country: data.country,

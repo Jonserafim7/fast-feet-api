@@ -1,17 +1,15 @@
 import { Injectable } from '@nestjs/common'
 import { OrdersRepository } from '@/core/repositories/orders-repository.js'
 import { Either, right } from '@/core/errors/either.js'
-import { Order, OrderStatus } from '@/generated/prisma/client.js'
+import { Order } from '@/generated/prisma/client.js'
 
-interface ListCourierOrdersUseCaseRequest {
-  courierId: string
+interface ListAvailableOrdersUseCaseRequest {
   page: number
   perPage: number
-  status?: OrderStatus
   search?: string
 }
 
-type ListCourierOrdersUseCaseResponse = Either<
+type ListAvailableOrdersUseCaseResponse = Either<
   null,
   {
     orders: Order[]
@@ -19,21 +17,17 @@ type ListCourierOrdersUseCaseResponse = Either<
 >
 
 @Injectable()
-export class ListCourierOrdersUseCase {
+export class ListAvailableOrdersUseCase {
   constructor(private readonly ordersRepository: OrdersRepository) {}
 
   async execute({
-    courierId,
     page,
     perPage,
-    status,
     search,
-  }: ListCourierOrdersUseCaseRequest): Promise<ListCourierOrdersUseCaseResponse> {
-    const orders = await this.ordersRepository.findManyByCourierId({
-      courierId,
+  }: ListAvailableOrdersUseCaseRequest): Promise<ListAvailableOrdersUseCaseResponse> {
+    const orders = await this.ordersRepository.findManyAvailable({
       page,
       perPage,
-      status,
       search,
     })
 

@@ -11,6 +11,7 @@ export interface MakeOrderInput {
   street?: string
   number?: string
   city?: string
+  neighborhood?: string
   state?: string
   zip?: string
   country?: string
@@ -29,6 +30,7 @@ export interface MakeOrderOutput {
   street: string
   number: string
   city: string
+  neighborhood: string
   state: string
   zip: string
   country: string
@@ -54,6 +56,7 @@ export async function makeOrder(
   const street = input.street ?? `Rua Teste ${orderCounter}`
   const number = input.number ?? `${orderCounter}`
   const city = input.city ?? 'São Paulo'
+  const neighborhood = input.neighborhood ?? 'Centro'
   const state = input.state ?? 'SP'
   const zip = input.zip ?? '01310100'
   const country = input.country ?? 'Brasil'
@@ -72,6 +75,7 @@ export async function makeOrder(
       street,
       number,
       city,
+      neighborhood,
       state,
       zip,
       country,
@@ -91,6 +95,7 @@ export async function makeOrder(
     street,
     number,
     city,
+    neighborhood,
     state,
     zip,
     country,

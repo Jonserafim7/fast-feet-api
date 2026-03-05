@@ -10,6 +10,7 @@ export interface CreateOrderData {
   street: string
   number: string
   city: string
+  neighborhood: string
   state: string
   zip: string
   country: string
@@ -26,15 +27,11 @@ export interface UpdateOrderData {
   street?: string
   number?: string
   city?: string
+  neighborhood?: string
   state?: string
   zip?: string
   country?: string
   complement?: string
-}
-
-export interface FindManyNearbyParams {
-  latitude: number
-  longitude: number
 }
 
 @Injectable()
@@ -42,11 +39,17 @@ export abstract class OrdersRepository {
   abstract create(data: CreateOrderData): Promise<void>
   abstract findById(id: string): Promise<Order | null>
   abstract findMany(params: { page: number; perPage: number }): Promise<Order[]>
-  abstract findManyNearby(params: FindManyNearbyParams): Promise<Order[]>
+  abstract findManyAvailable(params: {
+    page: number
+    perPage: number
+    search?: string
+  }): Promise<Order[]>
   abstract findManyByCourierId(params: {
     courierId: string
     page: number
     perPage: number
+    status?: OrderStatus
+    search?: string
   }): Promise<Order[]>
   abstract save(data: UpdateOrderData): Promise<void>
   abstract delete(id: string): Promise<void>

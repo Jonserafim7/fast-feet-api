@@ -10,6 +10,7 @@ export class OrderPresenter {
       street: order.street,
       number: order.number,
       city: order.city,
+      neighborhood: order.neighborhood,
       state: order.state,
       zip: order.zip,
       country: order.country,

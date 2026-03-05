@@ -2,11 +2,9 @@ import {
   OrdersRepository,
   CreateOrderData,
   UpdateOrderData,
-  FindManyNearbyParams,
 } from '@/core/repositories/orders-repository.js'
 import { Order, Prisma, OrderStatus } from '@/generated/prisma/client.js'
 import { randomUUID } from 'node:crypto'
-import { getDistanceBetweenCoordinates } from '@/core/utils/get-distance-between-coordinates.js'
 
 export class InMemoryOrdersRepository implements OrdersRepository {
   public items: Order[] = []
@@ -20,6 +18,7 @@ export class InMemoryOrdersRepository implements OrdersRepository {
       street: data.street,
       number: data.number,
       city: data.city,
+      neighborhood: data.neighborhood,
       state: data.state,
       zip: data.zip,
       country: data.country,
@@ -64,40 +63,58 @@ export class InMemoryOrdersRepository implements OrdersRepository {
     return Promise.resolve(orders)
   }
 
-  async findManyNearby({
-    latitude,
-    longitude,
-  }: FindManyNearbyParams): Promise<Order[]> {
-    const MAX_DISTANCE_IN_KM = 20
+  private matchesSearch(order: Order, search: string): boolean {
+    const lower = search.toLowerCase()
+    return (
+      order.street.toLowerCase().includes(lower) ||
+      order.neighborhood.toLowerCase().includes(lower) ||
+      order.city.toLowerCase().includes(lower) ||
+      order.state.toLowerCase().includes(lower) ||
+      order.zip.toLowerCase().includes(lower)
+    )
+  }
 
-    return this.items.filter((order) => {
-      if (order.status !== 'WAITING') return false
-
-      const distance = getDistanceBetweenCoordinates(
-        { latitude, longitude },
-        {
-          latitude: order.latitude.toNumber(),
-          longitude: order.longitude.toNumber(),
-        }
-      )
-
-      return distance <= MAX_DISTANCE_IN_KM
-    })
+  async findManyAvailable({
+    page,
+    perPage,
+    search,
+  }: {
+    page: number
+    perPage: number
+    search?: string
+  }): Promise<Order[]> {
+    const start = (page - 1) * perPage
+    return this.items
+      .filter((order) => {
+        if (order.status !== 'WAITING' || order.courierId !== null) return false
+        if (search && !this.matchesSearch(order, search)) return false
+        return true
+      })
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice(start, start + perPage)
   }
 
   findManyByCourierId({
     courierId,
     page,
     perPage,
+    status,
+    search,
   }: {
     courierId: string
     page: number
     perPage: number
+    status?: OrderStatus
+    search?: string
   }): Promise<Order[]> {
     const start = (page - 1) * perPage
     const orders = this.items
-      .filter((order) => order.courierId === courierId)
-      .slice()
+      .filter((order) => {
+        if (order.courierId !== courierId) return false
+        if (status && order.status !== status) return false
+        if (search && !this.matchesSearch(order, search)) return false
+        return true
+      })
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       .slice(start, start + perPage)
 
@@ -122,6 +139,7 @@ export class InMemoryOrdersRepository implements OrdersRepository {
         street: data.street ?? currentOrder.street,
         number: data.number ?? currentOrder.number,
         city: data.city ?? currentOrder.city,
+        neighborhood: data.neighborhood ?? currentOrder.neighborhood,
         state: data.state ?? currentOrder.state,
         zip: data.zip ?? currentOrder.zip,
         country: data.country ?? currentOrder.country,

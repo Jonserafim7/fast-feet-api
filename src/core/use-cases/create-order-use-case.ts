@@ -11,6 +11,7 @@ interface CreateOrderUseCaseRequest {
   street: string
   number: string
   city: string
+  neighborhood: string
   state: string
   zip: string
   country: string
@@ -33,6 +34,7 @@ export class CreateOrderUseCase {
     street,
     number,
     city,
+    neighborhood,
     state,
     zip,
     country,
@@ -52,6 +54,7 @@ export class CreateOrderUseCase {
       street,
       number,
       city,
+      neighborhood,
       state,
       zip,
       country,

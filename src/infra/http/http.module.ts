@@ -17,7 +17,7 @@ import { CreateOrderUseCase } from '@/core/use-cases/create-order-use-case.js'
 import { GetOrderUseCase } from '@/core/use-cases/get-order-use-case.js'
 import { GetCourierOrderUseCase } from '@/core/use-cases/get-courier-order-use-case.js'
 import { ListOrdersUseCase } from '@/core/use-cases/list-orders-use-case.js'
-import { ListNearbyOrdersUseCase } from '@/core/use-cases/list-nearby-orders-use-case.js'
+import { ListAvailableOrdersUseCase } from '@/core/use-cases/list-available-orders-use-case.js'
 import { ListCourierOrdersUseCase } from '@/core/use-cases/list-courier-orders-use-case.js'
 import { UpdateOrderUseCase } from '@/core/use-cases/update-order-use-case.js'
 import { DeleteOrderUseCase } from '@/core/use-cases/delete-order-use-case.js'
@@ -52,7 +52,7 @@ import { CreateOrderController } from '@/infra/http/controllers/create-order.con
 import { GetOrderController } from '@/infra/http/controllers/get-order.controller.js'
 import { GetCourierOrderController } from '@/infra/http/controllers/get-courier-order.controller.js'
 import { ListOrdersController } from '@/infra/http/controllers/list-orders.controller.js'
-import { ListNearbyOrdersController } from '@/infra/http/controllers/list-nearby-orders.controller.js'
+import { ListAvailableOrdersController } from '@/infra/http/controllers/list-available-orders.controller.js'
 import { ListCourierOrdersController } from '@/infra/http/controllers/list-courier-orders.controller.js'
 import { UpdateOrderController } from '@/infra/http/controllers/update-order.controller.js'
 import { DeleteOrderController } from '@/infra/http/controllers/delete-order.controller.js'
@@ -91,7 +91,7 @@ import { HealthController } from '@/infra/http/controllers/health.controller.js'
     UpdateUserPasswordController,
     CreateOrderController,
     ListOrdersController,
-    ListNearbyOrdersController,
+    ListAvailableOrdersController,
     ListCourierOrdersController,
     GetOrderController,
     GetCourierOrderController,
@@ -123,7 +123,7 @@ import { HealthController } from '@/infra/http/controllers/health.controller.js'
     GetOrderUseCase,
     GetCourierOrderUseCase,
     ListOrdersUseCase,
-    ListNearbyOrdersUseCase,
+    ListAvailableOrdersUseCase,
     ListCourierOrdersUseCase,
     UpdateOrderUseCase,
     DeleteOrderUseCase,

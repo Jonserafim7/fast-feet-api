@@ -64,15 +64,16 @@ model Order {
   id     String      @id @default(uuid())
   status OrderStatus @default(PENDING)
 
-  latitude   Decimal
-  longitude  Decimal
-  street     String
-  number     String
-  city       String
-  state      String
-  zip        String
-  country    String
-  complement String?
+  latitude     Decimal
+  longitude    Decimal
+  street       String
+  number       String
+  city         String
+  neighborhood String
+  state        String
+  zip          String
+  country      String
+  complement   String?
 
   pickupDate   DateTime? @map("pickup_date")
   deliveryDate DateTime? @map("delivery_date")
@@ -122,13 +123,13 @@ model RefreshToken {
 }
 
 model Notification {
-  id          String    @id @default(uuid())
-  recipientId String    @map("recipient_id")
+  id          String             @id @default(uuid())
+  recipientId String             @map("recipient_id")
   title       String
   content     String
   status      NotificationStatus
-  readAt      DateTime? @map("read_at")
-  createdAt   DateTime  @default(now()) @map("created_at")
+  readAt      DateTime?          @map("read_at")
+  createdAt   DateTime           @default(now()) @map("created_at")
 
   recipient Recipient @relation(fields: [recipientId], references: [id], onDelete: Cascade)
 

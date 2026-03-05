@@ -7,12 +7,16 @@ import type { TokenPayload } from '@/infra/auth/jwt.strategy.js'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js'
 import { OrderPresenter } from '@/infra/http/presenters/order-presenter.js'
 
-const paginationQuerySchema = z.object({
+const courierOrdersQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   perPage: z.coerce.number().int().min(1).max(50).default(20),
+  status: z
+    .enum(['PENDING', 'WAITING', 'WITHDRAWN', 'DELIVERED', 'RETURNED'])
+    .optional(),
+  search: z.string().trim().min(1).optional(),
 })
 
-type PaginationQuery = z.infer<typeof paginationQuerySchema>
+type CourierOrdersQuery = z.infer<typeof courierOrdersQuerySchema>
 
 @Controller('/orders')
 @Roles('COURIER')
@@ -22,14 +26,17 @@ export class ListCourierOrdersController {
   @Get('/me')
   async handle(
     @CurrentUser() user: TokenPayload,
-    @Query(new ZodValidationPipe(paginationQuerySchema)) query: PaginationQuery
+    @Query(new ZodValidationPipe(courierOrdersQuerySchema))
+    query: CourierOrdersQuery
   ) {
-    const { page, perPage } = query
+    const { page, perPage, status, search } = query
 
     const result = await this.listCourierOrders.execute({
       courierId: user.sub,
       page,
       perPage,
+      status,
+      search,
     })
 
     if (result.isRight()) {

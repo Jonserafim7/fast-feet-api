@@ -21,6 +21,7 @@ describe('get order use case', () => {
       street: 'Av Paulista',
       number: '1000',
       city: 'São Paulo',
+      neighborhood: 'Centro',
       state: 'SP',
       zip: '01310100',
       country: 'Brasil',

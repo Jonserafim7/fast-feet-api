@@ -10,7 +10,7 @@ import {
   makeOrder,
 } from '@/test/factories/index.js'
 
-describe('List Nearby Orders (E2E)', () => {
+describe('List Available Orders (E2E)', () => {
   let app: INestApplication
   let prisma: PrismaService
   let jwt: JwtService
@@ -33,34 +33,32 @@ describe('List Nearby Orders (E2E)', () => {
     await app.close()
   })
 
-  test('[GET] /orders/nearby - should list nearby WAITING orders', async () => {
-    const courier = await makeCourier(prisma, { cpf: '12345678901' })
+  test('[GET] /orders/available', async () => {
+    const courier = await makeCourier(prisma, { cpf: '96710062058' })
     const recipient = await makeRecipient(prisma, {
       email: 'recipient@example.com',
     })
 
-    // Create order within 20km (near Sao Paulo center)
     await makeOrder(prisma, {
       recipientId: recipient.id,
       status: 'WAITING',
-      latitude: -23.5605,
-      longitude: -46.6433,
+      city: 'São Paulo',
+      neighborhood: 'Bela Vista',
     })
 
-    // Create order outside 20km
     await makeOrder(prisma, {
       recipientId: recipient.id,
       status: 'WAITING',
-      latitude: -23.9,
-      longitude: -46.633308,
+      city: 'Campinas',
+      neighborhood: 'Cambuí',
     })
 
-    // Create nearby order but not WAITING
     await makeOrder(prisma, {
       recipientId: recipient.id,
-      status: 'DELIVERED',
-      latitude: -23.5605,
-      longitude: -46.6433,
+      status: 'WITHDRAWN',
+      courierId: courier.id,
+      city: 'São Paulo',
+      neighborhood: 'Centro',
     })
 
     const accessToken = await makeAccessToken(jwt, {
@@ -68,15 +66,20 @@ describe('List Nearby Orders (E2E)', () => {
       role: courier.role,
     })
 
-    const response = await request(app.getHttpServer())
-      .get('/orders/nearby')
-      .query({
-        latitude: -23.55052,
-        longitude: -46.633308,
-      })
+    const responseAll = await request(app.getHttpServer())
+      .get('/orders/available')
       .set('Authorization', `Bearer ${accessToken}`)
 
-    expect(response.statusCode).toBe(200)
-    expect(response.body.orders).toHaveLength(1)
+    expect(responseAll.statusCode).toBe(200)
+    expect(responseAll.body.orders).toHaveLength(2)
+
+    const responseSearch = await request(app.getHttpServer())
+      .get('/orders/available')
+      .query({ search: 'Campinas' })
+      .set('Authorization', `Bearer ${accessToken}`)
+
+    expect(responseSearch.statusCode).toBe(200)
+    expect(responseSearch.body.orders).toHaveLength(1)
+    expect(responseSearch.body.orders[0].city).toBe('Campinas')
   })
 })

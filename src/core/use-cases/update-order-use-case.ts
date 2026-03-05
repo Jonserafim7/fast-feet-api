@@ -10,6 +10,7 @@ interface UpdateOrderUseCaseRequest {
   street?: string
   number?: string
   city?: string
+  neighborhood?: string
   state?: string
   zip?: string
   country?: string
@@ -29,6 +30,7 @@ export class UpdateOrderUseCase {
     street,
     number,
     city,
+    neighborhood,
     state,
     zip,
     country,
@@ -47,6 +49,7 @@ export class UpdateOrderUseCase {
       street,
       number,
       city,
+      neighborhood,
       state,
       zip,
       country,

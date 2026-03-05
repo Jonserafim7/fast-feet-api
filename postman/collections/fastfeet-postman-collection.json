@@ -521,7 +521,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/orders/me?page=1&perPage=20",
+              "raw": "{{baseUrl}}/orders/me?page=1&perPage=20&status=&search=",
               "host": ["{{baseUrl}}"],
               "path": ["orders", "me"],
               "query": [
@@ -532,6 +532,16 @@
                 {
                   "key": "perPage",
                   "value": "20"
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "Optional: PENDING, WAITING, WITHDRAWN, DELIVERED, RETURNED"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Optional: search by street, neighborhood, city, state, or zip"
                 }
               ]
             }
@@ -539,7 +549,7 @@
           "response": []
         },
         {
-          "name": "List Nearby Orders",
+          "name": "List Available Orders",
           "event": [
             {
               "listen": "test",
@@ -558,17 +568,22 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/orders/nearby?latitude=-23.5505&longitude=-46.6333",
+              "raw": "{{baseUrl}}/orders/available?page=1&perPage=20&search=",
               "host": ["{{baseUrl}}"],
-              "path": ["orders", "nearby"],
+              "path": ["orders", "available"],
               "query": [
                 {
-                  "key": "latitude",
-                  "value": "-23.5505"
+                  "key": "page",
+                  "value": "1"
                 },
                 {
-                  "key": "longitude",
-                  "value": "-46.6333"
+                  "key": "perPage",
+                  "value": "20"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Optional: search by street, neighborhood, city, state, or zip"
                 }
               ]
             }
@@ -893,7 +908,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"recipientId\": \"{{recipientId}}\",\n  \"latitude\": -23.5505,\n  \"longitude\": -46.6333,\n  \"street\": \"Rua Example\",\n  \"number\": \"123\",\n  \"city\": \"Sao Paulo\",\n  \"state\": \"SP\",\n  \"zip\": \"01001000\",\n  \"country\": \"Brasil\"\n}",
+              "raw": "{\n  \"recipientId\": \"{{recipientId}}\",\n  \"latitude\": -23.5505,\n  \"longitude\": -46.6333,\n  \"street\": \"Rua Example\",\n  \"number\": \"123\",\n  \"city\": \"Sao Paulo\",\n  \"neighborhood\": \"Centro\",\n  \"state\": \"SP\",\n  \"zip\": \"01001000\",\n  \"country\": \"Brasil\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -998,7 +1013,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"street\": \"Rua Updated\",\n  \"city\": \"Rio de Janeiro\",\n  \"state\": \"RJ\"\n}",
+              "raw": "{\n  \"street\": \"Rua Updated\",\n  \"city\": \"Rio de Janeiro\",\n  \"neighborhood\": \"Jardins\",\n  \"state\": \"RJ\"\n}",
               "options": {
                 "raw": {
                   "language": "json"

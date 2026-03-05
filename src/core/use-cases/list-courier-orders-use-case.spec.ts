@@ -14,6 +14,7 @@ function makeOrderData(overrides?: Partial<CreateOrderData>): CreateOrderData {
     street: 'Rua Teste',
     number: '123',
     city: 'São Paulo',
+    neighborhood: 'Centro',
     state: 'SP',
     zip: '01310100',
     country: 'Brasil',
