@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import {
-  RefreshTokensRepository,
-  RefreshTokenData,
+import { RefreshTokensRepository } from '@/domain/repositories/refresh-tokens-repository.js'
+import type {
+  RefreshToken,
   CreateRefreshTokenData,
-} from '@/core/repositories/refresh-tokens-repository.js'
+} from '@/domain/entities/refresh-token.js'
 import { PrismaService } from '@/infra/database/prisma/prisma.service.js'
 
 @Injectable()
@@ -21,7 +21,7 @@ export class PrismaRefreshTokensRepository implements RefreshTokensRepository {
     })
   }
 
-  async findByToken(tokenHash: string): Promise<RefreshTokenData | null> {
+  async findByToken(tokenHash: string): Promise<RefreshToken | null> {
     return this.prisma.refreshToken.findUnique({
       where: { token: tokenHash },
     })

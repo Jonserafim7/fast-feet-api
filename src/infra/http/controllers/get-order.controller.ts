@@ -6,8 +6,8 @@ import {
   Param,
   ParseUUIDPipe,
 } from '@nestjs/common'
-import { GetOrderUseCase } from '@/core/use-cases/get-order-use-case.js'
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
+import { GetOrderUseCase } from '@/domain/use-cases/get-order-use-case.js'
+import { ResourceNotFoundError } from '@/domain/errors/resource-not-found-error.js'
 import { Roles } from '@/infra/auth/roles.decorator.js'
 import { OrderPresenter } from '@/infra/http/presenters/order-presenter.js'
 
@@ -32,7 +32,7 @@ export class GetOrderController {
     }
 
     return {
-      order: OrderPresenter.toHTTP(result.value.order),
+      order: OrderPresenter.toHTTPWithRecipient(result.value.order),
     }
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { createHash, randomUUID } from 'node:crypto'
-import { TokenHasher } from '@/core/cryptography/token-hasher.js'
+import { TokenHasher } from '@/domain/cryptography/token-hasher.js'
 
 @Injectable()
 export class Sha256TokenHasher implements TokenHasher {

@@ -1,13 +1,16 @@
-import {
-  OrdersRepository,
-  CreateOrderData,
-  UpdateOrderData,
-} from '@/core/repositories/orders-repository.js'
-import { Order, Prisma, OrderStatus } from '@/generated/prisma/client.js'
+import { OrdersRepository } from '@/domain/repositories/orders-repository.js'
+import type { CreateOrderData, UpdateOrderData } from '@/domain/entities/order.js'
+import type { Order, OrderWithRecipient } from '@/domain/entities/order.js'
+import type { OrderStatus } from '@/domain/entities/order-status.js'
+import type { InMemoryRecipientsRepository } from './in-memory-recipients-repository.js'
 import { randomUUID } from 'node:crypto'
 
 export class InMemoryOrdersRepository implements OrdersRepository {
   public items: Order[] = []
+
+  constructor(
+    private readonly recipientsRepository?: InMemoryRecipientsRepository
+  ) {}
 
   async create(data: CreateOrderData): Promise<void> {
     const order: Order = {
@@ -15,8 +18,8 @@ export class InMemoryOrdersRepository implements OrdersRepository {
       title: data.title,
       description: data.description ?? null,
       status: data.status ?? 'WAITING',
-      latitude: new Prisma.Decimal(data.latitude),
-      longitude: new Prisma.Decimal(data.longitude),
+      latitude: data.latitude,
+      longitude: data.longitude,
       street: data.street,
       number: data.number,
       city: data.city,
@@ -47,6 +50,16 @@ export class InMemoryOrdersRepository implements OrdersRepository {
     }
 
     return Promise.resolve(order)
+  }
+
+  async findByIdWithRecipient(id: string): Promise<OrderWithRecipient | null> {
+    const order = this.items.find((item) => item.id === id)
+    if (!order) return null
+
+    const recipient = await this.recipientsRepository?.findById(order.recipientId)
+    if (!recipient) return null
+
+    return { ...order, recipient }
   }
 
   findMany({
@@ -136,14 +149,8 @@ export class InMemoryOrdersRepository implements OrdersRepository {
           data.description !== undefined
             ? data.description
             : currentOrder.description,
-        latitude:
-          data.latitude !== undefined
-            ? new Prisma.Decimal(data.latitude)
-            : currentOrder.latitude,
-        longitude:
-          data.longitude !== undefined
-            ? new Prisma.Decimal(data.longitude)
-            : currentOrder.longitude,
+        latitude: data.latitude ?? currentOrder.latitude,
+        longitude: data.longitude ?? currentOrder.longitude,
         street: data.street ?? currentOrder.street,
         number: data.number ?? currentOrder.number,
         city: data.city ?? currentOrder.city,

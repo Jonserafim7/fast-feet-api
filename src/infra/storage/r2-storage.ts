@@ -1,4 +1,4 @@
-import { UploadParams, Uploader } from '@/core/storage/uploader.js'
+import { UploadParams, Uploader } from '@/domain/storage/uploader.js'
 
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { Injectable } from '@nestjs/common'

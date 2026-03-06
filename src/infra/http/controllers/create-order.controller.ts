@@ -7,8 +7,8 @@ import {
   Post,
 } from '@nestjs/common'
 import { z } from 'zod'
-import { CreateOrderUseCase } from '@/core/use-cases/create-order-use-case.js'
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
+import { CreateOrderUseCase } from '@/domain/use-cases/create-order-use-case.js'
+import { ResourceNotFoundError } from '@/domain/errors/resource-not-found-error.js'
 import { Roles } from '@/infra/auth/roles.decorator.js'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js'
 

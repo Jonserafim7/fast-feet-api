@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { Mailer, SendMailData } from '@/core/messaging/mailer.js'
+import { Mailer, SendMailData } from '@/domain/messaging/mailer.js'
 import { EnvService } from '@/infra/env/env.service.js'
 import nodemailer from 'nodemailer'
 import type { Transporter } from 'nodemailer'

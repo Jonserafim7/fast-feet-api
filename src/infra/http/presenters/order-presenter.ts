@@ -1,4 +1,5 @@
-import { Order } from '@/generated/prisma/client.js'
+import type { Order, OrderWithRecipient } from '@/domain/entities/order.js'
+import { RecipientPresenter } from './recipient-presenter.js'
 
 export class OrderPresenter {
   static toHTTP(order: Order) {
@@ -7,8 +8,8 @@ export class OrderPresenter {
       title: order.title,
       description: order.description,
       status: order.status,
-      latitude: order.latitude.toNumber(),
-      longitude: order.longitude.toNumber(),
+      latitude: order.latitude,
+      longitude: order.longitude,
       street: order.street,
       number: order.number,
       city: order.city,
@@ -23,6 +24,13 @@ export class OrderPresenter {
       courierId: order.courierId,
       createdAt: order.createdAt,
       updatedAt: order.updatedAt,
+    }
+  }
+
+  static toHTTPWithRecipient(order: OrderWithRecipient) {
+    return {
+      ...OrderPresenter.toHTTP(order),
+      recipient: RecipientPresenter.toHTTP(order.recipient),
     }
   }
 }

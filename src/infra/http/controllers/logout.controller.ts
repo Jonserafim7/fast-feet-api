@@ -5,10 +5,10 @@ import {
   HttpStatus,
   NotFoundException,
 } from '@nestjs/common'
-import { RevokeUserSessionsUseCase } from '@/core/use-cases/revoke-user-sessions-use-case.js'
+import { RevokeUserSessionsUseCase } from '@/domain/use-cases/revoke-user-sessions-use-case.js'
 import { CurrentUser } from '@/infra/auth/current-user.decorator.js'
 import type { TokenPayload } from '@/infra/auth/jwt.strategy.js'
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
+import { ResourceNotFoundError } from '@/domain/errors/resource-not-found-error.js'
 
 @Controller('sessions')
 export class LogoutController {

@@ -7,9 +7,9 @@ import {
   Param,
   ParseUUIDPipe,
 } from '@nestjs/common'
-import { GetCourierOrderUseCase } from '@/core/use-cases/get-courier-order-use-case.js'
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
-import { NotOrderCourierError } from '@/core/errors/not-order-courier-error.js'
+import { GetCourierOrderUseCase } from '@/domain/use-cases/get-courier-order-use-case.js'
+import { ResourceNotFoundError } from '@/domain/errors/resource-not-found-error.js'
+import { NotOrderCourierError } from '@/domain/errors/not-order-courier-error.js'
 import { Roles } from '@/infra/auth/roles.decorator.js'
 import { CurrentUser } from '@/infra/auth/current-user.decorator.js'
 import type { TokenPayload } from '@/infra/auth/jwt.strategy.js'

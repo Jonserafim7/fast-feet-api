@@ -1,12 +1,12 @@
-import {
-  RefreshTokensRepository,
-  RefreshTokenData,
+import { RefreshTokensRepository } from '@/domain/repositories/refresh-tokens-repository.js'
+import type {
+  RefreshToken,
   CreateRefreshTokenData,
-} from '@/core/repositories/refresh-tokens-repository.js'
+} from '@/domain/entities/refresh-token.js'
 import { randomUUID } from 'node:crypto'
 
 export class InMemoryRefreshTokensRepository implements RefreshTokensRepository {
-  public items: RefreshTokenData[] = []
+  public items: RefreshToken[] = []
 
   async create(data: CreateRefreshTokenData): Promise<void> {
     this.items.push({
@@ -20,7 +20,7 @@ export class InMemoryRefreshTokensRepository implements RefreshTokensRepository 
     })
   }
 
-  async findByToken(tokenHash: string): Promise<RefreshTokenData | null> {
+  async findByToken(tokenHash: string): Promise<RefreshToken | null> {
     return this.items.find((item) => item.token === tokenHash) ?? null
   }
 

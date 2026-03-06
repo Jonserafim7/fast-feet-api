@@ -6,8 +6,8 @@ import {
   Param,
   ParseUUIDPipe,
 } from '@nestjs/common'
-import { GetCourierUseCase } from '@/core/use-cases/get-courier-use-case.js'
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
+import { GetCourierUseCase } from '@/domain/use-cases/get-courier-use-case.js'
+import { ResourceNotFoundError } from '@/domain/errors/resource-not-found-error.js'
 import { Roles } from '@/infra/auth/roles.decorator.js'
 import { CourierPresenter } from '@/infra/http/presenters/courier-presenter.js'
 

@@ -9,9 +9,9 @@ import {
   Patch,
 } from '@nestjs/common'
 import { z } from 'zod'
-import { UpdateRecipientUseCase } from '@/core/use-cases/update-recipient-use-case.js'
-import { RecipientAlreadyExistsError } from '@/core/errors/recipient-already-exists-errors.js'
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
+import { UpdateRecipientUseCase } from '@/domain/use-cases/update-recipient-use-case.js'
+import { RecipientAlreadyExistsError } from '@/domain/errors/recipient-already-exists-errors.js'
+import { ResourceNotFoundError } from '@/domain/errors/resource-not-found-error.js'
 import { Roles } from '@/infra/auth/roles.decorator.js'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js'
 

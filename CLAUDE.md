@@ -30,18 +30,25 @@ E2E tests require the test database running (`docker compose up -d`).
 ### Clean Architecture Layers
 
 ```
-src/core/      → Pure business logic, no framework dependencies
-src/infra/     → NestJS controllers, Prisma repos, external services
-src/test/      → Test doubles (in-memory repos, fakes, factories)
-src/generated/ → Auto-generated Prisma client (do not edit)
+src/domain/entities/      → Domain interfaces, input DTOs, const enums
+src/domain/repositories/  → Abstract data access contracts (import types from entities)
+src/domain/use-cases/     → One @Injectable() class per feature, returns Either<Error, Success>
+src/domain/errors/        → Business error types
+src/domain/cryptography/  → Abstract crypto services
+src/domain/messaging/     → Abstract messaging services (Mailer)
+src/domain/storage/       → Abstract storage services (Uploader)
+src/infra/              → NestJS controllers, Prisma repos, external services
+src/test/               → Test doubles (in-memory repos, fakes, factories)
+src/generated/          → Auto-generated Prisma client (do not edit)
 ```
 
-**Dependency rule**: `core/` never imports from `infra/`. Core defines abstract interfaces; infra provides implementations via NestJS DI.
+**Dependency rule**: `domain/` never imports from `infra/` or `generated/`. Domain defines its own entity interfaces and const enums; Prisma types stay in the infra layer.
 
-### Core Layer
+### Domain Layer
 
-- **Use-cases**: One `@Injectable()` class per feature. Returns `Either<Error, Success>`, never throws.
-- **Repositories**: Abstract classes defining data access contracts. Implemented in infra via Prisma.
+- **Entities**: Domain interfaces and input DTOs live in `src/domain/entities/`. Const objects with `as const` for enums (`Role`, `OrderStatus`, `NotificationStatus`). Repositories import types from here — they never define their own.
+- **Repositories**: Abstract classes defining data access contracts. Pure method signatures, no type definitions. Implemented in infra via Prisma.
+- **Use-cases**: Returns `Either<Error, Success>`, never throws.
 - **Either monad**: `Left` = failure, `Right` = success. Use `left()` / `right()` helpers.
 - **Error types**: Each business error implements `UseCaseError`. Controllers map these to HTTP exceptions.
 - **Abstract services**: Cryptography (`Encrypter`, `HashGenerator`, `HashComparer`, `TokenHasher`), messaging (`Mailer`), storage (`Uploader`).
@@ -50,6 +57,7 @@ src/generated/ → Auto-generated Prisma client (do not edit)
 
 - **Controllers**: Zod schemas + `ZodValidationPipe` for request validation. Map `Either` results to HTTP exceptions.
 - **Presenters**: Static `toHTTP()` methods that transform domain objects to API responses (strip sensitive fields).
+- **Prisma repositories**: Map between Prisma types and domain entities at the repository boundary. Prisma-specific types (`Prisma.Decimal`, Prisma enums) never leak into core.
 - **Auth**: JWT (HS256) with Passport. Global guards: `JwtAuthGuard` + `RolesGuard`. Decorators: `@Public()`, `@Roles()`, `@CurrentUser()`.
 - **DI wiring**: `{ provide: AbstractClass, useClass: ConcreteClass }` in module providers.
 - **Environment**: Zod schema validates all env vars at startup. Access via `EnvService.get('KEY')`.
@@ -57,8 +65,7 @@ src/generated/ → Auto-generated Prisma client (do not edit)
 ## Key Conventions
 
 - **Path alias**: `@/*` → `./src/*`
-- **ESM**: `"type": "module"` — local infra imports may require `.js` extension
-- **Prisma models as entities**: Uses Prisma-generated types directly, no separate domain entity classes
+- **ESM**: `"type": "module"` — imports require `.js` extension
 - **Refresh tokens**: SHA-256 hashed before storage. Token family tracking detects reuse.
 
 ## Testing Patterns

@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import type { PrismaService } from '@/infra/database/prisma/prisma.service.js'
-import type { OrderStatus } from '@/generated/prisma/client.js'
+import type { OrderStatus } from '@/domain/entities/order-status.js'
 import { Prisma } from '@/generated/prisma/client.js'
 
 export interface MakeOrderInput {
@@ -29,8 +29,8 @@ export interface MakeOrderOutput {
   title: string
   description: string | null
   status: OrderStatus
-  latitude: Prisma.Decimal
-  longitude: Prisma.Decimal
+  latitude: number
+  longitude: number
   street: string
   number: string
   city: string
@@ -57,8 +57,8 @@ export async function makeOrder(
   const title = input.title ?? `Entrega ${orderCounter}`
   const description = input.description !== undefined ? input.description : null
   const status = input.status ?? 'WAITING'
-  const latitude = new Prisma.Decimal(input.latitude ?? -23.55052)
-  const longitude = new Prisma.Decimal(input.longitude ?? -46.633308)
+  const latitude = input.latitude ?? -23.55052
+  const longitude = input.longitude ?? -46.633308
   const street = input.street ?? `Rua Teste ${orderCounter}`
   const number = input.number ?? `${orderCounter}`
   const city = input.city ?? 'São Paulo'
@@ -78,8 +78,8 @@ export async function makeOrder(
       title,
       description,
       status,
-      latitude,
-      longitude,
+      latitude: new Prisma.Decimal(latitude),
+      longitude: new Prisma.Decimal(longitude),
       street,
       number,
       city,

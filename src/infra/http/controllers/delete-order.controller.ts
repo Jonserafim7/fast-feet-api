@@ -7,8 +7,8 @@ import {
   Param,
   ParseUUIDPipe,
 } from '@nestjs/common'
-import { DeleteOrderUseCase } from '@/core/use-cases/delete-order-use-case.js'
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
+import { DeleteOrderUseCase } from '@/domain/use-cases/delete-order-use-case.js'
+import { ResourceNotFoundError } from '@/domain/errors/resource-not-found-error.js'
 import { Roles } from '@/infra/auth/roles.decorator.js'
 
 @Controller('/orders')

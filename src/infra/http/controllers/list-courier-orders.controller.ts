@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common'
 import { z } from 'zod'
-import { ListCourierOrdersUseCase } from '@/core/use-cases/list-courier-orders-use-case.js'
+import { ListCourierOrdersUseCase } from '@/domain/use-cases/list-courier-orders-use-case.js'
 import { Roles } from '@/infra/auth/roles.decorator.js'
 import { CurrentUser } from '@/infra/auth/current-user.decorator.js'
 import type { TokenPayload } from '@/infra/auth/jwt.strategy.js'

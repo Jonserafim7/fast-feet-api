@@ -1,8 +1,8 @@
-import {
-  NotificationsRepository,
+import { NotificationsRepository } from '@/domain/repositories/notifications-repository.js'
+import type {
   CreateNotificationData,
   Notification,
-} from '@/core/repositories/notifications-repository.js'
+} from '@/domain/entities/notification.js'
 import { randomUUID } from 'node:crypto'
 
 export class InMemoryNotificationsRepository implements NotificationsRepository {

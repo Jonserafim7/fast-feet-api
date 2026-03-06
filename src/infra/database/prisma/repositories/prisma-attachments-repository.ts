@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import {
-  AttachmentsRepository,
-  CreateAttachmentData,
-} from '@/core/repositories/attachments-repository.js'
+import { AttachmentsRepository } from '@/domain/repositories/attachments-repository.js'
+import type { CreateAttachmentData } from '@/domain/entities/attachment.js'
 import { PrismaService } from '@/infra/database/prisma/prisma.service.js'
 
 @Injectable()

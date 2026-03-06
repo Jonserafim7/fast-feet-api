@@ -4,8 +4,8 @@ import {
   Get,
   NotFoundException,
 } from '@nestjs/common'
-import { GetProfileUseCase } from '@/core/use-cases/get-profile-use-case.js'
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
+import { GetProfileUseCase } from '@/domain/use-cases/get-profile-use-case.js'
+import { ResourceNotFoundError } from '@/domain/errors/resource-not-found-error.js'
 import { CurrentUser } from '@/infra/auth/current-user.decorator.js'
 import type { TokenPayload } from '@/infra/auth/jwt.strategy.js'
 import { UserPresenter } from '@/infra/http/presenters/user-presenter.js'

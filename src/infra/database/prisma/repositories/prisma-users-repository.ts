@@ -1,14 +1,24 @@
 import { Injectable } from '@nestjs/common'
-import { UsersRepository } from '@/core/repositories/users-repository.js'
+import { UsersRepository } from '@/domain/repositories/users-repository.js'
+import type { CreateUserData } from '@/domain/entities/user.js'
 import { PrismaService } from '@/infra/database/prisma/prisma.service.js'
-import { Prisma, Role, User } from '@/generated/prisma/client.js'
+import type { User } from '@/domain/entities/user.js'
+import type { Role } from '@/domain/entities/role.js'
 
 @Injectable()
 export class PrismaUsersRepository implements UsersRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: Prisma.UserUncheckedCreateInput) {
-    await this.prisma.user.create({ data })
+  async create(data: CreateUserData) {
+    await this.prisma.user.create({
+      data: {
+        id: data.id,
+        name: data.name,
+        cpf: data.cpf,
+        passwordHash: data.passwordHash,
+        role: data.role,
+      },
+    })
   }
 
   async findByCpf(cpf: string) {

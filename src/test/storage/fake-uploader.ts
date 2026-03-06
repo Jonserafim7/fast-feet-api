@@ -1,4 +1,4 @@
-import { UploadParams, Uploader } from '@/core/storage/uploader.js'
+import { UploadParams, Uploader } from '@/domain/storage/uploader.js'
 import { randomUUID } from 'node:crypto'
 
 interface Upload {

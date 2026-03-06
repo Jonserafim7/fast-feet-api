@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { Mailer } from '@/core/messaging/mailer.js'
+import { Mailer } from '@/domain/messaging/mailer.js'
 import { NodemailerMailer } from '@/infra/messaging/nodemailer-mailer.js'
 import { EnvModule } from '@/infra/env/env.module.js'
 

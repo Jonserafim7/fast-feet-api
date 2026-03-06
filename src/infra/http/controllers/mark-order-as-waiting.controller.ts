@@ -8,9 +8,9 @@ import {
   Patch,
 } from '@nestjs/common'
 import { Roles } from '@/infra/auth/roles.decorator.js'
-import { MarkOrderAsWaitingUseCase } from '@/core/use-cases/mark-order-as-waiting-use-case.js'
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
-import { InvalidOrderStatusError } from '@/core/errors/invalid-order-status-error.js'
+import { MarkOrderAsWaitingUseCase } from '@/domain/use-cases/mark-order-as-waiting-use-case.js'
+import { ResourceNotFoundError } from '@/domain/errors/resource-not-found-error.js'
+import { InvalidOrderStatusError } from '@/domain/errors/invalid-order-status-error.js'
 
 @Controller('/orders')
 @Roles('ADMIN')

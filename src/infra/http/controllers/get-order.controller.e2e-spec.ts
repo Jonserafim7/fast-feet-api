@@ -59,6 +59,11 @@ describe('Get Order (E2E)', () => {
         status: 'WAITING',
         street: 'Av Paulista',
         recipientId: recipient.id,
+        recipient: {
+          id: recipient.id,
+          name: recipient.name,
+          email: 'recipient@example.com',
+        },
       },
     })
   })

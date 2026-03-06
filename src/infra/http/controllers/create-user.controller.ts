@@ -9,8 +9,8 @@ import {
 } from '@nestjs/common'
 import { z } from 'zod'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js'
-import { CreateUserUseCase } from '@/core/use-cases/create-user-use-case.js'
-import { UserAlreadyExistsError } from '@/core/errors/user-already-exists-errors.js'
+import { CreateUserUseCase } from '@/domain/use-cases/create-user-use-case.js'
+import { UserAlreadyExistsError } from '@/domain/errors/user-already-exists-errors.js'
 import { Roles } from '@/infra/auth/roles.decorator.js'
 import { cpfSchema } from '@/infra/http/validators/cpf.schema.js'
 

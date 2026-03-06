@@ -1,15 +1,26 @@
 import { Injectable } from '@nestjs/common'
-import {
-  OrdersRepository,
-  CreateOrderData,
-  UpdateOrderData,
-} from '@/core/repositories/orders-repository.js'
+import { OrdersRepository } from '@/domain/repositories/orders-repository.js'
+import type { CreateOrderData, UpdateOrderData } from '@/domain/entities/order.js'
 import { PrismaService } from '@/infra/database/prisma/prisma.service.js'
-import { Prisma, OrderStatus, Order } from '@/generated/prisma/client.js'
+import {
+  Prisma,
+  OrderStatus,
+  Order as PrismaOrder,
+} from '@/generated/prisma/client.js'
+import type { Order } from '@/domain/entities/order.js'
+import type { OrderWithRecipient } from '@/domain/entities/order.js'
 
 @Injectable()
 export class PrismaOrdersRepository implements OrdersRepository {
   constructor(private readonly prisma: PrismaService) {}
+
+  private toDomain(prismaOrder: PrismaOrder): Order {
+    return {
+      ...prismaOrder,
+      latitude: prismaOrder.latitude.toNumber(),
+      longitude: prismaOrder.longitude.toNumber(),
+    }
+  }
 
   private buildSearchFilter(search: string): Prisma.OrderWhereInput {
     return {
@@ -53,7 +64,17 @@ export class PrismaOrdersRepository implements OrdersRepository {
     const order = await this.prisma.order.findUnique({
       where: { id },
     })
-    return order
+    return order ? this.toDomain(order) : null
+  }
+
+  async findByIdWithRecipient(id: string): Promise<OrderWithRecipient | null> {
+    const order = await this.prisma.order.findUnique({
+      where: { id },
+      include: { recipient: true },
+    })
+    if (!order) return null
+    const { recipient, ...rest } = order
+    return { ...this.toDomain(rest), recipient }
   }
 
   async findMany({ page, perPage }: { page: number; perPage: number }) {
@@ -63,7 +84,7 @@ export class PrismaOrdersRepository implements OrdersRepository {
       take: perPage,
       orderBy: { createdAt: 'desc' },
     })
-    return orders
+    return orders.map((o) => this.toDomain(o))
   }
 
   async findManyAvailable({
@@ -74,7 +95,7 @@ export class PrismaOrdersRepository implements OrdersRepository {
     page: number
     perPage: number
     search?: string
-  }): Promise<Order[]> {
+  }) {
     const skip = (page - 1) * perPage
     const where: Prisma.OrderWhereInput = {
       status: 'WAITING',
@@ -82,12 +103,13 @@ export class PrismaOrdersRepository implements OrdersRepository {
       ...(search && this.buildSearchFilter(search)),
     }
 
-    return this.prisma.order.findMany({
+    const orders = await this.prisma.order.findMany({
       where,
       skip,
       take: perPage,
       orderBy: { createdAt: 'desc' },
     })
+    return orders.map((o) => this.toDomain(o))
   }
 
   async findManyByCourierId({
@@ -110,12 +132,13 @@ export class PrismaOrdersRepository implements OrdersRepository {
       ...(search && this.buildSearchFilter(search)),
     }
 
-    return this.prisma.order.findMany({
+    const orders = await this.prisma.order.findMany({
       where,
       skip,
       take: perPage,
       orderBy: { createdAt: 'desc' },
     })
+    return orders.map((o) => this.toDomain(o))
   }
 
   async save(data: UpdateOrderData) {

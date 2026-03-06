@@ -11,10 +11,10 @@ import {
 import { Roles } from '@/infra/auth/roles.decorator.js'
 import { CurrentUser } from '@/infra/auth/current-user.decorator.js'
 import type { TokenPayload } from '@/infra/auth/jwt.strategy.js'
-import { ReturnOrderUseCase } from '@/core/use-cases/return-order-use-case.js'
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
-import { InvalidOrderStatusError } from '@/core/errors/invalid-order-status-error.js'
-import { NotOrderCourierError } from '@/core/errors/not-order-courier-error.js'
+import { ReturnOrderUseCase } from '@/domain/use-cases/return-order-use-case.js'
+import { ResourceNotFoundError } from '@/domain/errors/resource-not-found-error.js'
+import { InvalidOrderStatusError } from '@/domain/errors/invalid-order-status-error.js'
+import { NotOrderCourierError } from '@/domain/errors/not-order-courier-error.js'
 
 @Controller('/orders')
 @Roles('COURIER')

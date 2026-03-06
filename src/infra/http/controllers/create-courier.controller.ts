@@ -8,8 +8,8 @@ import {
   UsePipes,
 } from '@nestjs/common'
 import { z } from 'zod'
-import { CreateCourierUseCase } from '@/core/use-cases/create-courier-use-case.js'
-import { UserAlreadyExistsError } from '@/core/errors/user-already-exists-errors.js'
+import { CreateCourierUseCase } from '@/domain/use-cases/create-courier-use-case.js'
+import { UserAlreadyExistsError } from '@/domain/errors/user-already-exists-errors.js'
 import { Roles } from '@/infra/auth/roles.decorator.js'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js'
 import { cpfSchema } from '@/infra/http/validators/cpf.schema.js'

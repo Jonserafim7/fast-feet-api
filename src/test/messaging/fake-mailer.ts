@@ -1,4 +1,4 @@
-import { Mailer, SendMailData } from '@/core/messaging/mailer.js'
+import { Mailer, SendMailData } from '@/domain/messaging/mailer.js'
 
 export class FakeMailer implements Mailer {
   public emails: SendMailData[] = []

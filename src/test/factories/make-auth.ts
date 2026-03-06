@@ -1,5 +1,5 @@
 import type { JwtService } from '@nestjs/jwt'
-import type { Role } from '@/generated/prisma/client.js'
+import type { Role } from '@/domain/entities/role.js'
 
 export interface AuthTokenPayload {
   sub: string

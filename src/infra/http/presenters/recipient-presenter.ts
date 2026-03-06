@@ -1,4 +1,4 @@
-import { Recipient } from '@/generated/prisma/client.js'
+import type { Recipient } from '@/domain/entities/recipient.js'
 
 export class RecipientPresenter {
   static toHTTP(recipient: Recipient) {

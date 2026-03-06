@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common'
-import { RecipientsRepository } from '@/core/repositories/recipients-repository.js'
+import { RecipientsRepository } from '@/domain/repositories/recipients-repository.js'
+import type { CreateRecipientData } from '@/domain/entities/recipient.js'
 import { PrismaService } from '@/infra/database/prisma/prisma.service.js'
-import { Prisma, Recipient } from '@/generated/prisma/client.js'
+import type { Recipient } from '@/domain/entities/recipient.js'
 
 @Injectable()
 export class PrismaRecipientsRepository implements RecipientsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: Prisma.RecipientUncheckedCreateInput) {
+  async create(data: CreateRecipientData) {
     await this.prisma.recipient.create({ data })
   }
 

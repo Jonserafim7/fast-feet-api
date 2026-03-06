@@ -9,8 +9,8 @@ import {
   Patch,
 } from '@nestjs/common'
 import { z } from 'zod'
-import { UpdateUserPasswordUseCase } from '@/core/use-cases/update-user-password-use-case.js'
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error.js'
+import { UpdateUserPasswordUseCase } from '@/domain/use-cases/update-user-password-use-case.js'
+import { ResourceNotFoundError } from '@/domain/errors/resource-not-found-error.js'
 import { Roles } from '@/infra/auth/roles.decorator.js'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js'
 

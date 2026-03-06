@@ -1,8 +1,6 @@
-import {
-  AttachmentsRepository,
-  CreateAttachmentData,
-} from '@/core/repositories/attachments-repository.js'
-import { Attachment } from '@/generated/prisma/client.js'
+import { AttachmentsRepository } from '@/domain/repositories/attachments-repository.js'
+import type { CreateAttachmentData } from '@/domain/entities/attachment.js'
+import type { Attachment } from '@/domain/entities/attachment.js'
 import { randomUUID } from 'node:crypto'
 
 export class InMemoryAttachmentsRepository implements AttachmentsRepository {

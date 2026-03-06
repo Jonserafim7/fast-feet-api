@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common'
 import { z } from 'zod'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js'
-import { RefreshTokenUseCase } from '@/core/use-cases/refresh-token-use-case.js'
+import { RefreshTokenUseCase } from '@/domain/use-cases/refresh-token-use-case.js'
 import { Public } from '@/infra/auth/public.decorator.js'
 import { EnvService } from '@/infra/env/env.service.js'
 

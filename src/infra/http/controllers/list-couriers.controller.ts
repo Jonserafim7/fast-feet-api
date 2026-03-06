@@ -1,6 +1,6 @@
 import { Controller, Get, Query, UsePipes } from '@nestjs/common'
 import { z } from 'zod'
-import { ListCouriersUseCase } from '@/core/use-cases/list-couriers-use-case.js'
+import { ListCouriersUseCase } from '@/domain/use-cases/list-couriers-use-case.js'
 import { Roles } from '@/infra/auth/roles.decorator.js'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js'
 import { CourierPresenter } from '@/infra/http/presenters/courier-presenter.js'

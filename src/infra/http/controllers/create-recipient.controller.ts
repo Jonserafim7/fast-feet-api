@@ -7,8 +7,8 @@ import {
   Post,
 } from '@nestjs/common'
 import { z } from 'zod'
-import { CreateRecipientUseCase } from '@/core/use-cases/create-recipient-use-case.js'
-import { RecipientAlreadyExistsError } from '@/core/errors/recipient-already-exists-errors.js'
+import { CreateRecipientUseCase } from '@/domain/use-cases/create-recipient-use-case.js'
+import { RecipientAlreadyExistsError } from '@/domain/errors/recipient-already-exists-errors.js'
 import { Roles } from '@/infra/auth/roles.decorator.js'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js'
 

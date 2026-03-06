@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import { BcryptHasher } from '@/infra/cryptography/bcrypt-hasher.js'
 import type { PrismaService } from '@/infra/database/prisma/prisma.service.js'
-import type { Role } from '@/generated/prisma/client.js'
+import type { Role } from '@/domain/entities/role.js'
 
 export interface MakeUserInput {
   id?: string

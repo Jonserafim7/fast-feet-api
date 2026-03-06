@@ -1,11 +1,12 @@
-import { RecipientsRepository } from '@/core/repositories/recipients-repository.js'
-import { Recipient, Prisma } from '@/generated/prisma/client.js'
+import { RecipientsRepository } from '@/domain/repositories/recipients-repository.js'
+import type { CreateRecipientData } from '@/domain/entities/recipient.js'
+import type { Recipient } from '@/domain/entities/recipient.js'
 import { randomUUID } from 'node:crypto'
 
 export class InMemoryRecipientsRepository implements RecipientsRepository {
   public items: Recipient[] = []
 
-  async create(data: Prisma.RecipientUncheckedCreateInput): Promise<void> {
+  async create(data: CreateRecipientData): Promise<void> {
     const recipient: Recipient = {
       id: data.id ?? randomUUID(),
       name: data.name,
