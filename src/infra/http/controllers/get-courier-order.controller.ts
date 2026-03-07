@@ -44,7 +44,7 @@ export class GetCourierOrderController {
     }
 
     return {
-      order: OrderPresenter.toHTTP(result.value.order),
+      order: OrderPresenter.toHTTPWithRecipient(result.value.order),
     }
   }
 }

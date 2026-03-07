@@ -3,7 +3,7 @@ import { OrdersRepository } from '@/domain/repositories/orders-repository.js'
 import { Either, left, right } from '@/domain/errors/either.js'
 import { ResourceNotFoundError } from '@/domain/errors/resource-not-found-error.js'
 import { NotOrderCourierError } from '@/domain/errors/not-order-courier-error.js'
-import type { Order } from '@/domain/entities/order.js'
+import type { OrderWithRecipient } from '@/domain/entities/order.js'
 
 interface GetCourierOrderUseCaseRequest {
   orderId: string
@@ -13,7 +13,7 @@ interface GetCourierOrderUseCaseRequest {
 type GetCourierOrderUseCaseResponse = Either<
   ResourceNotFoundError | NotOrderCourierError,
   {
-    order: Order
+    order: OrderWithRecipient
   }
 >
 
@@ -25,7 +25,7 @@ export class GetCourierOrderUseCase {
     orderId,
     courierId,
   }: GetCourierOrderUseCaseRequest): Promise<GetCourierOrderUseCaseResponse> {
-    const order = await this.ordersRepository.findById(orderId)
+    const order = await this.ordersRepository.findByIdWithRecipient(orderId)
 
     if (!order) {
       return left(new ResourceNotFoundError(orderId))

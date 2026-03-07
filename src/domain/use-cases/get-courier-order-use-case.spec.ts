@@ -1,15 +1,24 @@
 import { InMemoryOrdersRepository } from '@/test/repositories/in-memory-orders-repository.js'
+import { InMemoryRecipientsRepository } from '@/test/repositories/in-memory-recipients-repository.js'
 import { GetCourierOrderUseCase } from './get-courier-order-use-case.js'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.js'
 import { NotOrderCourierError } from '../errors/not-order-courier-error.js'
 
 describe('get courier order use case', () => {
+  let recipientsRepository: InMemoryRecipientsRepository
   let ordersRepository: InMemoryOrdersRepository
   let sut: GetCourierOrderUseCase
 
-  beforeEach(() => {
-    ordersRepository = new InMemoryOrdersRepository()
+  beforeEach(async () => {
+    recipientsRepository = new InMemoryRecipientsRepository()
+    ordersRepository = new InMemoryOrdersRepository(recipientsRepository)
     sut = new GetCourierOrderUseCase(ordersRepository)
+
+    await recipientsRepository.create({
+      id: 'recipient-1',
+      name: 'John Doe',
+      email: 'john@example.com',
+    })
   })
 
   it('should return a WAITING order for any courier', async () => {
