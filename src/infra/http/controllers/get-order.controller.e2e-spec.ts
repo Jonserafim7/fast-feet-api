@@ -8,6 +8,7 @@ import {
   makeAccessToken,
   makeRecipient,
   makeOrder,
+  makeAttachment,
 } from '@/test/factories/index.js'
 
 describe('Get Order (E2E)', () => {
@@ -43,6 +44,10 @@ describe('Get Order (E2E)', () => {
       street: 'Av Paulista',
     })
 
+    const attachment = await makeAttachment(prisma, {
+      orderId: order.id,
+    })
+
     const accessToken = await makeAccessToken(jwt, {
       sub: adminUser.id,
       role: adminUser.role,
@@ -64,6 +69,13 @@ describe('Get Order (E2E)', () => {
           name: recipient.name,
           email: 'recipient@example.com',
         },
+        attachments: [
+          {
+            id: attachment.id,
+            title: attachment.title,
+            url: expect.stringContaining(attachment.url),
+          },
+        ],
       },
     })
   })

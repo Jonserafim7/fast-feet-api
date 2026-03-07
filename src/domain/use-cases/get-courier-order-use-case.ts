@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { OrdersRepository } from '@/domain/repositories/orders-repository.js'
+import { AttachmentsRepository } from '@/domain/repositories/attachments-repository.js'
+import { Uploader } from '@/domain/storage/uploader.js'
 import { Either, left, right } from '@/domain/errors/either.js'
 import { ResourceNotFoundError } from '@/domain/errors/resource-not-found-error.js'
 import { NotOrderCourierError } from '@/domain/errors/not-order-courier-error.js'
-import type { OrderWithRecipient } from '@/domain/entities/order.js'
+import type { OrderWithRecipientAndAttachments } from '@/domain/entities/order.js'
 
 interface GetCourierOrderUseCaseRequest {
   orderId: string
@@ -13,13 +15,17 @@ interface GetCourierOrderUseCaseRequest {
 type GetCourierOrderUseCaseResponse = Either<
   ResourceNotFoundError | NotOrderCourierError,
   {
-    order: OrderWithRecipient
+    order: OrderWithRecipientAndAttachments
   }
 >
 
 @Injectable()
 export class GetCourierOrderUseCase {
-  constructor(private readonly ordersRepository: OrdersRepository) {}
+  constructor(
+    private readonly ordersRepository: OrdersRepository,
+    private readonly attachmentsRepository: AttachmentsRepository,
+    private readonly uploader: Uploader
+  ) {}
 
   async execute({
     orderId,
@@ -38,6 +44,15 @@ export class GetCourierOrderUseCase {
       return left(new NotOrderCourierError())
     }
 
-    return right({ order })
+    const rawAttachments = await this.attachmentsRepository.findByOrderId(orderId)
+
+    const attachments = await Promise.all(
+      rawAttachments.map(async (a) => ({
+        ...a,
+        url: await this.uploader.getFileUrl(a.url),
+      }))
+    )
+
+    return right({ order: { ...order, attachments } })
   }
 }

@@ -1,3 +1,4 @@
+import type { Attachment } from './attachment.js'
 import type { OrderStatus } from './order-status.js'
 import type { Recipient } from './recipient.js'
 
@@ -27,6 +28,10 @@ export interface Order {
 
 export interface OrderWithRecipient extends Order {
   recipient: Recipient
+}
+
+export interface OrderWithRecipientAndAttachments extends OrderWithRecipient {
+  attachments: Attachment[]
 }
 
 export interface CreateOrderData {

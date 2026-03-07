@@ -19,4 +19,8 @@ export class FakeUploader implements Uploader {
 
     return { url }
   }
+
+  async getFileUrl(key: string): Promise<string> {
+    return `http://fake-url.com/${key}`
+  }
 }

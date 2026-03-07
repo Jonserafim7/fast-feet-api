@@ -1,6 +1,7 @@
 import { UploadParams, Uploader } from '@/domain/storage/uploader.js'
 
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { Injectable } from '@nestjs/common'
 import { EnvService } from '@/infra/env/env.service.js'
 import { randomUUID } from 'node:crypto'
@@ -42,5 +43,14 @@ export class R2Storage implements Uploader {
     return {
       url: uniqueFileName,
     }
+  }
+
+  async getFileUrl(key: string): Promise<string> {
+    const command = new GetObjectCommand({
+      Bucket: this.envService.get('AWS_BUCKET_NAME'),
+      Key: key,
+    })
+
+    return getSignedUrl(this.client, command, { expiresIn: 3600 })
   }
 }

@@ -1,5 +1,7 @@
 import { InMemoryOrdersRepository } from '@/test/repositories/in-memory-orders-repository.js'
 import { InMemoryRecipientsRepository } from '@/test/repositories/in-memory-recipients-repository.js'
+import { InMemoryAttachmentsRepository } from '@/test/repositories/in-memory-attachments-repository.js'
+import { FakeUploader } from '@/test/storage/fake-uploader.js'
 import { GetCourierOrderUseCase } from './get-courier-order-use-case.js'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.js'
 import { NotOrderCourierError } from '../errors/not-order-courier-error.js'
@@ -7,12 +9,20 @@ import { NotOrderCourierError } from '../errors/not-order-courier-error.js'
 describe('get courier order use case', () => {
   let recipientsRepository: InMemoryRecipientsRepository
   let ordersRepository: InMemoryOrdersRepository
+  let attachmentsRepository: InMemoryAttachmentsRepository
+  let uploader: FakeUploader
   let sut: GetCourierOrderUseCase
 
   beforeEach(async () => {
     recipientsRepository = new InMemoryRecipientsRepository()
     ordersRepository = new InMemoryOrdersRepository(recipientsRepository)
-    sut = new GetCourierOrderUseCase(ordersRepository)
+    attachmentsRepository = new InMemoryAttachmentsRepository()
+    uploader = new FakeUploader()
+    sut = new GetCourierOrderUseCase(
+      ordersRepository,
+      attachmentsRepository,
+      uploader
+    )
 
     await recipientsRepository.create({
       id: 'recipient-1',
@@ -76,6 +86,44 @@ describe('get courier order use case', () => {
     if (result.isRight()) {
       expect(result.value.order.id).toBe('order-1')
       expect(result.value.order.status).toBe('WITHDRAWN')
+    }
+  })
+
+  it('should return order with attachments', async () => {
+    await ordersRepository.create({
+      id: 'order-1',
+      title: 'Entrega',
+      status: 'DELIVERED',
+      recipientId: 'recipient-1',
+      courierId: 'courier-1',
+      latitude: -23.55052,
+      longitude: -46.633308,
+      street: 'Av Paulista',
+      number: '1000',
+      city: 'São Paulo',
+      neighborhood: 'Centro',
+      state: 'SP',
+      zip: '01310100',
+      country: 'Brasil',
+    })
+
+    await attachmentsRepository.create({
+      title: 'photo.jpg',
+      url: 'abc-photo.jpg',
+      orderId: 'order-1',
+    })
+
+    const result = await sut.execute({
+      orderId: 'order-1',
+      courierId: 'courier-1',
+    })
+
+    expect(result.isRight()).toBe(true)
+    if (result.isRight()) {
+      expect(result.value.order.attachments).toHaveLength(1)
+      expect(result.value.order.attachments[0].url).toBe(
+        'http://fake-url.com/abc-photo.jpg'
+      )
     }
   })
 

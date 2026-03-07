@@ -8,6 +8,7 @@ import {
   makeAccessToken,
   makeRecipient,
   makeOrder,
+  makeAttachment,
 } from '@/test/factories/index.js'
 
 describe('Get Courier Order (E2E)', () => {
@@ -61,7 +62,7 @@ describe('Get Courier Order (E2E)', () => {
     })
   })
 
-  test('[GET] /orders/me/:id - courier can get own assigned order', async () => {
+  test('[GET] /orders/me/:id - courier can get own assigned order with attachments', async () => {
     const courier = await makeCourier(prisma, { cpf: '38937165471' })
     const recipient = await makeRecipient(prisma, {
       email: 'recipient-2@example.com',
@@ -70,6 +71,10 @@ describe('Get Courier Order (E2E)', () => {
       recipientId: recipient.id,
       status: 'WITHDRAWN',
       courierId: courier.id,
+    })
+
+    const attachment = await makeAttachment(prisma, {
+      orderId: order.id,
     })
 
     const accessToken = await makeAccessToken(jwt, {
@@ -87,6 +92,13 @@ describe('Get Courier Order (E2E)', () => {
         id: order.id,
         status: 'WITHDRAWN',
         courierId: courier.id,
+        attachments: [
+          {
+            id: attachment.id,
+            title: attachment.title,
+            url: expect.stringContaining(attachment.url),
+          },
+        ],
       },
     })
   })

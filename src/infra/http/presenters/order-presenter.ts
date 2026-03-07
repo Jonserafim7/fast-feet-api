@@ -1,4 +1,8 @@
-import type { Order, OrderWithRecipient } from '@/domain/entities/order.js'
+import type {
+  Order,
+  OrderWithRecipient,
+  OrderWithRecipientAndAttachments,
+} from '@/domain/entities/order.js'
 import { RecipientPresenter } from './recipient-presenter.js'
 
 export class OrderPresenter {
@@ -31,6 +35,19 @@ export class OrderPresenter {
     return {
       ...OrderPresenter.toHTTP(order),
       recipient: RecipientPresenter.toHTTP(order.recipient),
+    }
+  }
+
+  static toHTTPWithRecipientAndAttachments(
+    order: OrderWithRecipientAndAttachments
+  ) {
+    return {
+      ...OrderPresenter.toHTTPWithRecipient(order),
+      attachments: order.attachments.map((a) => ({
+        id: a.id,
+        title: a.title,
+        url: a.url,
+      })),
     }
   }
 }
