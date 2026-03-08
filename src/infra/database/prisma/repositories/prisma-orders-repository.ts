@@ -79,12 +79,15 @@ export class PrismaOrdersRepository implements OrdersRepository {
 
   async findMany({ page, perPage }: { page: number; perPage: number }) {
     const skip = (page - 1) * perPage
-    const orders = await this.prisma.order.findMany({
-      skip,
-      take: perPage,
-      orderBy: { createdAt: 'desc' },
-    })
-    return orders.map((o) => this.toDomain(o))
+    const [items, total] = await Promise.all([
+      this.prisma.order.findMany({
+        skip,
+        take: perPage,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.order.count(),
+    ])
+    return { orders: items.map((o) => this.toDomain(o)), total }
   }
 
   async findManyAvailable({
@@ -103,13 +106,16 @@ export class PrismaOrdersRepository implements OrdersRepository {
       ...(search && this.buildSearchFilter(search)),
     }
 
-    const orders = await this.prisma.order.findMany({
-      where,
-      skip,
-      take: perPage,
-      orderBy: { createdAt: 'desc' },
-    })
-    return orders.map((o) => this.toDomain(o))
+    const [items, total] = await Promise.all([
+      this.prisma.order.findMany({
+        where,
+        skip,
+        take: perPage,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.order.count({ where }),
+    ])
+    return { orders: items.map((o) => this.toDomain(o)), total }
   }
 
   async findManyByCourierId({
@@ -132,13 +138,16 @@ export class PrismaOrdersRepository implements OrdersRepository {
       ...(search && this.buildSearchFilter(search)),
     }
 
-    const orders = await this.prisma.order.findMany({
-      where,
-      skip,
-      take: perPage,
-      orderBy: { createdAt: 'desc' },
-    })
-    return orders.map((o) => this.toDomain(o))
+    const [items, total] = await Promise.all([
+      this.prisma.order.findMany({
+        where,
+        skip,
+        take: perPage,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.order.count({ where }),
+    ])
+    return { orders: items.map((o) => this.toDomain(o)), total }
   }
 
   async save(data: UpdateOrderData) {

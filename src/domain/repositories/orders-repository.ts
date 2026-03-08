@@ -12,19 +12,22 @@ export abstract class OrdersRepository {
   abstract create(data: CreateOrderData): Promise<void>
   abstract findById(id: string): Promise<Order | null>
   abstract findByIdWithRecipient(id: string): Promise<OrderWithRecipient | null>
-  abstract findMany(params: { page: number; perPage: number }): Promise<Order[]>
+  abstract findMany(params: {
+    page: number
+    perPage: number
+  }): Promise<{ orders: Order[]; total: number }>
   abstract findManyAvailable(params: {
     page: number
     perPage: number
     search?: string
-  }): Promise<Order[]>
+  }): Promise<{ orders: Order[]; total: number }>
   abstract findManyByCourierId(params: {
     courierId: string
     page: number
     perPage: number
     status?: OrderStatus
     search?: string
-  }): Promise<Order[]>
+  }): Promise<{ orders: Order[]; total: number }>
   abstract save(data: UpdateOrderData): Promise<void>
   abstract delete(id: string): Promise<void>
   abstract updateStatus(id: string, status: OrderStatus): Promise<void>

@@ -13,6 +13,7 @@ type ListAvailableOrdersUseCaseResponse = Either<
   null,
   {
     orders: Order[]
+    total: number
   }
 >
 
@@ -25,12 +26,12 @@ export class ListAvailableOrdersUseCase {
     perPage,
     search,
   }: ListAvailableOrdersUseCaseRequest): Promise<ListAvailableOrdersUseCaseResponse> {
-    const orders = await this.ordersRepository.findManyAvailable({
+    const { orders, total } = await this.ordersRepository.findManyAvailable({
       page,
       perPage,
       search,
     })
 
-    return right({ orders })
+    return right({ orders, total })
   }
 }

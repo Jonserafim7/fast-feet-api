@@ -68,14 +68,14 @@ export class InMemoryOrdersRepository implements OrdersRepository {
   }: {
     page: number
     perPage: number
-  }): Promise<Order[]> {
-    const start = (page - 1) * perPage
-    const orders = this.items
+  }): Promise<{ orders: Order[]; total: number }> {
+    const sorted = this.items
       .slice()
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-      .slice(start, start + perPage)
+    const start = (page - 1) * perPage
+    const orders = sorted.slice(start, start + perPage)
 
-    return Promise.resolve(orders)
+    return Promise.resolve({ orders, total: sorted.length })
   }
 
   private matchesSearch(order: Order, search: string): boolean {
@@ -98,16 +98,19 @@ export class InMemoryOrdersRepository implements OrdersRepository {
     page: number
     perPage: number
     search?: string
-  }): Promise<Order[]> {
-    const start = (page - 1) * perPage
-    return this.items
+  }): Promise<{ orders: Order[]; total: number }> {
+    const filtered = this.items
       .filter((order) => {
         if (order.status !== 'WAITING' || order.courierId !== null) return false
         if (search && !this.matchesSearch(order, search)) return false
         return true
       })
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-      .slice(start, start + perPage)
+    const start = (page - 1) * perPage
+    return {
+      orders: filtered.slice(start, start + perPage),
+      total: filtered.length,
+    }
   }
 
   findManyByCourierId({
@@ -122,9 +125,8 @@ export class InMemoryOrdersRepository implements OrdersRepository {
     perPage: number
     status?: OrderStatus
     search?: string
-  }): Promise<Order[]> {
-    const start = (page - 1) * perPage
-    const orders = this.items
+  }): Promise<{ orders: Order[]; total: number }> {
+    const filtered = this.items
       .filter((order) => {
         if (order.courierId !== courierId) return false
         if (status && order.status !== status) return false
@@ -132,9 +134,12 @@ export class InMemoryOrdersRepository implements OrdersRepository {
         return true
       })
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-      .slice(start, start + perPage)
+    const start = (page - 1) * perPage
 
-    return Promise.resolve(orders)
+    return Promise.resolve({
+      orders: filtered.slice(start, start + perPage),
+      total: filtered.length,
+    })
   }
 
   save(data: UpdateOrderData): Promise<void> {

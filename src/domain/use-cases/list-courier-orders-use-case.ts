@@ -16,6 +16,7 @@ type ListCourierOrdersUseCaseResponse = Either<
   null,
   {
     orders: Order[]
+    total: number
   }
 >
 
@@ -30,7 +31,7 @@ export class ListCourierOrdersUseCase {
     status,
     search,
   }: ListCourierOrdersUseCaseRequest): Promise<ListCourierOrdersUseCaseResponse> {
-    const orders = await this.ordersRepository.findManyByCourierId({
+    const { orders, total } = await this.ordersRepository.findManyByCourierId({
       courierId,
       page,
       perPage,
@@ -38,6 +39,6 @@ export class ListCourierOrdersUseCase {
       search,
     })
 
-    return right({ orders })
+    return right({ orders, total })
   }
 }

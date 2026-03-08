@@ -12,6 +12,7 @@ type ListOrdersUseCaseResponse = Either<
   null,
   {
     orders: Order[]
+    total: number
   }
 >
 
@@ -23,8 +24,11 @@ export class ListOrdersUseCase {
     page,
     perPage,
   }: ListOrdersUseCaseRequest): Promise<ListOrdersUseCaseResponse> {
-    const orders = await this.ordersRepository.findMany({ page, perPage })
+    const { orders, total } = await this.ordersRepository.findMany({
+      page,
+      perPage,
+    })
 
-    return right({ orders })
+    return right({ orders, total })
   }
 }

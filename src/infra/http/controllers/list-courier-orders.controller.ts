@@ -42,9 +42,10 @@ export class ListCourierOrdersController {
     if (result.isRight()) {
       return {
         orders: result.value.orders.map((order) => OrderPresenter.toHTTP(order)),
+        total: result.value.total,
       }
     }
 
-    return { orders: [] }
+    return { orders: [], total: 0 }
   }
 }
