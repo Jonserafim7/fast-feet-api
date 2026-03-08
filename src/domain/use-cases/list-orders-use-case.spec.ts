@@ -1,4 +1,5 @@
 import { InMemoryOrdersRepository } from '@/test/repositories/in-memory-orders-repository.js'
+import { makeOrderData } from '@/test/factories/index.js'
 import { ListOrdersUseCase } from './list-orders-use-case.js'
 
 describe('list orders use case', () => {
@@ -12,21 +13,7 @@ describe('list orders use case', () => {
 
   it('should list orders with pagination', async () => {
     for (let i = 1; i <= 25; i++) {
-      await ordersRepository.create({
-        id: `order-${i}`,
-        title: 'Entrega',
-        status: 'WAITING',
-        recipientId: 'recipient-1',
-        latitude: -23.55052,
-        longitude: -46.633308,
-        street: `Street ${i}`,
-        number: `${i}`,
-        city: 'São Paulo',
-        neighborhood: 'Centro',
-        state: 'SP',
-        zip: '01310100',
-        country: 'Brasil',
-      })
+      await ordersRepository.create(makeOrderData({ id: `order-${i}` }))
     }
 
     const resultPage1 = await sut.execute({ page: 1, perPage: 10 })

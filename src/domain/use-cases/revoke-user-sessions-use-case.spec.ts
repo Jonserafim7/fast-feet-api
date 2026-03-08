@@ -2,6 +2,7 @@ import { InMemoryUsersRepository } from '@/test/repositories/in-memory-users-rep
 import { InMemoryRefreshTokensRepository } from '@/test/repositories/in-memory-refresh-tokens-repository.js'
 import { RevokeUserSessionsUseCase } from './revoke-user-sessions-use-case.js'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.js'
+import { makeUserData } from '@/test/factories/index.js'
 
 describe('revoke user sessions use case', () => {
   let usersRepository: InMemoryUsersRepository
@@ -15,13 +16,7 @@ describe('revoke user sessions use case', () => {
   })
 
   it('should revoke all sessions for a user', async () => {
-    await usersRepository.create({
-      id: 'user-1',
-      name: 'John Doe',
-      cpf: '12345678909',
-      passwordHash: 'hashed',
-      role: 'COURIER',
-    })
+    await usersRepository.create(makeUserData({ id: 'user-1' }))
 
     await refreshTokensRepository.create({
       token: 'token-1',
@@ -44,13 +39,7 @@ describe('revoke user sessions use case', () => {
   })
 
   it('should not revoke tokens of other users', async () => {
-    await usersRepository.create({
-      id: 'user-1',
-      name: 'John Doe',
-      cpf: '12345678909',
-      passwordHash: 'hashed',
-      role: 'COURIER',
-    })
+    await usersRepository.create(makeUserData({ id: 'user-1' }))
 
     await refreshTokensRepository.create({
       token: 'token-user1',

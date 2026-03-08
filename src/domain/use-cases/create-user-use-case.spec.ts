@@ -2,6 +2,7 @@ import { InMemoryUsersRepository } from '@/test/repositories/in-memory-users-rep
 import { FakeHashGenerator } from '@/test/cryptography/fake-hash-generator.js'
 import { CreateUserUseCase } from './create-user-use-case.js'
 import { UserAlreadyExistsError } from '../errors/user-already-exists-errors.js'
+import { makeUserData } from '@/test/factories/index.js'
 
 describe('create user use case', () => {
   let usersRepository: InMemoryUsersRepository
@@ -25,12 +26,12 @@ describe('create user use case', () => {
   })
 
   it('should not be able to create a new user with same cpf', async () => {
-    await usersRepository.create({
-      name: 'John Doe',
-      cpf: '12345678909',
-      passwordHash: await hashGenerator.hash('123456'),
-      role: 'COURIER',
-    })
+    await usersRepository.create(
+      makeUserData({
+        cpf: '12345678909',
+        passwordHash: await hashGenerator.hash('123456'),
+      })
+    )
 
     const result = await sut.execute({
       name: 'John Doe',

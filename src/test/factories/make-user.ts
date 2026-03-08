@@ -1,7 +1,21 @@
 import { randomUUID } from 'node:crypto'
+import { faker } from '@faker-js/faker'
 import { BcryptHasher } from '@/infra/cryptography/bcrypt-hasher.js'
+import type { CreateUserData } from '@/domain/entities/user.js'
 import type { PrismaService } from '@/infra/database/prisma/prisma.service.js'
 import type { Role } from '@/domain/entities/role.js'
+
+export function makeUserData(
+  overrides?: Partial<CreateUserData>
+): CreateUserData {
+  return {
+    name: faker.person.fullName(),
+    cpf: faker.string.numeric(11),
+    passwordHash: faker.internet.password(),
+    role: 'COURIER',
+    ...overrides,
+  }
+}
 
 export interface MakeUserInput {
   id?: string

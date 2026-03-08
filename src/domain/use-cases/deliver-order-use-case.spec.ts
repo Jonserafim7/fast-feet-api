@@ -4,6 +4,7 @@ import { InMemoryRecipientsRepository } from '@/test/repositories/in-memory-reci
 import { InMemoryNotificationsRepository } from '@/test/repositories/in-memory-notifications-repository.js'
 import { FakeMailer } from '@/test/messaging/fake-mailer.js'
 import { FakeUploader } from '@/test/storage/fake-uploader.js'
+import { makeOrderData, makeRecipientData } from '@/test/factories/index.js'
 import { DeliverOrderUseCase } from './deliver-order-use-case.js'
 import { SendNotificationUseCase } from './send-notification-use-case.js'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.js'
@@ -42,28 +43,22 @@ describe('deliver order use case', () => {
   })
 
   it('should be able to deliver an order with photo', async () => {
-    await recipientsRepository.create({
-      id: 'recipient-1',
-      name: 'John Doe',
-      email: 'john@example.com',
-    })
+    await recipientsRepository.create(
+      makeRecipientData({
+        id: 'recipient-1',
+        name: 'John Doe',
+        email: 'john@example.com',
+      })
+    )
 
-    await ordersRepository.create({
-      id: 'order-1',
-      title: 'Entrega',
-      status: 'WITHDRAWN',
-      recipientId: 'recipient-1',
-      courierId: 'courier-1',
-      latitude: -23.55052,
-      longitude: -46.633308,
-      street: 'Av Paulista',
-      number: '1000',
-      city: 'São Paulo',
-      neighborhood: 'Centro',
-      state: 'SP',
-      zip: '01310100',
-      country: 'Brasil',
-    })
+    await ordersRepository.create(
+      makeOrderData({
+        id: 'order-1',
+        status: 'WITHDRAWN',
+        recipientId: 'recipient-1',
+        courierId: 'courier-1',
+      })
+    )
 
     const result = await sut.execute({
       orderId: 'order-1',
@@ -100,22 +95,14 @@ describe('deliver order use case', () => {
   })
 
   it('should not deliver order if courier is not the owner', async () => {
-    await ordersRepository.create({
-      id: 'order-1',
-      title: 'Entrega',
-      status: 'WITHDRAWN',
-      recipientId: 'recipient-1',
-      courierId: 'courier-1',
-      latitude: -23.55052,
-      longitude: -46.633308,
-      street: 'Av Paulista',
-      number: '1000',
-      city: 'São Paulo',
-      neighborhood: 'Centro',
-      state: 'SP',
-      zip: '01310100',
-      country: 'Brasil',
-    })
+    await ordersRepository.create(
+      makeOrderData({
+        id: 'order-1',
+        status: 'WITHDRAWN',
+        recipientId: 'recipient-1',
+        courierId: 'courier-1',
+      })
+    )
 
     const result = await sut.execute({
       orderId: 'order-1',
@@ -130,21 +117,13 @@ describe('deliver order use case', () => {
   })
 
   it('should not deliver order that is not withdrawn', async () => {
-    await ordersRepository.create({
-      id: 'order-1',
-      title: 'Entrega',
-      status: 'WAITING',
-      recipientId: 'recipient-1',
-      latitude: -23.55052,
-      longitude: -46.633308,
-      street: 'Av Paulista',
-      number: '1000',
-      city: 'São Paulo',
-      neighborhood: 'Centro',
-      state: 'SP',
-      zip: '01310100',
-      country: 'Brasil',
-    })
+    await ordersRepository.create(
+      makeOrderData({
+        id: 'order-1',
+        status: 'WAITING',
+        recipientId: 'recipient-1',
+      })
+    )
 
     const result = await sut.execute({
       orderId: 'order-1',
@@ -172,22 +151,14 @@ describe('deliver order use case', () => {
   })
 
   it('should not deliver order without file', async () => {
-    await ordersRepository.create({
-      id: 'order-1',
-      title: 'Entrega',
-      status: 'WITHDRAWN',
-      recipientId: 'recipient-1',
-      courierId: 'courier-1',
-      latitude: -23.55052,
-      longitude: -46.633308,
-      street: 'Av Paulista',
-      number: '1000',
-      city: 'São Paulo',
-      neighborhood: 'Centro',
-      state: 'SP',
-      zip: '01310100',
-      country: 'Brasil',
-    })
+    await ordersRepository.create(
+      makeOrderData({
+        id: 'order-1',
+        status: 'WITHDRAWN',
+        recipientId: 'recipient-1',
+        courierId: 'courier-1',
+      })
+    )
 
     const result = await sut.execute({
       orderId: 'order-1',

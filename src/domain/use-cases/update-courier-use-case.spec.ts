@@ -3,6 +3,7 @@ import { UpdateCourierUseCase } from './update-courier-use-case.js'
 import { Role } from '@/domain/entities/role.js'
 import { UserAlreadyExistsError } from '../errors/user-already-exists-errors.js'
 import { ResourceNotFoundError } from '@/domain/errors/resource-not-found-error.js'
+import { makeUserData } from '@/test/factories/index.js'
 
 describe('update courier use case', () => {
   let usersRepository: InMemoryUsersRepository
@@ -14,12 +15,7 @@ describe('update courier use case', () => {
   })
 
   it('should update courier data when it exists', async () => {
-    await usersRepository.create({
-      name: 'Courier User',
-      cpf: '12345678909',
-      passwordHash: 'hash',
-      role: Role.COURIER,
-    })
+    await usersRepository.create(makeUserData({ role: Role.COURIER }))
 
     const courierId = usersRepository.items[0].id
 
@@ -35,19 +31,10 @@ describe('update courier use case', () => {
   })
 
   it('should not update when cpf is already in use', async () => {
-    await usersRepository.create({
-      name: 'Courier One',
-      cpf: '12345678909',
-      passwordHash: 'hash',
-      role: Role.COURIER,
-    })
-
-    await usersRepository.create({
-      name: 'Courier Two',
-      cpf: '74185296355',
-      passwordHash: 'hash',
-      role: Role.COURIER,
-    })
+    await usersRepository.create(makeUserData({ role: Role.COURIER }))
+    await usersRepository.create(
+      makeUserData({ cpf: '74185296355', role: Role.COURIER })
+    )
 
     const courierId = usersRepository.items[0].id
 
@@ -61,12 +48,7 @@ describe('update courier use case', () => {
   })
 
   it('should return not found when user is not a courier', async () => {
-    await usersRepository.create({
-      name: 'Admin User',
-      cpf: '11122233396',
-      passwordHash: 'hash',
-      role: Role.ADMIN,
-    })
+    await usersRepository.create(makeUserData({ role: Role.ADMIN }))
 
     const adminId = usersRepository.items[0].id
 

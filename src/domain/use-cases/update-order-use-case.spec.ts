@@ -1,4 +1,5 @@
 import { InMemoryOrdersRepository } from '@/test/repositories/in-memory-orders-repository.js'
+import { makeOrderData } from '@/test/factories/index.js'
 import { UpdateOrderUseCase } from './update-order-use-case.js'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.js'
 
@@ -12,22 +13,15 @@ describe('update order use case', () => {
   })
 
   it('should update an order', async () => {
-    await ordersRepository.create({
-      id: 'order-1',
-      title: 'Pacote original',
-      status: 'WAITING',
-      recipientId: 'recipient-1',
-      latitude: -23.55052,
-      longitude: -46.633308,
-      street: 'Av Paulista',
-      number: '1000',
-      city: 'São Paulo',
-      neighborhood: 'Centro',
-      state: 'SP',
-      zip: '01310100',
-      country: 'Brasil',
-      complement: 'Apto 101',
-    })
+    await ordersRepository.create(
+      makeOrderData({
+        id: 'order-1',
+        complement: 'Apto 101',
+        city: 'São Paulo',
+        neighborhood: 'Centro',
+        state: 'SP',
+      })
+    )
 
     const result = await sut.execute({
       orderId: 'order-1',

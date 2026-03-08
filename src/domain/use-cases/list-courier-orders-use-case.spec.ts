@@ -1,27 +1,6 @@
 import { InMemoryOrdersRepository } from '@/test/repositories/in-memory-orders-repository.js'
+import { makeOrderData } from '@/test/factories/index.js'
 import { ListCourierOrdersUseCase } from './list-courier-orders-use-case.js'
-import type { CreateOrderData } from '@/domain/entities/order.js'
-import { randomUUID } from 'node:crypto'
-
-function makeOrderData(overrides?: Partial<CreateOrderData>): CreateOrderData {
-  return {
-    id: randomUUID(),
-    title: 'Entrega',
-    status: 'WAITING',
-    recipientId: 'recipient-1',
-    courierId: undefined,
-    latitude: -23.55052,
-    longitude: -46.633308,
-    street: 'Rua Teste',
-    number: '123',
-    city: 'São Paulo',
-    neighborhood: 'Centro',
-    state: 'SP',
-    zip: '01310100',
-    country: 'Brasil',
-    ...overrides,
-  }
-}
 
 describe('list courier orders use case', () => {
   let ordersRepository: InMemoryOrdersRepository

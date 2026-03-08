@@ -2,6 +2,7 @@ import { InMemoryUsersRepository } from '@/test/repositories/in-memory-users-rep
 import { GetProfileUseCase } from './get-profile-use-case.js'
 import { Role } from '@/domain/entities/role.js'
 import { ResourceNotFoundError } from '@/domain/errors/resource-not-found-error.js'
+import { makeUserData } from '@/test/factories/index.js'
 
 describe('get profile use case', () => {
   let usersRepository: InMemoryUsersRepository
@@ -13,12 +14,7 @@ describe('get profile use case', () => {
   })
 
   it('should return a profile for a courier', async () => {
-    await usersRepository.create({
-      name: 'Courier User',
-      cpf: '12345678909',
-      passwordHash: 'hash',
-      role: Role.COURIER,
-    })
+    await usersRepository.create(makeUserData({ role: Role.COURIER }))
 
     const userId = usersRepository.items[0].id
 
@@ -32,12 +28,7 @@ describe('get profile use case', () => {
   })
 
   it('should return a profile for an admin', async () => {
-    await usersRepository.create({
-      name: 'Admin User',
-      cpf: '11122233396',
-      passwordHash: 'hash',
-      role: Role.ADMIN,
-    })
+    await usersRepository.create(makeUserData({ role: Role.ADMIN }))
 
     const userId = usersRepository.items[0].id
 

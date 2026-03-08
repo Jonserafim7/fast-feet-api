@@ -1,7 +1,30 @@
 import { randomUUID } from 'node:crypto'
+import { faker } from '@faker-js/faker'
+import type { CreateOrderData } from '@/domain/entities/order.js'
 import type { PrismaService } from '@/infra/database/prisma/prisma.service.js'
 import type { OrderStatus } from '@/domain/entities/order-status.js'
 import { Prisma } from '@/generated/prisma/client.js'
+
+export function makeOrderData(
+  overrides?: Partial<CreateOrderData>
+): CreateOrderData {
+  return {
+    id: faker.string.uuid(),
+    title: faker.commerce.productName(),
+    status: 'WAITING',
+    recipientId: faker.string.uuid(),
+    latitude: faker.location.latitude(),
+    longitude: faker.location.longitude(),
+    street: faker.location.street(),
+    number: String(faker.number.int({ min: 1, max: 9999 })),
+    city: faker.location.city(),
+    neighborhood: faker.location.county(),
+    state: faker.location.state({ abbreviated: true }),
+    zip: faker.location.zipCode(),
+    country: faker.location.country(),
+    ...overrides,
+  }
+}
 
 export interface MakeOrderInput {
   id?: string

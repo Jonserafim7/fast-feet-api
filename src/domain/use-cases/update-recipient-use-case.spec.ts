@@ -1,4 +1,5 @@
 import { InMemoryRecipientsRepository } from '@/test/repositories/in-memory-recipients-repository.js'
+import { makeRecipientData } from '@/test/factories/index.js'
 import { UpdateRecipientUseCase } from './update-recipient-use-case.js'
 import { RecipientAlreadyExistsError } from '../errors/recipient-already-exists-errors.js'
 import { ResourceNotFoundError } from '@/domain/errors/resource-not-found-error.js'
@@ -13,11 +14,7 @@ describe('update recipient use case', () => {
   })
 
   it('should update recipient data when it exists', async () => {
-    await recipientsRepository.create({
-      name: 'Recipient One',
-      email: 'recipient.one@example.com',
-      phone: '11999999999',
-    })
+    await recipientsRepository.create(makeRecipientData())
 
     const recipientId = recipientsRepository.items[0].id
 
@@ -37,15 +34,10 @@ describe('update recipient use case', () => {
   })
 
   it('should not update when email is already in use', async () => {
-    await recipientsRepository.create({
-      name: 'Recipient One',
-      email: 'recipient.one@example.com',
-    })
-
-    await recipientsRepository.create({
-      name: 'Recipient Two',
-      email: 'recipient.two@example.com',
-    })
+    await recipientsRepository.create(makeRecipientData())
+    await recipientsRepository.create(
+      makeRecipientData({ email: 'recipient.two@example.com' })
+    )
 
     const recipientId = recipientsRepository.items[0].id
 

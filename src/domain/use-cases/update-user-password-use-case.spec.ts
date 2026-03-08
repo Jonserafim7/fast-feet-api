@@ -3,6 +3,7 @@ import { FakeHashGenerator } from '@/test/cryptography/fake-hash-generator.js'
 import { UpdateUserPasswordUseCase } from './update-user-password-use-case.js'
 import { Role } from '@/domain/entities/role.js'
 import { ResourceNotFoundError } from '@/domain/errors/resource-not-found-error.js'
+import { makeUserData } from '@/test/factories/index.js'
 
 describe('update user password use case', () => {
   let usersRepository: InMemoryUsersRepository
@@ -16,12 +17,7 @@ describe('update user password use case', () => {
   })
 
   it('should update password hash when user exists', async () => {
-    await usersRepository.create({
-      name: 'Courier User',
-      cpf: '12345678909',
-      passwordHash: 'old-hash',
-      role: Role.COURIER,
-    })
+    await usersRepository.create(makeUserData({ role: Role.COURIER }))
 
     const userId = usersRepository.items[0].id
 

@@ -1,4 +1,5 @@
 import { InMemoryRecipientsRepository } from '@/test/repositories/in-memory-recipients-repository.js'
+import { makeRecipientData } from '@/test/factories/index.js'
 import { DeleteRecipientUseCase } from './delete-recipient-use-case.js'
 import { ResourceNotFoundError } from '@/domain/errors/resource-not-found-error.js'
 
@@ -12,10 +13,7 @@ describe('delete recipient use case', () => {
   })
 
   it('should delete recipient when it exists', async () => {
-    await recipientsRepository.create({
-      name: 'Recipient One',
-      email: 'recipient.one@example.com',
-    })
+    await recipientsRepository.create(makeRecipientData())
 
     const recipientId = recipientsRepository.items[0].id
 

@@ -19,6 +19,7 @@ import { GetCourierOrderUseCase } from '@/domain/use-cases/get-courier-order-use
 import { ListOrdersUseCase } from '@/domain/use-cases/list-orders-use-case.js'
 import { ListAvailableOrdersUseCase } from '@/domain/use-cases/list-available-orders-use-case.js'
 import { ListCourierOrdersUseCase } from '@/domain/use-cases/list-courier-orders-use-case.js'
+import { CountCourierOrdersUseCase } from '@/domain/use-cases/count-courier-orders-use-case.js'
 import { UpdateOrderUseCase } from '@/domain/use-cases/update-order-use-case.js'
 import { DeleteOrderUseCase } from '@/domain/use-cases/delete-order-use-case.js'
 import { MarkOrderAsWaitingUseCase } from '@/domain/use-cases/mark-order-as-waiting-use-case.js'
@@ -54,6 +55,7 @@ import { GetCourierOrderController } from '@/infra/http/controllers/get-courier-
 import { ListOrdersController } from '@/infra/http/controllers/list-orders.controller.js'
 import { ListAvailableOrdersController } from '@/infra/http/controllers/list-available-orders.controller.js'
 import { ListCourierOrdersController } from '@/infra/http/controllers/list-courier-orders.controller.js'
+import { CountCourierOrdersController } from '@/infra/http/controllers/count-courier-orders.controller.js'
 import { UpdateOrderController } from '@/infra/http/controllers/update-order.controller.js'
 import { DeleteOrderController } from '@/infra/http/controllers/delete-order.controller.js'
 import { MarkOrderAsWaitingController } from '@/infra/http/controllers/mark-order-as-waiting.controller.js'
@@ -93,6 +95,7 @@ import { HealthController } from '@/infra/http/controllers/health.controller.js'
     ListOrdersController,
     ListAvailableOrdersController,
     ListCourierOrdersController,
+    CountCourierOrdersController,
     GetOrderController,
     GetCourierOrderController,
     UpdateOrderController,
@@ -125,6 +128,7 @@ import { HealthController } from '@/infra/http/controllers/health.controller.js'
     ListOrdersUseCase,
     ListAvailableOrdersUseCase,
     ListCourierOrdersUseCase,
+    CountCourierOrdersUseCase,
     UpdateOrderUseCase,
     DeleteOrderUseCase,
     MarkOrderAsWaitingUseCase,

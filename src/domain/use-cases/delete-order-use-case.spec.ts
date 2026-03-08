@@ -1,4 +1,5 @@
 import { InMemoryOrdersRepository } from '@/test/repositories/in-memory-orders-repository.js'
+import { makeOrderData } from '@/test/factories/index.js'
 import { DeleteOrderUseCase } from './delete-order-use-case.js'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.js'
 
@@ -12,21 +13,7 @@ describe('delete order use case', () => {
   })
 
   it('should delete an order', async () => {
-    await ordersRepository.create({
-      id: 'order-1',
-      title: 'Entrega',
-      status: 'WAITING',
-      recipientId: 'recipient-1',
-      latitude: -23.55052,
-      longitude: -46.633308,
-      street: 'Av Paulista',
-      number: '1000',
-      city: 'São Paulo',
-      neighborhood: 'Centro',
-      state: 'SP',
-      zip: '01310100',
-      country: 'Brasil',
-    })
+    await ordersRepository.create(makeOrderData({ id: 'order-1' }))
 
     const result = await sut.execute({ orderId: 'order-1' })
 

@@ -2,6 +2,7 @@ import { InMemoryOrdersRepository } from '@/test/repositories/in-memory-orders-r
 import { InMemoryRecipientsRepository } from '@/test/repositories/in-memory-recipients-repository.js'
 import { InMemoryAttachmentsRepository } from '@/test/repositories/in-memory-attachments-repository.js'
 import { FakeUploader } from '@/test/storage/fake-uploader.js'
+import { makeOrderData, makeRecipientData } from '@/test/factories/index.js'
 import { GetCourierOrderUseCase } from './get-courier-order-use-case.js'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.js'
 import { NotOrderCourierError } from '../errors/not-order-courier-error.js'
@@ -24,29 +25,23 @@ describe('get courier order use case', () => {
       uploader
     )
 
-    await recipientsRepository.create({
-      id: 'recipient-1',
-      name: 'John Doe',
-      email: 'john@example.com',
-    })
+    await recipientsRepository.create(
+      makeRecipientData({
+        id: 'recipient-1',
+        name: 'John Doe',
+        email: 'john@example.com',
+      })
+    )
   })
 
   it('should return a WAITING order for any courier', async () => {
-    await ordersRepository.create({
-      id: 'order-1',
-      title: 'Entrega',
-      status: 'WAITING',
-      recipientId: 'recipient-1',
-      latitude: -23.55052,
-      longitude: -46.633308,
-      street: 'Av Paulista',
-      number: '1000',
-      city: 'São Paulo',
-      neighborhood: 'Centro',
-      state: 'SP',
-      zip: '01310100',
-      country: 'Brasil',
-    })
+    await ordersRepository.create(
+      makeOrderData({
+        id: 'order-1',
+        status: 'WAITING',
+        recipientId: 'recipient-1',
+      })
+    )
 
     const result = await sut.execute({
       orderId: 'order-1',
@@ -60,22 +55,14 @@ describe('get courier order use case', () => {
   })
 
   it('should return own order regardless of status', async () => {
-    await ordersRepository.create({
-      id: 'order-1',
-      title: 'Entrega',
-      status: 'WITHDRAWN',
-      recipientId: 'recipient-1',
-      courierId: 'courier-1',
-      latitude: -23.55052,
-      longitude: -46.633308,
-      street: 'Av Paulista',
-      number: '1000',
-      city: 'São Paulo',
-      neighborhood: 'Centro',
-      state: 'SP',
-      zip: '01310100',
-      country: 'Brasil',
-    })
+    await ordersRepository.create(
+      makeOrderData({
+        id: 'order-1',
+        status: 'WITHDRAWN',
+        recipientId: 'recipient-1',
+        courierId: 'courier-1',
+      })
+    )
 
     const result = await sut.execute({
       orderId: 'order-1',
@@ -90,22 +77,14 @@ describe('get courier order use case', () => {
   })
 
   it('should return order with attachments', async () => {
-    await ordersRepository.create({
-      id: 'order-1',
-      title: 'Entrega',
-      status: 'DELIVERED',
-      recipientId: 'recipient-1',
-      courierId: 'courier-1',
-      latitude: -23.55052,
-      longitude: -46.633308,
-      street: 'Av Paulista',
-      number: '1000',
-      city: 'São Paulo',
-      neighborhood: 'Centro',
-      state: 'SP',
-      zip: '01310100',
-      country: 'Brasil',
-    })
+    await ordersRepository.create(
+      makeOrderData({
+        id: 'order-1',
+        status: 'DELIVERED',
+        recipientId: 'recipient-1',
+        courierId: 'courier-1',
+      })
+    )
 
     await attachmentsRepository.create({
       title: 'photo.jpg',
@@ -128,22 +107,14 @@ describe('get courier order use case', () => {
   })
 
   it('should return error when courier tries to access another courier non-WAITING order', async () => {
-    await ordersRepository.create({
-      id: 'order-1',
-      title: 'Entrega',
-      status: 'WITHDRAWN',
-      recipientId: 'recipient-1',
-      courierId: 'courier-1',
-      latitude: -23.55052,
-      longitude: -46.633308,
-      street: 'Av Paulista',
-      number: '1000',
-      city: 'São Paulo',
-      neighborhood: 'Centro',
-      state: 'SP',
-      zip: '01310100',
-      country: 'Brasil',
-    })
+    await ordersRepository.create(
+      makeOrderData({
+        id: 'order-1',
+        status: 'WITHDRAWN',
+        recipientId: 'recipient-1',
+        courierId: 'courier-1',
+      })
+    )
 
     const result = await sut.execute({
       orderId: 'order-1',

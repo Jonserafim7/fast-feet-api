@@ -3,6 +3,7 @@ import { FakeHashGenerator } from '@/test/cryptography/fake-hash-generator.js'
 import { CreateCourierUseCase } from './create-courier-use-case.js'
 import { UserAlreadyExistsError } from '../errors/user-already-exists-errors.js'
 import { Role } from '@/domain/entities/role.js'
+import { makeUserData } from '@/test/factories/index.js'
 
 describe('create courier use case', () => {
   let usersRepository: InMemoryUsersRepository
@@ -29,12 +30,13 @@ describe('create courier use case', () => {
   })
 
   it('should not create a courier when cpf already exists', async () => {
-    await usersRepository.create({
-      name: 'John Doe',
-      cpf: '12345678909',
-      passwordHash: await hashGenerator.hash('123456'),
-      role: Role.COURIER,
-    })
+    await usersRepository.create(
+      makeUserData({
+        cpf: '12345678909',
+        passwordHash: await hashGenerator.hash('123456'),
+        role: Role.COURIER,
+      })
+    )
 
     const result = await sut.execute({
       name: 'John Doe',

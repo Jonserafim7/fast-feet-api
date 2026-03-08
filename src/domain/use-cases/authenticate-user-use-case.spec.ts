@@ -6,6 +6,7 @@ import { FakeEncrypter } from '@/test/cryptography/fake-encrypter.js'
 import { FakeHashComparer } from '@/test/cryptography/fake-hash-comparer.js'
 import { FakeTokenHasher } from '@/test/cryptography/fake-token-hasher.js'
 import { InvalidCredentialsError } from '../errors/invalid-credentials-errors.js'
+import { makeUserData } from '@/test/factories/index.js'
 
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000
 
@@ -35,12 +36,13 @@ describe('authenticate user use case', () => {
   })
 
   it('should be able to authenticate a user', async () => {
-    await usersRepository.create({
-      name: 'John Doe',
-      cpf: '12345678909',
-      passwordHash: await fakeHashGenerator.hash('123456'),
-      role: 'COURIER',
-    })
+    await usersRepository.create(
+      makeUserData({
+        name: 'John Doe',
+        cpf: '12345678909',
+        passwordHash: await fakeHashGenerator.hash('123456'),
+      })
+    )
 
     const result = await sut.execute({
       cpf: '12345678909',
@@ -63,12 +65,13 @@ describe('authenticate user use case', () => {
   })
 
   it('should persist refresh token on successful authentication', async () => {
-    await usersRepository.create({
-      name: 'John Doe',
-      cpf: '12345678909',
-      passwordHash: await fakeHashGenerator.hash('123456'),
-      role: 'COURIER',
-    })
+    await usersRepository.create(
+      makeUserData({
+        name: 'John Doe',
+        cpf: '12345678909',
+        passwordHash: await fakeHashGenerator.hash('123456'),
+      })
+    )
 
     await sut.execute({
       cpf: '12345678909',
@@ -81,12 +84,13 @@ describe('authenticate user use case', () => {
   })
 
   it('should not be able to authenticate a user with wrong credentials', async () => {
-    await usersRepository.create({
-      name: 'John Doe',
-      cpf: '12345678909',
-      passwordHash: await fakeHashGenerator.hash('123456'),
-      role: 'COURIER',
-    })
+    await usersRepository.create(
+      makeUserData({
+        name: 'John Doe',
+        cpf: '12345678909',
+        passwordHash: await fakeHashGenerator.hash('123456'),
+      })
+    )
 
     const result = await sut.execute({
       cpf: '12345678909',

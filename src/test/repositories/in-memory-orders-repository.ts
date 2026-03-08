@@ -232,4 +232,18 @@ export class InMemoryOrdersRepository implements OrdersRepository {
       }
     }
   }
+
+  async countByCourierId(courierId: string) {
+    const available = this.items.filter(
+      (o) => o.status === 'WAITING' && o.courierId === null
+    ).length
+    const withdrawn = this.items.filter(
+      (o) => o.courierId === courierId && o.status === 'WITHDRAWN'
+    ).length
+    const delivered = this.items.filter(
+      (o) => o.courierId === courierId && o.status === 'DELIVERED'
+    ).length
+
+    return { available, withdrawn, delivered }
+  }
 }

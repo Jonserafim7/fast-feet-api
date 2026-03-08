@@ -1,5 +1,18 @@
 import { randomUUID } from 'node:crypto'
+import { faker } from '@faker-js/faker'
+import type { CreateRecipientData } from '@/domain/entities/recipient.js'
 import type { PrismaService } from '@/infra/database/prisma/prisma.service.js'
+
+export function makeRecipientData(
+  overrides?: Partial<CreateRecipientData>
+): CreateRecipientData {
+  return {
+    name: faker.person.fullName(),
+    email: faker.internet.email(),
+    phone: faker.phone.number(),
+    ...overrides,
+  }
+}
 
 export interface MakeRecipientInput {
   id?: string

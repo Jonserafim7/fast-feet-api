@@ -1,5 +1,6 @@
 import { InMemoryOrdersRepository } from '@/test/repositories/in-memory-orders-repository.js'
 import { InMemoryRecipientsRepository } from '@/test/repositories/in-memory-recipients-repository.js'
+import { makeRecipientData } from '@/test/factories/index.js'
 import { CreateOrderUseCase } from './create-order-use-case.js'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.js'
 
@@ -15,11 +16,7 @@ describe('create order use case', () => {
   })
 
   it('should create an order when recipient exists', async () => {
-    await recipientsRepository.create({
-      id: 'recipient-1',
-      name: 'John Doe',
-      email: 'john@example.com',
-    })
+    await recipientsRepository.create(makeRecipientData({ id: 'recipient-1' }))
 
     const result = await sut.execute({
       recipientId: 'recipient-1',

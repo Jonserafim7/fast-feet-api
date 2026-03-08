@@ -217,4 +217,20 @@ export class PrismaOrdersRepository implements OrdersRepository {
       },
     })
   }
+
+  async countByCourierId(courierId: string) {
+    const [available, withdrawn, delivered] = await Promise.all([
+      this.prisma.order.count({
+        where: { status: 'WAITING', courierId: null },
+      }),
+      this.prisma.order.count({
+        where: { courierId, status: 'WITHDRAWN' },
+      }),
+      this.prisma.order.count({
+        where: { courierId, status: 'DELIVERED' },
+      }),
+    ])
+
+    return { available, withdrawn, delivered }
+  }
 }

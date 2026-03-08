@@ -2,6 +2,7 @@ import { InMemoryOrdersRepository } from '@/test/repositories/in-memory-orders-r
 import { InMemoryRecipientsRepository } from '@/test/repositories/in-memory-recipients-repository.js'
 import { InMemoryAttachmentsRepository } from '@/test/repositories/in-memory-attachments-repository.js'
 import { FakeUploader } from '@/test/storage/fake-uploader.js'
+import { makeOrderData, makeRecipientData } from '@/test/factories/index.js'
 import { GetOrderUseCase } from './get-order-use-case.js'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error.js'
 
@@ -21,27 +22,21 @@ describe('get order use case', () => {
   })
 
   it('should get an order by id with recipient', async () => {
-    await recipientsRepository.create({
-      id: 'recipient-1',
-      name: 'John Doe',
-      email: 'john@example.com',
-    })
+    await recipientsRepository.create(
+      makeRecipientData({
+        id: 'recipient-1',
+        name: 'John Doe',
+        email: 'john@example.com',
+      })
+    )
 
-    await ordersRepository.create({
-      id: 'order-1',
-      title: 'Entrega',
-      status: 'WAITING',
-      recipientId: 'recipient-1',
-      latitude: -23.55052,
-      longitude: -46.633308,
-      street: 'Av Paulista',
-      number: '1000',
-      city: 'São Paulo',
-      neighborhood: 'Centro',
-      state: 'SP',
-      zip: '01310100',
-      country: 'Brasil',
-    })
+    await ordersRepository.create(
+      makeOrderData({
+        id: 'order-1',
+        status: 'WAITING',
+        recipientId: 'recipient-1',
+      })
+    )
 
     const result = await sut.execute({ orderId: 'order-1' })
 
@@ -57,27 +52,21 @@ describe('get order use case', () => {
   })
 
   it('should return order with attachments', async () => {
-    await recipientsRepository.create({
-      id: 'recipient-1',
-      name: 'John Doe',
-      email: 'john@example.com',
-    })
+    await recipientsRepository.create(
+      makeRecipientData({
+        id: 'recipient-1',
+        name: 'John Doe',
+        email: 'john@example.com',
+      })
+    )
 
-    await ordersRepository.create({
-      id: 'order-1',
-      title: 'Entrega',
-      status: 'DELIVERED',
-      recipientId: 'recipient-1',
-      latitude: -23.55052,
-      longitude: -46.633308,
-      street: 'Av Paulista',
-      number: '1000',
-      city: 'São Paulo',
-      neighborhood: 'Centro',
-      state: 'SP',
-      zip: '01310100',
-      country: 'Brasil',
-    })
+    await ordersRepository.create(
+      makeOrderData({
+        id: 'order-1',
+        status: 'DELIVERED',
+        recipientId: 'recipient-1',
+      })
+    )
 
     await attachmentsRepository.create({
       title: 'photo.jpg',

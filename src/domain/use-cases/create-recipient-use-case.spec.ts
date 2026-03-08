@@ -1,4 +1,5 @@
 import { InMemoryRecipientsRepository } from '@/test/repositories/in-memory-recipients-repository.js'
+import { makeRecipientData } from '@/test/factories/index.js'
 import { CreateRecipientUseCase } from './create-recipient-use-case.js'
 import { RecipientAlreadyExistsError } from '../errors/recipient-already-exists-errors.js'
 
@@ -23,11 +24,9 @@ describe('create recipient use case', () => {
   })
 
   it('should not create a recipient when email already exists', async () => {
-    await recipientsRepository.create({
-      name: 'Recipient One',
-      email: 'recipient@example.com',
-      phone: '11999999999',
-    })
+    await recipientsRepository.create(
+      makeRecipientData({ email: 'recipient@example.com' })
+    )
 
     const result = await sut.execute({
       name: 'Recipient Two',

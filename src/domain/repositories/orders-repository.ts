@@ -38,4 +38,9 @@ export abstract class OrdersRepository {
   ): Promise<void>
   abstract deliver(id: string, deliveryDate: Date): Promise<void>
   abstract return(id: string, returnDate: Date): Promise<void>
+  abstract countByCourierId(courierId: string): Promise<{
+    available: number
+    withdrawn: number
+    delivered: number
+  }>
 }

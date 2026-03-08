@@ -1,23 +1,9 @@
 import { InMemoryOrdersRepository } from '@/test/repositories/in-memory-orders-repository.js'
+import { makeOrderData } from '@/test/factories/index.js'
 import { ListAvailableOrdersUseCase } from './list-available-orders-use-case.js'
 
 let ordersRepository: InMemoryOrdersRepository
 let sut: ListAvailableOrdersUseCase
-
-const makeOrderData = (overrides = {}) => ({
-  title: 'Entrega',
-  recipientId: 'recipient-1',
-  latitude: -23.55052,
-  longitude: -46.633308,
-  street: 'Av Paulista',
-  number: '1000',
-  city: 'São Paulo',
-  neighborhood: 'Bela Vista',
-  state: 'SP',
-  zip: '01310100',
-  country: 'Brasil',
-  ...overrides,
-})
 
 describe('list available orders use case', () => {
   beforeEach(() => {
