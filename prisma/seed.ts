@@ -1,10 +1,27 @@
-import { PrismaClient } from '../src/generated/prisma/client.js'
+import { PrismaClient, type Prisma } from '../src/generated/prisma/client.js'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { hash } from 'bcryptjs'
 import { randomUUID } from 'node:crypto'
+import { fakerPT_BR as faker } from '@faker-js/faker'
+
+faker.seed(12345)
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
 const prisma = new PrismaClient({ adapter })
+
+const SEED_CONFIG = {
+  couriers: 5,
+  recipients: 40,
+  orders: {
+    PENDING: 20,
+    WAITING: 120,
+    WITHDRAWN: 28,
+    DELIVERED: 20,
+    RETURNED: 12,
+  },
+} as const
+
+type OrderStatus = keyof typeof SEED_CONFIG.orders
 
 // ---------------------------------------------------------------------------
 // CPF Generator — computes valid mod-11 check digits from a 9-digit base
@@ -49,7 +66,7 @@ async function clearDatabase() {
 }
 
 // ---------------------------------------------------------------------------
-// Seed data
+// Helpers
 // ---------------------------------------------------------------------------
 
 function daysAgo(days: number): Date {
@@ -58,7 +75,51 @@ function daysAgo(days: number): Date {
   return date
 }
 
-const ADDRESSES = [
+const BR_STATES = [
+  'AC',
+  'AL',
+  'AP',
+  'AM',
+  'BA',
+  'CE',
+  'DF',
+  'ES',
+  'GO',
+  'MA',
+  'MT',
+  'MS',
+  'MG',
+  'PA',
+  'PB',
+  'PR',
+  'PE',
+  'PI',
+  'RJ',
+  'RN',
+  'RS',
+  'RO',
+  'RR',
+  'SC',
+  'SP',
+  'SE',
+  'TO',
+] as const
+
+function generateBrazilianAddress() {
+  return {
+    street: faker.location.street(),
+    number: String(faker.number.int({ min: 1, max: 9999 })),
+    neighborhood: faker.location.county(),
+    city: faker.location.city(),
+    state: faker.helpers.arrayElement(BR_STATES),
+    zip: faker.string.numeric(8),
+    latitude: faker.location.latitude({ min: -33, max: 5 }),
+    longitude: faker.location.longitude({ min: -74, max: -35 }),
+    country: 'Brasil',
+  }
+}
+
+const CURATED_ADDRESSES = [
   {
     street: 'Avenida Paulista',
     number: '1578',
@@ -171,6 +232,11 @@ const ADDRESSES = [
   },
 ]
 
+function pickAddress(index: number) {
+  if (index < CURATED_ADDRESSES.length) return CURATED_ADDRESSES[index]
+  return generateBrazilianAddress()
+}
+
 // ---------------------------------------------------------------------------
 // Seed functions
 // ---------------------------------------------------------------------------
@@ -180,12 +246,11 @@ async function seedUsers(
   adminPasswordHash: string,
   defaultPasswordHash: string
 ) {
-  const adminId = randomUUID()
   await prisma.user.upsert({
     where: { cpf: adminCpf },
     update: { passwordHash: adminPasswordHash },
     create: {
-      id: adminId,
+      id: randomUUID(),
       name: 'Admin',
       cpf: adminCpf,
       passwordHash: adminPasswordHash,
@@ -193,271 +258,170 @@ async function seedUsers(
     },
   })
 
-  const admin2Id = randomUUID()
-  const courier1Id = randomUUID()
-  const courier2Id = randomUUID()
-  const courier3Id = randomUUID()
+  const courierIds: string[] = []
 
-  await prisma.user.createMany({
-    data: [
-      {
-        id: admin2Id,
-        name: 'Fernanda Oliveira',
-        cpf: generateValidCpf('529982247'),
-        passwordHash: defaultPasswordHash,
-        role: 'ADMIN',
-      },
-      {
-        id: courier1Id,
-        name: 'Carlos Silva',
-        cpf: generateValidCpf('327648591'),
-        passwordHash: defaultPasswordHash,
-        role: 'COURIER',
-      },
-      {
-        id: courier2Id,
-        name: 'Mariana Santos',
-        cpf: generateValidCpf('861543279'),
-        passwordHash: defaultPasswordHash,
-        role: 'COURIER',
-      },
-      {
-        id: courier3Id,
-        name: 'Rafael Costa',
-        cpf: generateValidCpf('194637528'),
-        passwordHash: defaultPasswordHash,
-        role: 'COURIER',
-      },
-    ],
+  const couriers = Array.from({ length: SEED_CONFIG.couriers }, () => {
+    const id = randomUUID()
+    courierIds.push(id)
+    return {
+      id,
+      name: faker.person.fullName(),
+      cpf: generateValidCpf(faker.string.numeric(9)),
+      passwordHash: defaultPasswordHash,
+      role: 'COURIER' as const,
+    }
   })
 
-  return { courier1Id, courier2Id, courier3Id }
+  await prisma.user.createMany({ data: couriers })
+
+  return courierIds
 }
 
 async function seedRecipients() {
-  const ids = Array.from({ length: 5 }, () => randomUUID())
+  const recipients = Array.from({ length: SEED_CONFIG.recipients }, () => ({
+    id: randomUUID(),
+    name: faker.person.fullName(),
+    email: faker.internet.email().toLowerCase(),
+    phone: faker.datatype.boolean({ probability: 0.7 })
+      ? faker.phone.number({ style: 'national' })
+      : null,
+  }))
 
-  await prisma.recipient.createMany({
-    data: [
-      {
-        id: ids[0],
-        name: 'Ana Beatriz Souza',
-        email: 'ana.souza@email.com',
-        phone: '11987654321',
-      },
-      {
-        id: ids[1],
-        name: 'Lucas Ferreira',
-        email: 'lucas.ferreira@email.com',
-        phone: '21976543210',
-      },
-      {
-        id: ids[2],
-        name: 'Camila Rodrigues',
-        email: 'camila.rodrigues@email.com',
-      },
-      {
-        id: ids[3],
-        name: 'Pedro Almeida',
-        email: 'pedro.almeida@email.com',
-        phone: '41965432109',
-      },
-      {
-        id: ids[4],
-        name: 'Julia Mendes',
-        email: 'julia.mendes@email.com',
-      },
-    ],
-  })
+  await prisma.recipient.createMany({ data: recipients })
 
-  return ids
+  return recipients.map((r) => r.id)
 }
 
-async function seedOrders(
-  courierIds: { courier1Id: string; courier2Id: string; courier3Id: string },
-  recipientIds: string[]
-) {
-  const orderIds = Array.from({ length: 10 }, () => randomUUID())
-  const couriers = [
-    courierIds.courier1Id,
-    courierIds.courier2Id,
-    courierIds.courier3Id,
-  ]
-
-  const orders = [
-    // 2 PENDING — no courier, no dates
-    {
-      id: orderIds[0],
-      title: 'Encomenda de livros',
-      description: 'Caixa com 3 livros de programação',
-      status: 'PENDING' as const,
-      recipientId: recipientIds[0],
-      ...ADDRESSES[0],
-    },
-    {
-      id: orderIds[1],
-      title: 'Equipamento eletrônico',
-      status: 'PENDING' as const,
-      recipientId: recipientIds[1],
-      ...ADDRESSES[1],
-    },
-
-    // 2 WAITING — no courier, no dates
-    {
-      id: orderIds[2],
-      title: 'Material de escritório',
-      description: 'Cadernos, canetas e organizadores',
-      status: 'WAITING' as const,
-      recipientId: recipientIds[2],
-      ...ADDRESSES[2],
-    },
-    {
-      id: orderIds[3],
-      title: 'Roupas e acessórios',
-      status: 'WAITING' as const,
-      recipientId: recipientIds[3],
-      ...ADDRESSES[3],
-    },
-
-    // 2 WITHDRAWN — courier assigned, pickupDate
-    {
-      id: orderIds[4],
-      title: 'Peças automotivas',
-      description: 'Kit de pastilhas de freio',
-      status: 'WITHDRAWN' as const,
-      recipientId: recipientIds[4],
-      courierId: couriers[0],
-      pickupDate: daysAgo(5),
-      ...ADDRESSES[4],
-    },
-    {
-      id: orderIds[5],
-      title: 'Instrumentos musicais',
-      status: 'WITHDRAWN' as const,
-      recipientId: recipientIds[0],
-      courierId: couriers[1],
-      pickupDate: daysAgo(4),
-      ...ADDRESSES[5],
-    },
-
-    // 2 DELIVERED — courier + pickupDate + deliveryDate
-    {
-      id: orderIds[6],
-      title: 'Móveis para escritório',
-      description: 'Cadeira ergonômica desmontada',
-      status: 'DELIVERED' as const,
-      recipientId: recipientIds[1],
-      courierId: couriers[2],
-      pickupDate: daysAgo(7),
-      deliveryDate: daysAgo(2),
-      ...ADDRESSES[6],
-    },
-    {
-      id: orderIds[7],
-      title: 'Produtos de beleza',
-      status: 'DELIVERED' as const,
-      recipientId: recipientIds[2],
-      courierId: couriers[0],
-      pickupDate: daysAgo(6),
-      deliveryDate: daysAgo(1),
-      ...ADDRESSES[7],
-    },
-
-    // 2 RETURNED — courier + pickupDate + returnDate
-    {
-      id: orderIds[8],
-      title: 'Eletrodoméstico',
-      description: 'Destinatário não encontrado no endereço',
-      status: 'RETURNED' as const,
-      recipientId: recipientIds[3],
-      courierId: couriers[1],
-      pickupDate: daysAgo(6),
-      returnDate: daysAgo(1),
-      ...ADDRESSES[8],
-    },
-    {
-      id: orderIds[9],
-      title: 'Documentos importantes',
-      status: 'RETURNED' as const,
-      recipientId: recipientIds[4],
-      courierId: couriers[2],
-      pickupDate: daysAgo(5),
-      returnDate: daysAgo(2),
-      ...ADDRESSES[9],
-    },
-  ]
-
-  await prisma.order.createMany({ data: orders })
-
-  return orderIds
+interface OrderRecord {
+  id: string
+  title: string
+  status: OrderStatus
+  recipientId: string
 }
 
-async function seedAttachments(deliveredOrderIds: string[]) {
+async function seedOrders(courierIds: string[], recipientIds: string[]) {
+  const allOrders: Prisma.OrderCreateManyInput[] = []
+  const ordersByStatus: Record<OrderStatus, OrderRecord[]> = {
+    PENDING: [],
+    WAITING: [],
+    WITHDRAWN: [],
+    DELIVERED: [],
+    RETURNED: [],
+  }
+
+  let globalIndex = 0
+
+  const statusEntries = Object.entries(SEED_CONFIG.orders) as [
+    OrderStatus,
+    number,
+  ][]
+
+  for (const [status, count] of statusEntries) {
+    for (let i = 0; i < count; i++) {
+      const id = randomUUID()
+      const title = faker.commerce.productName()
+      const recipientId = faker.helpers.arrayElement(recipientIds)
+      const address = pickAddress(globalIndex)
+      const hasDescription = faker.datatype.boolean({ probability: 0.4 })
+
+      const order: Prisma.OrderCreateManyInput = {
+        id,
+        title,
+        description: hasDescription ? faker.commerce.productDescription() : null,
+        status,
+        recipientId,
+        ...address,
+      }
+
+      if (status === 'WITHDRAWN') {
+        order.courierId = faker.helpers.arrayElement(courierIds)
+        order.pickupDate = daysAgo(faker.number.int({ min: 1, max: 7 }))
+      } else if (status === 'DELIVERED') {
+        order.courierId = faker.helpers.arrayElement(courierIds)
+        order.pickupDate = daysAgo(faker.number.int({ min: 5, max: 14 }))
+        order.deliveryDate = daysAgo(faker.number.int({ min: 1, max: 4 }))
+      } else if (status === 'RETURNED') {
+        order.courierId = faker.helpers.arrayElement(courierIds)
+        order.pickupDate = daysAgo(faker.number.int({ min: 5, max: 14 }))
+        order.returnDate = daysAgo(faker.number.int({ min: 1, max: 4 }))
+      }
+
+      allOrders.push(order)
+      ordersByStatus[status].push({ id, title, status, recipientId })
+      globalIndex++
+    }
+  }
+
+  await prisma.order.createMany({ data: allOrders })
+
+  return ordersByStatus
+}
+
+async function seedAttachments(deliveredOrders: OrderRecord[]) {
   await prisma.attachment.createMany({
-    data: deliveredOrderIds.map((orderId) => ({
+    data: deliveredOrders.map((order) => ({
       id: randomUUID(),
       title: 'comprovante-entrega.jpg',
       url: `attachments/${randomUUID()}-comprovante-entrega.jpg`,
-      orderId,
+      orderId: order.id,
     })),
   })
 }
 
-async function seedNotifications(recipientIds: string[]) {
-  await prisma.notification.createMany({
-    data: [
-      {
+const NOTIFICATION_TEMPLATES: Record<
+  Exclude<OrderStatus, 'PENDING'>,
+  { title: string; content: (orderTitle: string) => string }
+> = {
+  WAITING: {
+    title: 'Encomenda aguardando retirada',
+    content: (t) =>
+      `Sua encomenda "${t}" está aguardando retirada pelo entregador.`,
+  },
+  WITHDRAWN: {
+    title: 'Encomenda retirada',
+    content: (t) =>
+      `Sua encomenda "${t}" foi retirada pelo entregador e está a caminho.`,
+  },
+  DELIVERED: {
+    title: 'Encomenda entregue',
+    content: (t) => `Sua encomenda "${t}" foi entregue com sucesso.`,
+  },
+  RETURNED: {
+    title: 'Encomenda devolvida',
+    content: (t) =>
+      `Sua encomenda "${t}" foi devolvida. Motivo: destinatário não encontrado.`,
+  },
+}
+
+async function seedNotifications(
+  ordersByStatus: Record<OrderStatus, OrderRecord[]>
+) {
+  const notifications: Prisma.NotificationCreateManyInput[] = []
+
+  for (const [status, orders] of Object.entries(ordersByStatus)) {
+    if (status === 'PENDING') continue
+
+    const template =
+      NOTIFICATION_TEMPLATES[status as Exclude<OrderStatus, 'PENDING'>]
+
+    for (const order of orders) {
+      const isSent = faker.datatype.boolean({ probability: 0.9 })
+      const hasRead = isSent && faker.datatype.boolean({ probability: 0.4 })
+
+      notifications.push({
         id: randomUUID(),
-        recipientId: recipientIds[2],
-        title: 'Encomenda aguardando retirada',
-        content:
-          'Sua encomenda "Material de escritório" está aguardando retirada pelo entregador.',
-        status: 'SENT',
-        readAt: daysAgo(3),
-      },
-      {
-        id: randomUUID(),
-        recipientId: recipientIds[3],
-        title: 'Encomenda aguardando retirada',
-        content:
-          'Sua encomenda "Roupas e acessórios" está aguardando retirada pelo entregador.',
-        status: 'SENT',
-      },
-      {
-        id: randomUUID(),
-        recipientId: recipientIds[4],
-        title: 'Encomenda retirada',
-        content:
-          'Sua encomenda "Peças automotivas" foi retirada pelo entregador e está a caminho.',
-        status: 'SENT',
-        readAt: daysAgo(4),
-      },
-      {
-        id: randomUUID(),
-        recipientId: recipientIds[1],
-        title: 'Encomenda entregue',
-        content:
-          'Sua encomenda "Móveis para escritório" foi entregue com sucesso.',
-        status: 'SENT',
-        readAt: daysAgo(1),
-      },
-      {
-        id: randomUUID(),
-        recipientId: recipientIds[2],
-        title: 'Encomenda entregue',
-        content: 'Sua encomenda "Produtos de beleza" foi entregue com sucesso.',
-        status: 'FAILED',
-      },
-      {
-        id: randomUUID(),
-        recipientId: recipientIds[3],
-        title: 'Encomenda devolvida',
-        content:
-          'Sua encomenda "Eletrodoméstico" foi devolvida. Motivo: destinatário não encontrado.',
-        status: 'SENT',
-      },
-    ],
-  })
+        recipientId: order.recipientId,
+        title: template.title,
+        content: template.content(order.title),
+        status: isSent ? 'SENT' : 'FAILED',
+        readAt: hasRead ? daysAgo(faker.number.int({ min: 1, max: 7 })) : null,
+      })
+    }
+  }
+
+  await prisma.notification.createMany({ data: notifications })
+
+  return notifications.length
 }
 
 // ---------------------------------------------------------------------------
@@ -485,6 +449,11 @@ async function main() {
   const adminPasswordHash = await hash(adminPassword, 8)
   const defaultPasswordHash = await hash('123456', 8)
 
+  const totalOrders = Object.values(SEED_CONFIG.orders).reduce(
+    (sum, n) => sum + n,
+    0
+  )
+
   console.log('Clearing database...')
   await clearDatabase()
 
@@ -499,21 +468,26 @@ async function main() {
   const recipientIds = await seedRecipients()
 
   console.log('Seeding orders...')
-  const orderIds = await seedOrders(courierIds, recipientIds)
+  const ordersByStatus = await seedOrders(courierIds, recipientIds)
 
   console.log('Seeding attachments...')
-  const deliveredOrderIds = [orderIds[6], orderIds[7]]
-  await seedAttachments(deliveredOrderIds)
+  await seedAttachments(ordersByStatus.DELIVERED)
 
   console.log('Seeding notifications...')
-  await seedNotifications(recipientIds)
+  const notificationCount = await seedNotifications(ordersByStatus)
 
   console.log('Seed completed successfully!')
-  console.log('  - 5 users (2 admins, 3 couriers)')
-  console.log('  - 5 recipients')
-  console.log('  - 10 orders (2 per status)')
-  console.log('  - 2 attachments')
-  console.log('  - 6 notifications')
+  console.log(
+    `  - ${1 + SEED_CONFIG.couriers} users (1 admin, ${SEED_CONFIG.couriers} couriers)`
+  )
+  console.log(`  - ${SEED_CONFIG.recipients} recipients`)
+  console.log(
+    `  - ${totalOrders} orders (${Object.entries(SEED_CONFIG.orders)
+      .map(([s, n]) => `${n} ${s}`)
+      .join(', ')})`
+  )
+  console.log(`  - ${ordersByStatus.DELIVERED.length} attachments`)
+  console.log(`  - ${notificationCount} notifications`)
 }
 
 main()
