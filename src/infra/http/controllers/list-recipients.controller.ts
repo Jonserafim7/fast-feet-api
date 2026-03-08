@@ -1,16 +1,12 @@
 import { Controller, Get, Query } from '@nestjs/common'
-import { z } from 'zod'
 import { ListRecipientsUseCase } from '@/domain/use-cases/list-recipients-use-case.js'
 import { Roles } from '@/infra/auth/roles.decorator.js'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js'
 import { RecipientPresenter } from '@/infra/http/presenters/recipient-presenter.js'
-
-const paginationQuerySchema = z.object({
-  page: z.coerce.number().int().min(1).default(1),
-  perPage: z.coerce.number().int().min(1).max(50).default(20),
-})
-
-type PaginationQuery = z.infer<typeof paginationQuerySchema>
+import {
+  paginationQuerySchema,
+  type PaginationQuery,
+} from '@/infra/http/schemas/pagination-query.schema.js'
 
 @Controller('/recipients')
 @Roles('ADMIN')

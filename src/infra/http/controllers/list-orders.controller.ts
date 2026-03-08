@@ -1,16 +1,12 @@
 import { Controller, Get, Query } from '@nestjs/common'
-import { z } from 'zod'
 import { ListOrdersUseCase } from '@/domain/use-cases/list-orders-use-case.js'
 import { Roles } from '@/infra/auth/roles.decorator.js'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js'
 import { OrderPresenter } from '@/infra/http/presenters/order-presenter.js'
-
-const paginationQuerySchema = z.object({
-  page: z.coerce.number().int().min(1).default(1),
-  perPage: z.coerce.number().int().min(1).max(50).default(20),
-})
-
-type PaginationQuery = z.infer<typeof paginationQuerySchema>
+import {
+  paginationQuerySchema,
+  type PaginationQuery,
+} from '@/infra/http/schemas/pagination-query.schema.js'
 
 @Controller('/orders')
 @Roles('ADMIN')
@@ -28,10 +24,10 @@ export class ListOrdersController {
     if (result.isRight()) {
       return {
         orders: result.value.orders.map((order) => OrderPresenter.toHTTP(order)),
-        total: result.value.total,
+        meta: { total: result.value.total, page, perPage },
       }
     }
 
-    return { orders: [], total: 0 }
+    return { orders: [], meta: { total: 0, page, perPage } }
   }
 }
