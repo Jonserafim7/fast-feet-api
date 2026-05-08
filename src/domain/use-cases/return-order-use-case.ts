@@ -29,42 +29,38 @@ export class ReturnOrderUseCase {
     orderId,
     courierId,
   }: ReturnOrderUseCaseRequest): Promise<ReturnOrderUseCaseResponse> {
-    // 1. Find the order
     const order = await this.ordersRepository.findById(orderId)
 
     if (!order) {
       return left(new ResourceNotFoundError(orderId))
     }
 
-    // 2. Validate order status is WITHDRAWN
     if (order.status !== 'WITHDRAWN') {
       return left(new InvalidOrderStatusError(order.status, 'WITHDRAWN'))
     }
 
-    // 3. Validate courier ownership
     if (order.courierId !== courierId) {
       return left(new NotOrderCourierError())
     }
 
-    // 4. Update order status to RETURNED
     await this.ordersRepository.return(orderId, new Date())
 
-    this.recipientsRepository
-      .findById(order.recipientId)
-      .then((recipient) => {
-        if (recipient) {
-          return this.sendNotification.execute({
-            recipientId: recipient.id,
-            recipientEmail: recipient.email,
-            title: 'Pedido devolvido',
-            content:
-              'Infelizmente seu pedido foi devolvido. Entre em contato para mais informações.',
-          })
-        }
-      })
-      .catch((error) => {
-        console.error('Failed to send notification for order', orderId, error)
-      })
+    try {
+      const recipient = await this.recipientsRepository.findById(
+        order.recipientId
+      )
+      if (recipient) {
+        await this.sendNotification.execute({
+          recipientId: recipient.id,
+          recipientEmail: recipient.email,
+          title: 'Pedido devolvido',
+          content:
+            'Infelizmente seu pedido foi devolvido. Entre em contato para mais informações.',
+        })
+      }
+    } catch (error) {
+      console.error('Failed to send notification for order', orderId, error)
+    }
 
     return right(null)
   }

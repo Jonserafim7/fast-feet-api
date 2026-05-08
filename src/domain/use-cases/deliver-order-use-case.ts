@@ -43,60 +43,45 @@ export class DeliverOrderUseCase {
     fileType,
     body,
   }: DeliverOrderUseCaseRequest): Promise<DeliverOrderUseCaseResponse> {
-    // 1. Find the order
     const order = await this.ordersRepository.findById(orderId)
 
     if (!order) {
       return left(new ResourceNotFoundError(orderId))
     }
 
-    // 2. Validate order status is WITHDRAWN
     if (order.status !== 'WITHDRAWN') {
       return left(new InvalidOrderStatusError(order.status, 'WITHDRAWN'))
     }
 
-    // 3. Validate courier ownership
     if (order.courierId !== courierId) {
       return left(new NotOrderCourierError())
     }
 
-    // 4. Validate file exists
     if (!body || body.length === 0) {
       return left(new AttachmentRequiredError())
     }
 
-    // 5. Upload file to R2
-    const { url } = await this.uploader.upload({
-      fileName,
-      fileType,
-      body,
-    })
+    const { url } = await this.uploader.upload({ fileName, fileType, body })
 
-    // 6. Create attachment record
-    await this.attachmentsRepository.create({
-      title: fileName,
-      url,
-      orderId,
-    })
+    await this.attachmentsRepository.create({ title: fileName, url, orderId })
 
-    // 7. Update order status to DELIVERED
     await this.ordersRepository.deliver(orderId, new Date())
 
-    this.recipientsRepository
-      .findById(order.recipientId)
-      .then((recipient) => {
-        if (recipient) {
-          return this.sendNotification.execute({
-            recipientId: recipient.id,
-            recipientEmail: recipient.email,
-            title: 'Pedido entregue',
-            content: 'Seu pedido foi entregue com sucesso.',
-          })
-        }
-      })
-      .catch((error) => {
-        console.error('Failed to send notification for order', orderId, error)
-      })
+    try {
+      const recipient = await this.recipientsRepository.findById(
+        order.recipientId
+      )
+      if (recipient) {
+        await this.sendNotification.execute({
+          recipientId: recipient.id,
+          recipientEmail: recipient.email,
+          title: 'Pedido entregue',
+          content: 'Seu pedido foi entregue com sucesso.',
+        })
+      }
+    } catch (error) {
+      console.error('Failed to send notification for order', orderId, error)
+    }
 
     return right({ attachmentUrl: url })
   }

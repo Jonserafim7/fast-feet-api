@@ -14,9 +14,6 @@ export class PrismaService
 {
   constructor(private envService: EnvService) {
     const databaseUrl = envService.get('DATABASE_URL')
-    const nodeEnv = envService.get('NODE_ENV')
-
-    // Schema is already validated by env schema (UUIDs or valid PostgreSQL identifiers)
     const schema = envService.get('DATABASE_SCHEMA')
 
     const adapter = new PrismaPg(
@@ -30,10 +27,7 @@ export class PrismaService
 
     super({
       adapter,
-      log:
-        nodeEnv === 'development'
-          ? ['query', 'info', 'warn', 'error']
-          : ['warn', 'error'],
+      log: ['warn', 'error'],
     })
   }
 

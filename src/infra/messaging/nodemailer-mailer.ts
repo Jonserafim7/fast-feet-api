@@ -20,11 +20,21 @@ export class NodemailerMailer implements Mailer {
   }
 
   async send({ to, subject, body }: SendMailData): Promise<void> {
-    await this.transporter.sendMail({
-      from: this.env.get('MAIL_FROM'),
-      to,
-      subject,
-      text: body,
-    })
+    const from = this.env.get('MAIL_FROM')
+    console.log(
+      `[Mailer] Sending email to=${to} subject="${subject}" from=${from}`
+    )
+    try {
+      const info = await this.transporter.sendMail({
+        from,
+        to,
+        subject,
+        text: body,
+      })
+      console.log(`[Mailer] Email sent messageId=${info.messageId}`)
+    } catch (error) {
+      console.error('[Mailer] Failed to send email:', error)
+      throw error
+    }
   }
 }
