@@ -18,6 +18,14 @@ Admins handle all CRUD operations, while couriers can withdraw, deliver (with ph
 
 > The original Rocketseat challenge specification is available at [`docs/CHALLENGE.md`](docs/CHALLENGE.md).
 
+## The FastFeet Ecosystem
+
+This API is the core of a full-stack logistics platform. The complete ecosystem consists of three parts:
+
+1. ⚙️ **Backend API (This repository)**: Built with NestJS and Clean Architecture.
+2. 📱 **[FastFeet Mobile App](https://github.com/Jonserafim7/fastfeet-app)**: Built with React Native & Expo. Empowers couriers to manage their assigned deliveries, use geolocation, and capture delivery photo proofs.
+3. 💻 **FastFeet Web Panel**: Built with React & Tailwind. Allows admins to manage the entire operation. _(Note: The repository for the web panel at [maferraz517/fastfeet-web](https://github.com/maferraz517/fastfeet-web) is currently private)._
+
 ## Tech Stack
 
 | Layer           | Technologies            |
