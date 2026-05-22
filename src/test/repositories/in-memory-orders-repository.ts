@@ -65,17 +65,25 @@ export class InMemoryOrdersRepository implements OrdersRepository {
   findMany({
     page,
     perPage,
+    status,
+    search,
   }: {
     page: number
     perPage: number
+    status?: OrderStatus
+    search?: string
   }): Promise<{ orders: Order[]; total: number }> {
-    const sorted = this.items
-      .slice()
+    const filtered = this.items
+      .filter((order) => {
+        if (status && order.status !== status) return false
+        if (search && !this.matchesSearch(order, search)) return false
+        return true
+      })
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
     const start = (page - 1) * perPage
-    const orders = sorted.slice(start, start + perPage)
+    const orders = filtered.slice(start, start + perPage)
 
-    return Promise.resolve({ orders, total: sorted.length })
+    return Promise.resolve({ orders, total: filtered.length })
   }
 
   private matchesSearch(order: Order, search: string): boolean {

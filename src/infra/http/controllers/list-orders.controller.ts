@@ -1,12 +1,19 @@
 import { Controller, Get, Query } from '@nestjs/common'
+import { z } from 'zod'
 import { ListOrdersUseCase } from '@/domain/use-cases/list-orders-use-case.js'
 import { Roles } from '@/infra/auth/roles.decorator.js'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js'
 import { OrderPresenter } from '@/infra/http/presenters/order-presenter.js'
-import {
-  paginationQuerySchema,
-  type PaginationQuery,
-} from '@/infra/http/schemas/pagination-query.schema.js'
+import { paginationQuerySchema } from '@/infra/http/schemas/pagination-query.schema.js'
+
+const listOrdersQuerySchema = paginationQuerySchema.extend({
+  status: z
+    .enum(['PENDING', 'WAITING', 'WITHDRAWN', 'DELIVERED', 'RETURNED'])
+    .optional(),
+  search: z.string().trim().min(1).optional(),
+})
+
+type ListOrdersQuery = z.infer<typeof listOrdersQuerySchema>
 
 @Controller('/orders')
 @Roles('ADMIN')
@@ -15,11 +22,16 @@ export class ListOrdersController {
 
   @Get()
   async handle(
-    @Query(new ZodValidationPipe(paginationQuerySchema)) query: PaginationQuery
+    @Query(new ZodValidationPipe(listOrdersQuerySchema)) query: ListOrdersQuery
   ) {
-    const { page, perPage } = query
+    const { page, perPage, status, search } = query
 
-    const result = await this.listOrders.execute({ page, perPage })
+    const result = await this.listOrders.execute({
+      page,
+      perPage,
+      status,
+      search,
+    })
 
     if (result.isRight()) {
       return {
