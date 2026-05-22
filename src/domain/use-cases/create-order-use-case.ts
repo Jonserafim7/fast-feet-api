@@ -8,8 +8,8 @@ interface CreateOrderUseCaseRequest {
   recipientId: string
   title: string
   description?: string
-  latitude: number
-  longitude: number
+  latitude?: number
+  longitude?: number
   street: string
   number: string
   city: string
