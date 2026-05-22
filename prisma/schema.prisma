@@ -66,8 +66,8 @@ model Order {
   description String?
   status      OrderStatus @default(PENDING)
 
-  latitude     Decimal
-  longitude    Decimal
+  latitude     Decimal?
+  longitude    Decimal?
   street       String
   number       String
   city         String

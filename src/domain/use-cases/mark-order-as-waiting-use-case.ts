@@ -32,8 +32,10 @@ export class MarkOrderAsWaitingUseCase {
       return left(new ResourceNotFoundError(orderId))
     }
 
-    if (order.status !== 'PENDING') {
-      return left(new InvalidOrderStatusError(order.status, 'PENDING'))
+    if (order.status !== 'PENDING' && order.status !== 'RETURNED') {
+      return left(
+        new InvalidOrderStatusError(order.status, 'PENDING or RETURNED')
+      )
     }
 
     await this.ordersRepository.updateStatus(orderId, 'WAITING')

@@ -18,8 +18,8 @@ export class InMemoryOrdersRepository implements OrdersRepository {
       title: data.title,
       description: data.description ?? null,
       status: data.status ?? 'WAITING',
-      latitude: data.latitude,
-      longitude: data.longitude,
+      latitude: data.latitude ?? null,
+      longitude: data.longitude ?? null,
       street: data.street,
       number: data.number,
       city: data.city,
@@ -80,23 +80,28 @@ export class InMemoryOrdersRepository implements OrdersRepository {
   findMany({
     page,
     perPage,
+    status,
+    search,
     showDeleted,
   }: {
     page: number
     perPage: number
+    status?: OrderStatus
+    search?: string
     showDeleted?: boolean
   }): Promise<{ orders: Order[]; total: number }> {
-    const filtered = this.items.filter((order) => {
-      if (order.deletedAt !== null && !showDeleted) return false
-      return true
-    })
-    const sorted = filtered
-      .slice()
+    const filtered = this.items
+      .filter((order) => {
+        if (order.deletedAt !== null && !showDeleted) return false
+        if (status && order.status !== status) return false
+        if (search && !this.matchesSearch(order, search)) return false
+        return true
+      })
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
     const start = (page - 1) * perPage
-    const orders = sorted.slice(start, start + perPage)
+    const orders = filtered.slice(start, start + perPage)
 
-    return Promise.resolve({ orders, total: sorted.length })
+    return Promise.resolve({ orders, total: filtered.length })
   }
 
   private matchesSearch(order: Order, search: string): boolean {
@@ -208,9 +213,15 @@ export class InMemoryOrdersRepository implements OrdersRepository {
     const itemIndex = this.items.findIndex((item) => item.id === id)
 
     if (itemIndex >= 0) {
+      const isWaiting = status === 'WAITING'
       this.items[itemIndex] = {
         ...this.items[itemIndex],
         status,
+        ...(isWaiting && {
+          courierId: null,
+          pickupDate: null,
+          returnDate: null,
+        }),
         updatedAt: new Date(),
       }
     }

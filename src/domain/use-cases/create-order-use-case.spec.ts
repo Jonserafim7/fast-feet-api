@@ -52,6 +52,43 @@ describe('create order use case', () => {
     })
   })
 
+  it('should create an order without latitude and longitude coordinates', async () => {
+    await recipientsRepository.create(makeRecipientData({ id: 'recipient-1' }))
+
+    const result = await sut.execute({
+      recipientId: 'recipient-1',
+      title: 'Pacote sem coordenadas',
+      description: 'Cuidado ao manusear',
+      street: 'Av Paulista',
+      number: '1000',
+      city: 'São Paulo',
+      neighborhood: 'Centro',
+      state: 'SP',
+      zip: '01310100',
+      country: 'Brasil',
+      complement: 'Apto 101',
+    })
+
+    expect(result.isRight()).toBe(true)
+    expect(ordersRepository.items).toHaveLength(1)
+    expect(ordersRepository.items[0]).toMatchObject({
+      status: 'PENDING',
+      recipientId: 'recipient-1',
+      title: 'Pacote sem coordenadas',
+      description: 'Cuidado ao manusear',
+      street: 'Av Paulista',
+      number: '1000',
+      city: 'São Paulo',
+      state: 'SP',
+      zip: '01310100',
+      country: 'Brasil',
+      complement: 'Apto 101',
+      latitude: null,
+      longitude: null,
+      courierId: null,
+    })
+  })
+
   it('should not create an order when recipient does not exist', async () => {
     const result = await sut.execute({
       recipientId: 'non-existent-recipient',

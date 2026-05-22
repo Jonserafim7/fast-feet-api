@@ -21,6 +21,8 @@ export abstract class OrdersRepository {
   abstract findMany(params: {
     page: number
     perPage: number
+    status?: OrderStatus
+    search?: string
     showDeleted?: boolean
   }): Promise<{ orders: Order[]; total: number }>
   abstract findManyAvailable(params: {

@@ -54,4 +54,58 @@ describe('List Orders (E2E)', () => {
     expect(response.statusCode).toBe(200)
     expect(response.body.orders).toHaveLength(2)
   })
+
+  test('[GET] /orders?status=PENDING', async () => {
+    const adminUser = await makeAdmin(prisma, { cpf: '28937165471' })
+    const recipient = await makeRecipient(prisma, {
+      email: 'recipient2@example.com',
+    })
+
+    await makeOrder(prisma, { recipientId: recipient.id, status: 'PENDING' })
+    await makeOrder(prisma, { recipientId: recipient.id, status: 'WAITING' })
+
+    const accessToken = await makeAccessToken(jwt, {
+      sub: adminUser.id,
+      role: adminUser.role,
+    })
+
+    const response = await request(app.getHttpServer())
+      .get('/orders')
+      .query({ status: 'PENDING' })
+      .set('Authorization', `Bearer ${accessToken}`)
+
+    expect(response.statusCode).toBe(200)
+    expect(response.body.orders).toHaveLength(1)
+    expect(response.body.orders[0].status).toBe('PENDING')
+  })
+
+  test('[GET] /orders?search=Copacabana', async () => {
+    const adminUser = await makeAdmin(prisma, { cpf: '28937165472' })
+    const recipient = await makeRecipient(prisma, {
+      email: 'recipient3@example.com',
+    })
+
+    await makeOrder(prisma, {
+      recipientId: recipient.id,
+      title: 'Package in Copacabana',
+    })
+    await makeOrder(prisma, {
+      recipientId: recipient.id,
+      title: 'Box in Ipanema',
+    })
+
+    const accessToken = await makeAccessToken(jwt, {
+      sub: adminUser.id,
+      role: adminUser.role,
+    })
+
+    const response = await request(app.getHttpServer())
+      .get('/orders')
+      .query({ search: 'copacabana' })
+      .set('Authorization', `Bearer ${accessToken}`)
+
+    expect(response.statusCode).toBe(200)
+    expect(response.body.orders).toHaveLength(1)
+    expect(response.body.orders[0].title).toBe('Package in Copacabana')
+  })
 })

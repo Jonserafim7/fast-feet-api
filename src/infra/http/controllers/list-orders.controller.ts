@@ -1,12 +1,16 @@
 import { Controller, Get, Query } from '@nestjs/common'
+import { z } from 'zod'
 import { ListOrdersUseCase } from '@/domain/use-cases/list-orders-use-case.js'
 import { Roles } from '@/infra/auth/roles.decorator.js'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation.pipe.js'
 import { OrderPresenter } from '@/infra/http/presenters/order-presenter.js'
-import { z } from 'zod'
 import { paginationQuerySchema } from '@/infra/http/schemas/pagination-query.schema.js'
 
 const listOrdersQuerySchema = paginationQuerySchema.extend({
+  status: z
+    .enum(['PENDING', 'WAITING', 'WITHDRAWN', 'DELIVERED', 'RETURNED'])
+    .optional(),
+  search: z.string().trim().min(1).optional(),
   showDeleted: z
     .string()
     .optional()
@@ -24,9 +28,15 @@ export class ListOrdersController {
   async handle(
     @Query(new ZodValidationPipe(listOrdersQuerySchema)) query: ListOrdersQuery
   ) {
-    const { page, perPage, showDeleted } = query
+    const { page, perPage, status, search, showDeleted } = query
 
-    const result = await this.listOrders.execute({ page, perPage, showDeleted })
+    const result = await this.listOrders.execute({
+      page,
+      perPage,
+      status,
+      search,
+      showDeleted,
+    })
 
     if (result.isRight()) {
       return {
