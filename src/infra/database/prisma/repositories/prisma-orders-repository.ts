@@ -17,8 +17,8 @@ export class PrismaOrdersRepository implements OrdersRepository {
   private toDomain(prismaOrder: PrismaOrder): Order {
     return {
       ...prismaOrder,
-      latitude: prismaOrder.latitude.toNumber(),
-      longitude: prismaOrder.longitude.toNumber(),
+      latitude: prismaOrder.latitude ? prismaOrder.latitude.toNumber() : null,
+      longitude: prismaOrder.longitude ? prismaOrder.longitude.toNumber() : null,
     }
   }
 
@@ -43,8 +43,14 @@ export class PrismaOrdersRepository implements OrdersRepository {
         description: data.description,
         status: data.status ?? 'WAITING',
         recipientId: data.recipientId,
-        latitude: new Prisma.Decimal(data.latitude),
-        longitude: new Prisma.Decimal(data.longitude),
+        latitude:
+          data.latitude !== undefined && data.latitude !== null
+            ? new Prisma.Decimal(data.latitude)
+            : null,
+        longitude:
+          data.longitude !== undefined && data.longitude !== null
+            ? new Prisma.Decimal(data.longitude)
+            : null,
         street: data.street,
         number: data.number,
         city: data.city,
@@ -174,11 +180,15 @@ export class PrismaOrdersRepository implements OrdersRepository {
         description: data.description,
         latitude:
           data.latitude !== undefined
-            ? new Prisma.Decimal(data.latitude)
+            ? data.latitude !== null
+              ? new Prisma.Decimal(data.latitude)
+              : null
             : undefined,
         longitude:
           data.longitude !== undefined
-            ? new Prisma.Decimal(data.longitude)
+            ? data.longitude !== null
+              ? new Prisma.Decimal(data.longitude)
+              : null
             : undefined,
         street: data.street,
         number: data.number,

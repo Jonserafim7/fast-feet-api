@@ -7,8 +7,8 @@ export interface Order {
   title: string
   description: string | null
   status: OrderStatus
-  latitude: number
-  longitude: number
+  latitude: number | null
+  longitude: number | null
   street: string
   number: string
   city: string
@@ -40,8 +40,8 @@ export interface CreateOrderData {
   title: string
   description?: string
   recipientId: string
-  latitude: number
-  longitude: number
+  latitude?: number | null
+  longitude?: number | null
   street: string
   number: string
   city: string
@@ -59,8 +59,8 @@ export interface UpdateOrderData {
   id: string
   title?: string
   description?: string
-  latitude?: number
-  longitude?: number
+  latitude?: number | null
+  longitude?: number | null
   street?: string
   number?: string
   city?: string
