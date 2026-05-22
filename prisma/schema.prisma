@@ -80,6 +80,7 @@ model Order {
   pickupDate   DateTime? @map("pickup_date")
   deliveryDate DateTime? @map("delivery_date")
   returnDate   DateTime? @map("return_date")
+  deletedAt    DateTime? @map("deleted_at")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

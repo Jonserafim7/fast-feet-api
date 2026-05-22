@@ -11,6 +11,10 @@ const listOrdersQuerySchema = paginationQuerySchema.extend({
     .enum(['PENDING', 'WAITING', 'WITHDRAWN', 'DELIVERED', 'RETURNED'])
     .optional(),
   search: z.string().trim().min(1).optional(),
+  showDeleted: z
+    .string()
+    .optional()
+    .transform((value) => value === 'true'),
 })
 
 type ListOrdersQuery = z.infer<typeof listOrdersQuerySchema>
@@ -24,13 +28,14 @@ export class ListOrdersController {
   async handle(
     @Query(new ZodValidationPipe(listOrdersQuerySchema)) query: ListOrdersQuery
   ) {
-    const { page, perPage, status, search } = query
+    const { page, perPage, status, search, showDeleted } = query
 
     const result = await this.listOrders.execute({
       page,
       perPage,
       status,
       search,
+      showDeleted,
     })
 
     if (result.isRight()) {

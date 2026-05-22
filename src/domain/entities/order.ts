@@ -24,6 +24,7 @@ export interface Order {
   updatedAt: Date
   recipientId: string
   courierId: string | null
+  deletedAt: Date | null
 }
 
 export interface OrderWithRecipient extends Order {
@@ -53,6 +54,7 @@ export interface CreateOrderData {
   courierId?: string
   pickupDate?: Date
   deliveryDate?: Date
+  deletedAt?: Date
 }
 
 export interface UpdateOrderData {
@@ -69,4 +71,5 @@ export interface UpdateOrderData {
   zip?: string
   country?: string
   complement?: string
+  deletedAt?: Date | null
 }

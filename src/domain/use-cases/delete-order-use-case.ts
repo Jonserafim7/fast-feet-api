@@ -22,7 +22,19 @@ export class DeleteOrderUseCase {
       return left(new ResourceNotFoundError(orderId))
     }
 
-    await this.ordersRepository.delete(orderId)
+    const shouldSoftDelete = ['WITHDRAWN', 'DELIVERED', 'RETURNED'].includes(
+      order.status
+    )
+
+    if (shouldSoftDelete) {
+      order.deletedAt = new Date()
+      await this.ordersRepository.save({
+        id: order.id,
+        deletedAt: order.deletedAt,
+      })
+    } else {
+      await this.ordersRepository.delete(orderId)
+    }
 
     return right(null)
   }

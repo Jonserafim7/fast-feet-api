@@ -9,6 +9,7 @@ interface ListOrdersUseCaseRequest {
   perPage: number
   status?: OrderStatus
   search?: string
+  showDeleted?: boolean
 }
 
 type ListOrdersUseCaseResponse = Either<
@@ -28,12 +29,14 @@ export class ListOrdersUseCase {
     perPage,
     status,
     search,
+    showDeleted,
   }: ListOrdersUseCaseRequest): Promise<ListOrdersUseCaseResponse> {
     const { orders, total } = await this.ordersRepository.findMany({
       page,
       perPage,
       status,
       search,
+      showDeleted,
     })
 
     return right({ orders, total })
