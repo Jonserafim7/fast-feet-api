@@ -207,9 +207,17 @@ export class PrismaOrdersRepository implements OrdersRepository {
   }
 
   async updateStatus(id: string, status: OrderStatus) {
+    const isWaiting = status === 'WAITING'
     await this.prisma.order.update({
       where: { id },
-      data: { status },
+      data: {
+        status,
+        ...(isWaiting && {
+          courierId: null,
+          pickupDate: null,
+          returnDate: null,
+        }),
+      },
     })
   }
 

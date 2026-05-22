@@ -191,9 +191,15 @@ export class InMemoryOrdersRepository implements OrdersRepository {
     const itemIndex = this.items.findIndex((item) => item.id === id)
 
     if (itemIndex >= 0) {
+      const isWaiting = status === 'WAITING'
       this.items[itemIndex] = {
         ...this.items[itemIndex],
         status,
+        ...(isWaiting && {
+          courierId: null,
+          pickupDate: null,
+          returnDate: null,
+        }),
         updatedAt: new Date(),
       }
     }
