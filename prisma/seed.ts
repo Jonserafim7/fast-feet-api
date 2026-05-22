@@ -10,14 +10,14 @@ const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
 const prisma = new PrismaClient({ adapter })
 
 const SEED_CONFIG = {
-  couriers: 5,
-  recipients: 40,
+  couriers: 2,
+  recipients: 2,
   orders: {
-    PENDING: 20,
-    WAITING: 120,
-    WITHDRAWN: 28,
-    DELIVERED: 20,
-    RETURNED: 12,
+    PENDING: 2,
+    WAITING: 2,
+    WITHDRAWN: 2,
+    DELIVERED: 2,
+    RETURNED: 2,
   },
 } as const
 
@@ -73,50 +73,6 @@ function daysAgo(days: number): Date {
   const date = new Date()
   date.setDate(date.getDate() - days)
   return date
-}
-
-const BR_STATES = [
-  'AC',
-  'AL',
-  'AP',
-  'AM',
-  'BA',
-  'CE',
-  'DF',
-  'ES',
-  'GO',
-  'MA',
-  'MT',
-  'MS',
-  'MG',
-  'PA',
-  'PB',
-  'PR',
-  'PE',
-  'PI',
-  'RJ',
-  'RN',
-  'RS',
-  'RO',
-  'RR',
-  'SC',
-  'SP',
-  'SE',
-  'TO',
-] as const
-
-function generateBrazilianAddress() {
-  return {
-    street: faker.location.street(),
-    number: String(faker.number.int({ min: 1, max: 9999 })),
-    neighborhood: faker.location.county(),
-    city: faker.location.city(),
-    state: faker.helpers.arrayElement(BR_STATES),
-    zip: faker.string.numeric(8),
-    latitude: faker.location.latitude({ min: -33, max: 5 }),
-    longitude: faker.location.longitude({ min: -74, max: -35 }),
-    country: 'Brasil',
-  }
 }
 
 const CURATED_ADDRESSES = [
@@ -232,11 +188,6 @@ const CURATED_ADDRESSES = [
   },
 ]
 
-function pickAddress(index: number) {
-  if (index < CURATED_ADDRESSES.length) return CURATED_ADDRESSES[index]
-  return generateBrazilianAddress()
-}
-
 // ---------------------------------------------------------------------------
 // Seed functions
 // ---------------------------------------------------------------------------
@@ -258,34 +209,46 @@ async function seedUsers(
     },
   })
 
-  const courierIds: string[] = []
+  const courier1Cpf = generateValidCpf('123456789')
+  const courier2Cpf = generateValidCpf('987654321')
 
-  const couriers = Array.from({ length: SEED_CONFIG.couriers }, () => {
-    const id = randomUUID()
-    courierIds.push(id)
-    return {
-      id,
-      name: faker.person.fullName(),
-      cpf: generateValidCpf(faker.string.numeric(9)),
+  const couriers = [
+    {
+      id: randomUUID(),
+      name: 'Entregador Um',
+      cpf: courier1Cpf,
       passwordHash: defaultPasswordHash,
       role: 'COURIER' as const,
-    }
-  })
+    },
+    {
+      id: randomUUID(),
+      name: 'Entregador Dois',
+      cpf: courier2Cpf,
+      passwordHash: defaultPasswordHash,
+      role: 'COURIER' as const,
+    },
+  ]
 
   await prisma.user.createMany({ data: couriers })
 
-  return courierIds
+  return couriers
 }
 
 async function seedRecipients() {
-  const recipients = Array.from({ length: SEED_CONFIG.recipients }, () => ({
-    id: randomUUID(),
-    name: faker.person.fullName(),
-    email: faker.internet.email().toLowerCase(),
-    phone: faker.datatype.boolean({ probability: 0.7 })
-      ? faker.phone.number({ style: 'national' })
-      : null,
-  }))
+  const recipients = [
+    {
+      id: randomUUID(),
+      name: 'Destinatário Um',
+      email: 'destinatario.um@example.com',
+      phone: '11999999999',
+    },
+    {
+      id: randomUUID(),
+      name: 'Destinatário Dois',
+      email: 'destinatario.dois@example.com',
+      phone: '11888888888',
+    },
+  ]
 
   await prisma.recipient.createMany({ data: recipients })
 
@@ -320,9 +283,9 @@ async function seedOrders(courierIds: string[], recipientIds: string[]) {
     for (let i = 0; i < count; i++) {
       const id = randomUUID()
       const title = faker.commerce.productName()
-      const recipientId = faker.helpers.arrayElement(recipientIds)
-      const address = pickAddress(globalIndex)
-      const hasDescription = faker.datatype.boolean({ probability: 0.4 })
+      const recipientId = recipientIds[i]
+      const address = CURATED_ADDRESSES[globalIndex]
+      const hasDescription = i === 0
 
       const order: Prisma.OrderCreateManyInput = {
         id,
@@ -334,16 +297,16 @@ async function seedOrders(courierIds: string[], recipientIds: string[]) {
       }
 
       if (status === 'WITHDRAWN') {
-        order.courierId = faker.helpers.arrayElement(courierIds)
-        order.pickupDate = daysAgo(faker.number.int({ min: 1, max: 7 }))
+        order.courierId = courierIds[i]
+        order.pickupDate = daysAgo(2)
       } else if (status === 'DELIVERED') {
-        order.courierId = faker.helpers.arrayElement(courierIds)
-        order.pickupDate = daysAgo(faker.number.int({ min: 5, max: 14 }))
-        order.deliveryDate = daysAgo(faker.number.int({ min: 1, max: 4 }))
+        order.courierId = courierIds[i]
+        order.pickupDate = daysAgo(6)
+        order.deliveryDate = daysAgo(2)
       } else if (status === 'RETURNED') {
-        order.courierId = faker.helpers.arrayElement(courierIds)
-        order.pickupDate = daysAgo(faker.number.int({ min: 5, max: 14 }))
-        order.returnDate = daysAgo(faker.number.int({ min: 1, max: 4 }))
+        order.courierId = courierIds[i]
+        order.pickupDate = daysAgo(6)
+        order.returnDate = daysAgo(2)
       }
 
       allOrders.push(order)
@@ -404,19 +367,19 @@ async function seedNotifications(
     const template =
       NOTIFICATION_TEMPLATES[status as Exclude<OrderStatus, 'PENDING'>]
 
-    for (const order of orders) {
-      const isSent = faker.datatype.boolean({ probability: 0.9 })
-      const hasRead = isSent && faker.datatype.boolean({ probability: 0.4 })
+    orders.forEach((order, index) => {
+      const isFirstOrder = index === 0
+      const readAt = isFirstOrder ? daysAgo(1) : null
 
       notifications.push({
         id: randomUUID(),
         recipientId: order.recipientId,
         title: template.title,
         content: template.content(order.title),
-        status: isSent ? 'SENT' : 'FAILED',
-        readAt: hasRead ? daysAgo(faker.number.int({ min: 1, max: 7 })) : null,
+        status: 'SENT',
+        readAt,
       })
-    }
+    })
   }
 
   await prisma.notification.createMany({ data: notifications })
@@ -458,11 +421,12 @@ async function main() {
   await clearDatabase()
 
   console.log('Seeding users...')
-  const courierIds = await seedUsers(
+  const couriers = await seedUsers(
     adminCpf,
     adminPasswordHash,
     defaultPasswordHash
   )
+  const courierIds = couriers.map((c) => c.id)
 
   console.log('Seeding recipients...')
   const recipientIds = await seedRecipients()
@@ -487,7 +451,22 @@ async function main() {
       .join(', ')})`
   )
   console.log(`  - ${ordersByStatus.DELIVERED.length} attachments`)
-  console.log(`  - ${notificationCount} notifications`)
+  console.log(`  - ${notificationCount} notifications\n`)
+
+  console.log('=========================================')
+  console.log('Credentials for local development:')
+  console.log('-----------------------------------------')
+  console.log('🔑 ADMIN:')
+  console.log(`  - CPF: ${adminCpf}`)
+  console.log('  - Senha: (definida no arquivo .env)')
+  console.log('')
+  couriers.forEach((courier) => {
+    console.log(`🔑 ENTREGADOR (${courier.name}):`)
+    console.log(`  - CPF: ${courier.cpf}`)
+    console.log('  - Senha: 123456')
+    console.log('')
+  })
+  console.log('=========================================')
 }
 
 main()
