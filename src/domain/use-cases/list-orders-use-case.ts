@@ -2,10 +2,13 @@ import { Injectable } from '@nestjs/common'
 import { OrdersRepository } from '@/domain/repositories/orders-repository.js'
 import { Either, right } from '@/domain/errors/either.js'
 import type { Order } from '@/domain/entities/order.js'
+import type { OrderStatus } from '@/domain/entities/order-status.js'
 
 interface ListOrdersUseCaseRequest {
   page: number
   perPage: number
+  status?: OrderStatus
+  search?: string
 }
 
 type ListOrdersUseCaseResponse = Either<
@@ -23,10 +26,14 @@ export class ListOrdersUseCase {
   async execute({
     page,
     perPage,
+    status,
+    search,
   }: ListOrdersUseCaseRequest): Promise<ListOrdersUseCaseResponse> {
     const { orders, total } = await this.ordersRepository.findMany({
       page,
       perPage,
+      status,
+      search,
     })
 
     return right({ orders, total })

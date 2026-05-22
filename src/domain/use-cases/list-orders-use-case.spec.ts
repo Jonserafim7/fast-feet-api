@@ -45,4 +45,58 @@ describe('list orders use case', () => {
       expect(result.value.orders).toHaveLength(0)
     }
   })
+
+  it('should list orders filtered by status', async () => {
+    await ordersRepository.create(
+      makeOrderData({ id: 'order-1', status: 'PENDING' })
+    )
+    await ordersRepository.create(
+      makeOrderData({ id: 'order-2', status: 'WAITING' })
+    )
+    await ordersRepository.create(
+      makeOrderData({ id: 'order-3', status: 'PENDING' })
+    )
+
+    const result = await sut.execute({ page: 1, perPage: 10, status: 'PENDING' })
+
+    expect(result.isRight()).toBe(true)
+    if (result.isRight()) {
+      expect(result.value.orders).toHaveLength(2)
+      expect(result.value.orders).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ id: 'order-1' }),
+          expect.objectContaining({ id: 'order-3' }),
+        ])
+      )
+    }
+  })
+
+  it('should list orders filtered by search query', async () => {
+    await ordersRepository.create(
+      makeOrderData({ id: 'order-1', title: 'Package in Copacabana' })
+    )
+    await ordersRepository.create(
+      makeOrderData({ id: 'order-2', title: 'Box in Ipanema' })
+    )
+    await ordersRepository.create(
+      makeOrderData({ id: 'order-3', title: 'Copacabana package' })
+    )
+
+    const result = await sut.execute({
+      page: 1,
+      perPage: 10,
+      search: 'copacabana',
+    })
+
+    expect(result.isRight()).toBe(true)
+    if (result.isRight()) {
+      expect(result.value.orders).toHaveLength(2)
+      expect(result.value.orders).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ id: 'order-1' }),
+          expect.objectContaining({ id: 'order-3' }),
+        ])
+      )
+    }
+  })
 })

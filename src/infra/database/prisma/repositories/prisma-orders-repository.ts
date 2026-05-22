@@ -77,15 +77,31 @@ export class PrismaOrdersRepository implements OrdersRepository {
     return { ...this.toDomain(rest), recipient }
   }
 
-  async findMany({ page, perPage }: { page: number; perPage: number }) {
+  async findMany({
+    page,
+    perPage,
+    status,
+    search,
+  }: {
+    page: number
+    perPage: number
+    status?: OrderStatus
+    search?: string
+  }) {
     const skip = (page - 1) * perPage
+    const where: Prisma.OrderWhereInput = {
+      ...(status && { status }),
+      ...(search && this.buildSearchFilter(search)),
+    }
+
     const [items, total] = await Promise.all([
       this.prisma.order.findMany({
+        where,
         skip,
         take: perPage,
         orderBy: { createdAt: 'desc' },
       }),
-      this.prisma.order.count(),
+      this.prisma.order.count({ where }),
     ])
     return { orders: items.map((o) => this.toDomain(o)), total }
   }
