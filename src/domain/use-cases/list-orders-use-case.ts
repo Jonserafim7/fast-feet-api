@@ -6,6 +6,7 @@ import type { Order } from '@/domain/entities/order.js'
 interface ListOrdersUseCaseRequest {
   page: number
   perPage: number
+  showDeleted?: boolean
 }
 
 type ListOrdersUseCaseResponse = Either<
@@ -23,10 +24,12 @@ export class ListOrdersUseCase {
   async execute({
     page,
     perPage,
+    showDeleted,
   }: ListOrdersUseCaseRequest): Promise<ListOrdersUseCaseResponse> {
     const { orders, total } = await this.ordersRepository.findMany({
       page,
       perPage,
+      showDeleted,
     })
 
     return right({ orders, total })

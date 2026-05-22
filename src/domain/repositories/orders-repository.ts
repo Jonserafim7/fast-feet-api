@@ -10,11 +10,18 @@ import type { OrderStatus } from '@/domain/entities/order-status.js'
 @Injectable()
 export abstract class OrdersRepository {
   abstract create(data: CreateOrderData): Promise<void>
-  abstract findById(id: string): Promise<Order | null>
-  abstract findByIdWithRecipient(id: string): Promise<OrderWithRecipient | null>
+  abstract findById(
+    id: string,
+    params?: { showDeleted?: boolean }
+  ): Promise<Order | null>
+  abstract findByIdWithRecipient(
+    id: string,
+    params?: { showDeleted?: boolean }
+  ): Promise<OrderWithRecipient | null>
   abstract findMany(params: {
     page: number
     perPage: number
+    showDeleted?: boolean
   }): Promise<{ orders: Order[]; total: number }>
   abstract findManyAvailable(params: {
     page: number

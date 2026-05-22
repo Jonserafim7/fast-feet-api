@@ -60,16 +60,25 @@ export class PrismaOrdersRepository implements OrdersRepository {
     })
   }
 
-  async findById(id: string) {
-    const order = await this.prisma.order.findUnique({
-      where: { id },
+  async findById(id: string, params?: { showDeleted?: boolean }) {
+    const order = await this.prisma.order.findFirst({
+      where: {
+        id,
+        deletedAt: params?.showDeleted ? undefined : null,
+      },
     })
     return order ? this.toDomain(order) : null
   }
 
-  async findByIdWithRecipient(id: string): Promise<OrderWithRecipient | null> {
-    const order = await this.prisma.order.findUnique({
-      where: { id },
+  async findByIdWithRecipient(
+    id: string,
+    params?: { showDeleted?: boolean }
+  ): Promise<OrderWithRecipient | null> {
+    const order = await this.prisma.order.findFirst({
+      where: {
+        id,
+        deletedAt: params?.showDeleted ? undefined : null,
+      },
       include: { recipient: true },
     })
     if (!order) return null
@@ -77,15 +86,27 @@ export class PrismaOrdersRepository implements OrdersRepository {
     return { ...this.toDomain(rest), recipient }
   }
 
-  async findMany({ page, perPage }: { page: number; perPage: number }) {
+  async findMany({
+    page,
+    perPage,
+    showDeleted,
+  }: {
+    page: number
+    perPage: number
+    showDeleted?: boolean
+  }) {
     const skip = (page - 1) * perPage
+    const where: Prisma.OrderWhereInput = {
+      deletedAt: showDeleted ? undefined : null,
+    }
     const [items, total] = await Promise.all([
       this.prisma.order.findMany({
+        where,
         skip,
         take: perPage,
         orderBy: { createdAt: 'desc' },
       }),
-      this.prisma.order.count(),
+      this.prisma.order.count({ where }),
     ])
     return { orders: items.map((o) => this.toDomain(o)), total }
   }
@@ -103,6 +124,7 @@ export class PrismaOrdersRepository implements OrdersRepository {
     const where: Prisma.OrderWhereInput = {
       status: 'WAITING',
       courierId: null,
+      deletedAt: null,
       ...(search && this.buildSearchFilter(search)),
     }
 
@@ -134,6 +156,7 @@ export class PrismaOrdersRepository implements OrdersRepository {
     const skip = (page - 1) * perPage
     const where: Prisma.OrderWhereInput = {
       courierId,
+      deletedAt: null,
       ...(status && { status }),
       ...(search && this.buildSearchFilter(search)),
     }
@@ -172,6 +195,7 @@ export class PrismaOrdersRepository implements OrdersRepository {
         zip: data.zip,
         country: data.country,
         complement: data.complement,
+        deletedAt: data.deletedAt !== undefined ? data.deletedAt : undefined,
       },
     })
   }
@@ -221,13 +245,13 @@ export class PrismaOrdersRepository implements OrdersRepository {
   async countByCourierId(courierId: string) {
     const [available, withdrawn, delivered] = await Promise.all([
       this.prisma.order.count({
-        where: { status: 'WAITING', courierId: null },
+        where: { status: 'WAITING', courierId: null, deletedAt: null },
       }),
       this.prisma.order.count({
-        where: { courierId, status: 'WITHDRAWN' },
+        where: { courierId, status: 'WITHDRAWN', deletedAt: null },
       }),
       this.prisma.order.count({
-        where: { courierId, status: 'DELIVERED' },
+        where: { courierId, status: 'DELIVERED', deletedAt: null },
       }),
     ])
 

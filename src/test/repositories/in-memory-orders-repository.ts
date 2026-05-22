@@ -35,6 +35,7 @@ export class InMemoryOrdersRepository implements OrdersRepository {
       updatedAt: new Date(),
       recipientId: data.recipientId,
       courierId: data.courierId ?? null,
+      deletedAt: null,
     }
 
     this.items.push(order)
@@ -42,19 +43,33 @@ export class InMemoryOrdersRepository implements OrdersRepository {
     return Promise.resolve()
   }
 
-  findById(id: string): Promise<Order | null> {
+  findById(
+    id: string,
+    params?: { showDeleted?: boolean }
+  ): Promise<Order | null> {
     const order = this.items.find((item) => item.id === id)
 
     if (!order) {
       return Promise.resolve(null)
     }
 
+    if (order.deletedAt !== null && !params?.showDeleted) {
+      return Promise.resolve(null)
+    }
+
     return Promise.resolve(order)
   }
 
-  async findByIdWithRecipient(id: string): Promise<OrderWithRecipient | null> {
+  async findByIdWithRecipient(
+    id: string,
+    params?: { showDeleted?: boolean }
+  ): Promise<OrderWithRecipient | null> {
     const order = this.items.find((item) => item.id === id)
     if (!order) return null
+
+    if (order.deletedAt !== null && !params?.showDeleted) {
+      return null
+    }
 
     const recipient = await this.recipientsRepository?.findById(order.recipientId)
     if (!recipient) return null
@@ -65,11 +80,17 @@ export class InMemoryOrdersRepository implements OrdersRepository {
   findMany({
     page,
     perPage,
+    showDeleted,
   }: {
     page: number
     perPage: number
+    showDeleted?: boolean
   }): Promise<{ orders: Order[]; total: number }> {
-    const sorted = this.items
+    const filtered = this.items.filter((order) => {
+      if (order.deletedAt !== null && !showDeleted) return false
+      return true
+    })
+    const sorted = filtered
       .slice()
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
     const start = (page - 1) * perPage
@@ -101,6 +122,7 @@ export class InMemoryOrdersRepository implements OrdersRepository {
   }): Promise<{ orders: Order[]; total: number }> {
     const filtered = this.items
       .filter((order) => {
+        if (order.deletedAt !== null) return false
         if (order.status !== 'WAITING' || order.courierId !== null) return false
         if (search && !this.matchesSearch(order, search)) return false
         return true
@@ -128,6 +150,7 @@ export class InMemoryOrdersRepository implements OrdersRepository {
   }): Promise<{ orders: Order[]; total: number }> {
     const filtered = this.items
       .filter((order) => {
+        if (order.deletedAt !== null) return false
         if (order.courierId !== courierId) return false
         if (status && order.status !== status) return false
         if (search && !this.matchesSearch(order, search)) return false
@@ -167,6 +190,8 @@ export class InMemoryOrdersRepository implements OrdersRepository {
           data.complement !== undefined
             ? data.complement
             : currentOrder.complement,
+        deletedAt:
+          data.deletedAt !== undefined ? data.deletedAt : currentOrder.deletedAt,
         updatedAt: new Date(),
       }
     }
@@ -235,13 +260,20 @@ export class InMemoryOrdersRepository implements OrdersRepository {
 
   async countByCourierId(courierId: string) {
     const available = this.items.filter(
-      (o) => o.status === 'WAITING' && o.courierId === null
+      (o) =>
+        o.deletedAt === null && o.status === 'WAITING' && o.courierId === null
     ).length
     const withdrawn = this.items.filter(
-      (o) => o.courierId === courierId && o.status === 'WITHDRAWN'
+      (o) =>
+        o.deletedAt === null &&
+        o.courierId === courierId &&
+        o.status === 'WITHDRAWN'
     ).length
     const delivered = this.items.filter(
-      (o) => o.courierId === courierId && o.status === 'DELIVERED'
+      (o) =>
+        o.deletedAt === null &&
+        o.courierId === courierId &&
+        o.status === 'DELIVERED'
     ).length
 
     return { available, withdrawn, delivered }
