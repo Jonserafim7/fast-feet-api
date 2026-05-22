@@ -132,4 +132,40 @@ describe('mark order as waiting use case', () => {
     expect(result.isLeft()).toBe(true)
     expect(result.value).toBeInstanceOf(InvalidOrderStatusError)
   })
+
+  it('should mark a returned order as waiting and reset fields', async () => {
+    await recipientsRepository.create(
+      makeRecipientData({
+        id: 'recipient-1',
+        name: 'John Doe',
+        email: 'john@example.com',
+      })
+    )
+
+    await ordersRepository.create(
+      makeOrderData({
+        id: 'order-1',
+        status: 'RETURNED',
+        recipientId: 'recipient-1',
+        courierId: 'courier-1',
+        pickupDate: new Date(),
+      })
+    )
+    ordersRepository.items[0].returnDate = new Date()
+
+    const result = await sut.execute({
+      orderId: 'order-1',
+    })
+
+    expect(result.isRight()).toBe(true)
+    expect(ordersRepository.items[0].status).toBe('WAITING')
+    expect(ordersRepository.items[0].courierId).toBeNull()
+    expect(ordersRepository.items[0].pickupDate).toBeNull()
+    expect(ordersRepository.items[0].returnDate).toBeNull()
+
+    await vi.waitFor(() => {
+      expect(notificationsRepository.items).toHaveLength(1)
+    })
+    expect(mailer.emails).toHaveLength(1)
+  })
 })
